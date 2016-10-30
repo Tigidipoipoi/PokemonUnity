@@ -5,39 +5,31 @@ using System.Collections;
 
 public class BumpLedge : MonoBehaviour
 {
-
-    public int movementDirection = 2;
-
-
+    public Direction movementDirection = Direction.DOWN;
 
     private IEnumerator bump()
     {
-        if (PlayerMovement.player.direction == movementDirection)
+        if (PlayerMovement.Instance.Direction == movementDirection)
         {
-            PlayerMovement.player.pauseInput();
+            PlayerMovement.Instance.pauseInput();
 
-            PlayerMovement.player.forceMoveForward(2);
-            PlayerMovement.player.followerScript.canMove = false;
-            if (!PlayerMovement.player.running)
+            PlayerMovement.Instance.forceMoveForward(2);
+            PlayerMovement.Instance.followerScript.canMove = false;
+            if (!PlayerMovement.Instance.IsRunning)
             {
-                yield return new WaitForSeconds(PlayerMovement.player.speed * 0.5f);
-                StartCoroutine(PlayerMovement.player.jump());
-                yield return new WaitForSeconds(PlayerMovement.player.speed * 0.5f);
+                yield return new WaitForSeconds(PlayerMovement.Instance.Speed * 0.5f);
+                StartCoroutine(PlayerMovement.Instance.jump());
+                yield return new WaitForSeconds(PlayerMovement.Instance.Speed * 0.5f);
             }
             else
             {
-                StartCoroutine(PlayerMovement.player.jump());
-                yield return new WaitForSeconds(PlayerMovement.player.speed);
+                StartCoroutine(PlayerMovement.Instance.jump());
+                yield return new WaitForSeconds(PlayerMovement.Instance.Speed);
             }
-            yield return new WaitForSeconds(PlayerMovement.player.speed);
+            yield return new WaitForSeconds(PlayerMovement.Instance.Speed);
 
-            PlayerMovement.player.followerScript.canMove = true;
-            PlayerMovement.player.unpauseInput();
+            PlayerMovement.Instance.followerScript.canMove = true;
+            PlayerMovement.Instance.unpauseInput();
         }
     }
-
-
-
-
-
 }

@@ -45,13 +45,13 @@ public class InteractPush : MonoBehaviour
     void Start()
     {
 
-        Player = PlayerMovement.player;
+        Player = PlayerMovement.Instance;
 
     }
 
     public IEnumerator interact()
     {
-        if (!Player.strength)
+        if (!Player.IsUsingStrength)
         {
             Pokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty("Strength");
             if (targetPokemon != null)
@@ -77,7 +77,7 @@ public class InteractPush : MonoBehaviour
                         Dialog.undrawDialogBox();
 
                         //Activate strength
-                        Player.activateStrength();
+                        Player.IsUsingStrength = true;
 
                         yield return new WaitForSeconds(0.5f);
 
@@ -118,28 +118,15 @@ public class InteractPush : MonoBehaviour
 
     public IEnumerator bump()
     {
-        if (Player.strength)
+        if (Player.IsUsingStrength)
         {
             if (Player.setCheckBusyWith(this.gameObject))
             {
-                Vector3 movement = new Vector3(0, 0, 0);
+                Vector3 movement = Player.GetForwardVectorRaw();
 
-                if (Player.direction == 0)
-                {
-                    movement = new Vector3(0, 0, 2);
-                }
-                else if (Player.direction == 1)
-                {
-                    movement = new Vector3(2, 0, 0);
-                }
-                else if (Player.direction == 2)
-                {
-                    movement = new Vector3(0, 0, -1);
-                }
-                else if (Player.direction == 3)
-                {
-                    movement = new Vector3(-1, 0, 0);
-                }
+                if (movement.x > 0
+                    || movement.z > 0)
+                    movement *= 2;
 
                 if (checkDestination(movement))
                 { //if destination is clear
@@ -174,11 +161,12 @@ public class InteractPush : MonoBehaviour
         startPosition = transform.position;
         destinationPosition1 = startPosition + movement;
 
-        int direction = 0;
+        Direction direction = Direction.UP;
         //Debug.Log("move: "+movement.x +" "+movement.z);
         if (Mathf.RoundToInt(movement.x) != 0)
-        { // moving right or left
-            direction = 1;
+        {
+            // moving right or left
+            direction = Direction.RIGHT;
             destinationPosition2 = destinationPosition1 + new Vector3(0, 0, 1);
         }
         else if (Mathf.RoundToInt(movement.z) != 0)
@@ -192,7 +180,7 @@ public class InteractPush : MonoBehaviour
         hitColliders = Physics.OverlapSphere(new Vector3(transform.position.x, transform.position.y, transform.position.z), 0.4f);
 
         //Check current map
-        RaycastHit[] hitRays = Physics.RaycastAll(transform.position + Vector3.up + Player.getForwardVectorRaw(direction), Vector3.down, 3f);
+        RaycastHit[] hitRays = Physics.RaycastAll(transform.position + Vector3.up + Player.GetForwardVectorRaw(direction), Vector3.down, 3f);
         int closestIndex = -1;
         float closestDistance = float.PositiveInfinity;
         if (hitRays.Length > 0)
@@ -214,7 +202,7 @@ public class InteractPush : MonoBehaviour
             currentMap = hitRays[closestIndex].collider.gameObject.GetComponent<MapCollider>();
 
             //Check destiantion map
-            hitRays = Physics.RaycastAll(transform.position + Vector3.up + Player.getForwardVectorRaw(direction), Vector3.down, 3f);
+            hitRays = Physics.RaycastAll(transform.position + Vector3.up + Player.GetForwardVectorRaw(direction), Vector3.down, 3f);
             closestIndex = -1;
             closestDistance = float.PositiveInfinity;
             if (hitRays.Length > 0)
@@ -271,8 +259,8 @@ public class InteractPush : MonoBehaviour
             if (currentObjectCollider == null)
             { //if both positions are free
               //ensure the slopes of the destination are both 0
-                float slope1 = MapCollider.getSlopeOfPosition(destinationPosition1, direction);
-                float slope2 = MapCollider.getSlopeOfPosition(destinationPosition2, direction);
+                float slope1 = MapCollider.GetSlopeOfPosition(destinationPosition1, direction);
+                float slope2 = MapCollider.GetSlopeOfPosition(destinationPosition2, direction);
 
                 //Make sure that destination Position is at most a single square away from start.
                 //this way we can ensure that the movement of the object will be one square at most

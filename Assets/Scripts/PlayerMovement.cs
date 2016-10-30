@@ -6,7 +6,7 @@ using System.Collections;
 public class PlayerMovement : MonoBehaviour
 {
 
-    public static PlayerMovement player;
+    public static PlayerMovement Instance;
 
     private DialogBoxHandler Dialog;
     private MapNameBoxHandler MapName;
@@ -14,19 +14,28 @@ public class PlayerMovement : MonoBehaviour
     //before a script runs, it'll check if the player is busy with another script's GameObject.
     public GameObject busyWith = null;
 
-    public bool moving = false;
-    public bool still = true;
-    public bool running = false;
-    public bool surfing = false;
-    public bool bike = false;
-    public bool strength = false;
-    public float walkSpeed = 0.3f; //time in seconds taken to walk 1 square.
-    public float runSpeed = 0.15f;
-    public float surfSpeed = 0.2f;
-    public float speed;
-    public int direction = 2; //0 = up, 1 = right, 2 = down, 3 = left
+    public bool IsMoving = false;
+    public bool IsStill = true;
+    public bool IsRunning = false;
+    public bool IsSurfing = false;
+    public bool IsBiking = false;
+    public bool IsUsingStrength = false;
+    /// <summary>
+    /// Time in seconds taken to walk 1 square.
+    /// </summary>
+    public float WalkSpeed = 0.3f;
+    /// <summary>
+    /// Time in seconds taken to run 1 square.
+    /// </summary>
+    public float RunSpeed = 0.15f;
+    /// <summary>
+    /// Time in seconds taken to surf 1 square.
+    /// </summary>
+    public float SurfSpeed = 0.2f;
+    public float Speed;
+    public Direction Direction = Direction.DOWN;
 
-    public bool canInput = true;
+    public bool CanInput = true;
 
     public float increment = 1f;
 
@@ -68,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
     public int walkFPS = 7;
     public int runFPS = 12;
 
-    private int mostRecentDirectionPressed = 0;
+    private Direction _mostRecentDirectionPressed;
     private float directionChangeInputDelay = 0.08f;
 
     //	private SceneTransition sceneTransition;
@@ -86,13 +95,13 @@ public class PlayerMovement : MonoBehaviour
         PlayerAudio = transform.GetComponent<AudioSource>();
 
         //set up the reference to this script.
-        player = this;
+        Instance = this;
 
         Dialog = GameObject.Find("GUI").GetComponent<DialogBoxHandler>();
         MapName = GameObject.Find("GUI").GetComponent<MapNameBoxHandler>();
 
-        canInput = true;
-        speed = walkSpeed;
+        CanInput = true;
+        Speed = WalkSpeed;
 
         follower = transform.FindChild("Follower").gameObject;
         followerScript = follower.GetComponent<FollowerMovement>();
@@ -119,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
 
-        if (!surfing)
+        if (!IsSurfing)
         {
             updateMount(false);
         }
@@ -131,7 +140,7 @@ public class PlayerMovement : MonoBehaviour
         reflect(false);
         followerScript.reflect(false);
 
-        updateDirection(direction);
+        updateDirection(Direction);
 
         StartCoroutine(control());
 
@@ -162,7 +171,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {   //if no map found
             //Check for map in front of player's direction
-            hitRays = Physics.RaycastAll(transform.position + Vector3.up + getForwardVectorRaw(), Vector3.down);
+            hitRays = Physics.RaycastAll(transform.position + Vector3.up + GetForwardVectorRaw(), Vector3.down);
             closestIndex = -1;
             closestDistance = float.PositiveInfinity;
             if (hitRays.Length > 0)
@@ -255,12 +264,12 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetAxisRaw("Horizontal") > 0)
             {
                 //	Debug.Log("NEW INPUT: Right");
-                mostRecentDirectionPressed = 1;
+                _mostRecentDirectionPressed = Direction.RIGHT;
             }
             else if (Input.GetAxisRaw("Horizontal") < 0)
             {
                 //	Debug.Log("NEW INPUT: Left");
-                mostRecentDirectionPressed = 3;
+                _mostRecentDirectionPressed = Direction.LEFT;
             }
         }
         else if (Input.GetButtonDown("Vertical"))
@@ -268,72 +277,58 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetAxisRaw("Vertical") > 0)
             {
                 //	Debug.Log("NEW INPUT: Up");
-                mostRecentDirectionPressed = 0;
+                _mostRecentDirectionPressed = Direction.UP;
             }
             else if (Input.GetAxisRaw("Vertical") < 0)
             {
                 //	Debug.Log("NEW INPUT: Down");
-                mostRecentDirectionPressed = 2;
+                _mostRecentDirectionPressed = Direction.DOWN;
             }
         }
 
     }
 
-    private bool isDirectionKeyHeld(int directionCheck)
+    private bool isDirectionKeyHeld(Direction pDirection)
     {
-        bool directionHeld = false;
-        if (directionCheck == 0 && Input.GetAxisRaw("Vertical") > 0)
-        {
-            directionHeld = true;
-        }
-        else if (directionCheck == 1 && Input.GetAxisRaw("Horizontal") > 0)
-        {
-            directionHeld = true;
-        }
-        else if (directionCheck == 2 && Input.GetAxisRaw("Vertical") < 0)
-        {
-            directionHeld = true;
-        }
-        else if (directionCheck == 3 && Input.GetAxisRaw("Horizontal") < 0)
-        {
-            directionHeld = true;
-        }
-        return directionHeld;
+        float rawVertical = Input.GetAxisRaw("Vertical");
+        float rawHorizontal = Input.GetAxisRaw("Horizontal");
+
+        if (pDirection == Direction.UP
+            && rawVertical > 0)
+            return true;
+        else if (pDirection == Direction.RIGHT
+            && rawHorizontal > 0)
+            return true;
+        else if (pDirection == Direction.DOWN
+            && rawVertical < 0)
+            return true;
+        else if (pDirection == Direction.LEFT
+            && rawHorizontal < 0)
+            return true;
+
+        return false;
     }
 
     private IEnumerator control()
     {
         bool still;
-        while (true)
+        while (isActiveAndEnabled)
         {
-            still = true; //the player is still, but if they've just finished moving a space, moving is still true for this frame (see end of coroutine)
-            if (canInput)
+            // The player is still, but if they've just finished moving a space, 
+            // moving is still true for this frame (see end of coroutine)
+            still = true;
+            if (CanInput)
             {
-                if (!surfing && !bike)
+                if (!IsSurfing
+                    && !IsBiking)
                 {
-                    if (Input.GetButton("Run"))
-                    {
-                        running = true;
-                        if (moving)
-                        {
-                            updateAnimation("run", runFPS);
-                        }
-                        else
-                        {
-                            updateAnimation("walk", walkFPS);
-                        }
-                        speed = runSpeed;
-                    }
-                    else
-                    {
-                        running = false;
-                        updateAnimation("walk", walkFPS);
-                        speed = walkSpeed;
-                    }
+                    checkRunning();
                 }
+
+                // Open Pause Menu.
                 if (Input.GetButton("Start"))
-                { //open Pause Menu
-                    if (moving || Input.GetButtonDown("Start"))
+                {
+                    if (IsMoving || Input.GetButtonDown("Start"))
                     {
                         if (setCheckBusyWith(Scene.main.Pause.gameObject))
                         {
@@ -354,14 +349,15 @@ public class PlayerMovement : MonoBehaviour
                 }
                 //if pausing/interacting/etc. is not being called, then moving is possible.
                 //		(if any direction input is being entered)
-                else if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+                else if (Input.GetAxisRaw("Horizontal") != 0
+                    || Input.GetAxisRaw("Vertical") != 0)
                 {
-
                     //if most recent direction pressed is held, but it isn't the current direction, set it to be
-                    if (mostRecentDirectionPressed != direction && isDirectionKeyHeld(mostRecentDirectionPressed))
+                    if (_mostRecentDirectionPressed != Direction
+                        && isDirectionKeyHeld(_mostRecentDirectionPressed))
                     {
-                        updateDirection(mostRecentDirectionPressed);
-                        if (!moving)
+                        updateDirection(_mostRecentDirectionPressed);
+                        if (!IsMoving)
                         {   // unless player has just moved, wait a small amount of time to ensure that they have time to
                             yield return new WaitForSeconds(directionChangeInputDelay);
                         } // let go before moving (allows only turning)
@@ -370,14 +366,15 @@ public class PlayerMovement : MonoBehaviour
                     else
                     {
                         //if current direction is not held down, check for the new direction to turn to
-                        if (!isDirectionKeyHeld(direction))
+                        if (!isDirectionKeyHeld(Direction))
                         {
                             //it's least likely to have held the opposite direction by accident
-                            int directionCheck = (direction + 2 > 3) ? direction - 2 : direction + 2;
-                            if (isDirectionKeyHeld(directionCheck))
+                            int directionCheck = ((int)Direction + 2) % 4;
+
+                            if (isDirectionKeyHeld((Direction)directionCheck))
                             {
-                                updateDirection(directionCheck);
-                                if (!moving)
+                                updateDirection((Direction)directionCheck);
+                                if (!IsMoving)
                                 {
                                     yield return new WaitForSeconds(directionChangeInputDelay);
                                 }
@@ -385,22 +382,26 @@ public class PlayerMovement : MonoBehaviour
                             else
                             {
                                 //it's either 90 degrees clockwise, counter, or none at this point. prioritise clockwise.
-                                directionCheck = (direction + 1 > 3) ? direction - 3 : direction + 1;
-                                if (isDirectionKeyHeld(directionCheck))
+                                directionCheck = ((int)Direction + 1) % 4;
+
+                                if (isDirectionKeyHeld((Direction)directionCheck))
                                 {
-                                    updateDirection(directionCheck);
-                                    if (!moving)
+                                    updateDirection((Direction)directionCheck);
+                                    if (!IsMoving)
                                     {
                                         yield return new WaitForSeconds(directionChangeInputDelay);
                                     }
                                 }
                                 else
                                 {
-                                    directionCheck = (direction - 1 < 0) ? direction + 3 : direction - 1;
-                                    if (isDirectionKeyHeld(directionCheck))
+                                    directionCheck = (int)Direction - 1;
+                                    if (directionCheck < 0)
+                                        directionCheck += 4;
+
+                                    if (isDirectionKeyHeld((Direction)directionCheck))
                                     {
-                                        updateDirection(directionCheck);
-                                        if (!moving)
+                                        updateDirection((Direction)directionCheck);
+                                        if (!IsMoving)
                                         {
                                             yield return new WaitForSeconds(directionChangeInputDelay);
                                         }
@@ -411,12 +412,12 @@ public class PlayerMovement : MonoBehaviour
                         //if current direction was held, then we want to attempt to move forward.
                         else
                         {
-                            moving = true;
+                            IsMoving = true;
                         }
                     }
 
                     //if moving is true (including by momentum from the previous step) then attempt to move forward.
-                    if (moving)
+                    if (IsMoving)
                     {
                         still = false;
                         yield return StartCoroutine(moveForward());
@@ -425,7 +426,7 @@ public class PlayerMovement : MonoBehaviour
 
                 }
                 else if (Input.GetKeyDown("g"))
-                { //DEBUG
+                {
                     Debug.Log(currentMap.getTileTag(transform.position));
                     if (followerScript.canMove)
                     {
@@ -437,25 +438,47 @@ public class PlayerMovement : MonoBehaviour
                     }
                 }
             }
+
+            // If still is true at this point, then no move function has been called.
             if (still)
-            {               //if still is true by this point, then no move function has been called
+            {
                 animPause = true;
-                moving = false;
-            }   //set moving to false. The player loses their momentum.
+                // The player loses his momentum.
+                IsMoving = false;
+            }
 
             yield return null;
         }
     }
 
-    public void updateDirection(int dir)
+    private void checkRunning()
     {
-        direction = dir;
-        pawnSprite.sprite = spriteSheet[direction * frames + frame];
+        IsRunning = Input.GetButton("Run");
+        if (IsRunning)
+        {
+            if (IsMoving)
+                updateAnimation("run", runFPS);
+            else
+                updateAnimation("walk", walkFPS);
+
+            Speed = RunSpeed;
+        }
+        else
+        {
+            updateAnimation("walk", walkFPS);
+            Speed = WalkSpeed;
+        }
+    }
+
+    public void updateDirection(Direction pDirection)
+    {
+        Direction = pDirection;
+        pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
         pawnReflectionSprite.sprite = pawnSprite.sprite;
         //pawnReflectionSprite.SetTextureOffset("_MainTex", GetUVSpriteMap(direction*frames+frame));
         if (mount.enabled)
         {
-            mount.sprite = mountSpriteSheet[dir];
+            mount.sprite = mountSpriteSheet[(int)pDirection];
         }
     }
 
@@ -468,7 +491,7 @@ public class PlayerMovement : MonoBehaviour
     {
         mount.enabled = enabled;
         mountSpriteSheet = Resources.LoadAll<Sprite>("PlayerSprites/" + spriteName);
-        mount.sprite = mountSpriteSheet[direction];
+        mount.sprite = mountSpriteSheet[(int)Direction];
     }
 
     public void updateAnimation(string newAnimationName, int fps)
@@ -515,7 +538,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     frame -= 1;
                 }
-                pawnSprite.sprite = spriteSheet[direction * frames + frame];
+                pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
                 pawnReflectionSprite.sprite = pawnSprite.sprite;
                 //pawnReflectionSprite.SetTextureOffset("_MainTex", GetUVSpriteMap(direction*frames+frame));
                 yield return new WaitForSeconds(secPerFrame / 4f);
@@ -538,15 +561,15 @@ public class PlayerMovement : MonoBehaviour
     ///Attempts to set player to be busy with "caller" and pauses input, returning true if the request worked.
     public bool setCheckBusyWith(GameObject caller)
     {
-        if (PlayerMovement.player.busyWith == null)
+        if (busyWith == null)
         {
-            PlayerMovement.player.busyWith = caller;
+            busyWith = caller;
         }
         //if the player is definitely busy with caller object
-        if (PlayerMovement.player.busyWith == caller)
+        if (busyWith == caller)
         {
             pauseInput();
-            Debug.Log("Busy with " + PlayerMovement.player.busyWith);
+            Debug.Log("Busy with " + busyWith);
             return true;
         }
         return false;
@@ -556,9 +579,9 @@ public class PlayerMovement : MonoBehaviour
     ///the player is still not busy 0.1 seconds after calling.
     public void unsetCheckBusyWith(GameObject caller)
     {
-        if (PlayerMovement.player.busyWith == caller)
+        if (busyWith == caller)
         {
-            PlayerMovement.player.busyWith = null;
+            busyWith = null;
         }
         StartCoroutine(checkBusinessBeforeUnpause(0.1f));
     }
@@ -566,24 +589,24 @@ public class PlayerMovement : MonoBehaviour
     public IEnumerator checkBusinessBeforeUnpause(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        if (PlayerMovement.player.busyWith == null)
+        if (PlayerMovement.Instance.busyWith == null)
         {
             unpauseInput();
         }
         else
         {
-            Debug.Log("Busy with " + PlayerMovement.player.busyWith);
+            Debug.Log("Busy with " + PlayerMovement.Instance.busyWith);
         }
     }
 
     public void pauseInput()
     {
-        canInput = false;
+        CanInput = false;
         if (animationName == "run")
         {
             updateAnimation("walk", walkFPS);
         }
-        running = false;
+        IsRunning = false;
     }
 
     public void pauseInput(float secondsToWait)
@@ -593,78 +616,49 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator pauseInputWait(float secondsToWait)
     {
-        canInput = false;
+        CanInput = false;
         yield return new WaitForSeconds(secondsToWait);
         Debug.Log("unpaused");
-        canInput = true;
+        CanInput = true;
     }
 
     public void unpauseInput()
     {
         Debug.Log("unpaused");
-        canInput = true;
+        CanInput = true;
     }
-
-    public bool isInputPaused()
-    {
-        if (canInput)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    public void activateStrength()
-    {
-        strength = true;
-    }
-
-
-
 
     ///returns the vector relative to the player direction, without any modifications.
-    public Vector3 getForwardVectorRaw()
+    public Vector3 GetForwardVectorRaw()
     {
-        return getForwardVectorRaw(direction);
+        return GetForwardVectorRaw(Direction);
     }
-    public Vector3 getForwardVectorRaw(int direction)
+    public Vector3 GetForwardVectorRaw(Direction pDirection)
     {
-        //set vector3 based off of direction
-        Vector3 forwardVector = new Vector3(0, 0, 0);
-        if (direction == 0)
+        switch (pDirection)
         {
-            forwardVector = new Vector3(0, 0, 1f);
+            case Direction.UP:
+                return Vector3.forward;
+            case Direction.RIGHT:
+                return Vector3.right;
+            case Direction.DOWN:
+                return Vector3.back;
+            case Direction.LEFT:
+                return Vector3.left;
+
+            default:
+                return Vector3.zero;
         }
-        else if (direction == 1)
-        {
-            forwardVector = new Vector3(1f, 0, 0);
-        }
-        else if (direction == 2)
-        {
-            forwardVector = new Vector3(0, 0, -1f);
-        }
-        else if (direction == 3)
-        {
-            forwardVector = new Vector3(-1f, 0, 0);
-        }
-        return forwardVector;
     }
 
-
-    public Vector3 getForwardVector()
+    public Vector3 GetForwardVector()
     {
-        return getForwardVector(direction, true);
+        return GetForwardVector(Direction);
     }
-    public Vector3 getForwardVector(int direction)
-    {
-        return getForwardVector(direction, true);
-    }
-    public Vector3 getForwardVector(int direction, bool checkForBridge)
+    public Vector3 GetForwardVector(Direction pDirection, bool pDoCheckForBridge = true)
     {
         //set initial vector3 based off of direction
-        Vector3 movement = getForwardVectorRaw(direction);
+        Vector3 movement = GetForwardVectorRaw(pDirection);
 
         //Check destination map	and bridge																//0.5f to adjust for stair height
         //cast a ray directly downwards from the position directly in front of the player		//1f to check in line with player's head
@@ -686,12 +680,12 @@ public class PlayerMovement : MonoBehaviour
                         destinationMap = mapHit.collider.gameObject.GetComponent<MapCollider>();
                     }
                 }
-                else if (bridgeHit.collider != null && checkForBridge)
+                else if (bridgeHit.collider != null && pDoCheckForBridge)
                 { //if both have been found
                     i = hitColliders.Length;    //stop searching
                 }
                 //if bridge has not been found yet
-                if (bridgeHit.collider == null && checkForBridge)
+                if (bridgeHit.collider == null && pDoCheckForBridge)
                 {
                     //if a collision's gameObject has a BridgeHandler, it is a bridge.
                     if (hitColliders[i].collider.gameObject.GetComponent<BridgeHandler>() != null)
@@ -719,8 +713,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        float currentSlope = Mathf.Abs(MapCollider.getSlopeOfPosition(transform.position, direction));
-        float destinationSlope = Mathf.Abs(MapCollider.getSlopeOfPosition(transform.position + getForwardVectorRaw(), direction, checkForBridge));
+        float currentSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(transform.position, pDirection));
+        float destinationSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(transform.position + GetForwardVectorRaw(), pDirection, pDoCheckForBridge));
         float yDistance = Mathf.Abs((transform.position.y + movement.y) - transform.position.y);
         yDistance = Mathf.Round(yDistance * 100f) / 100f;
 
@@ -741,7 +735,7 @@ public class PlayerMovement : MonoBehaviour
     ///Make the player move one space in the direction they are facing
     private IEnumerator moveForward()
     {
-        Vector3 movement = getForwardVector();
+        Vector3 movement = GetForwardVector();
 
         bool ableToMove = false;
 
@@ -780,16 +774,16 @@ public class PlayerMovement : MonoBehaviour
                 if (bridgeHit.collider != null || destinationTileTag != 1)
                 {   //wall tile tag
 
-                    if (bridgeHit.collider == null && !surfing && destinationTileTag == 2)
+                    if (bridgeHit.collider == null && !IsSurfing && destinationTileTag == 2)
                     { //(water tile tag)
                     }
                     else
                     {
-                        if (surfing && destinationTileTag != 2f)
+                        if (IsSurfing && destinationTileTag != 2f)
                         { //disable surfing if not headed to water tile
                             updateAnimation("walk", walkFPS);
-                            speed = walkSpeed;
-                            surfing = false;
+                            Speed = WalkSpeed;
+                            IsSurfing = false;
                             StartCoroutine("dismount");
                             BgmHandler.main.PlayMain(accessedAudio, accessedAudioLoopStartSamples);
                         }
@@ -829,7 +823,7 @@ public class PlayerMovement : MonoBehaviour
         if (!ableToMove)
         {
             Invoke("playBump", 0.05f);
-            moving = false;
+            IsMoving = false;
             animPause = true;
         }
     }
@@ -850,17 +844,17 @@ public class PlayerMovement : MonoBehaviour
         if (movement != Vector3.zero)
         {
             Vector3 startPosition = hitBox.position;
-            moving = true;
+            IsMoving = true;
             increment = 0;
 
             if (!lockFollower)
             {
-                StartCoroutine(followerScript.move(startPosition, speed));
+                StartCoroutine(followerScript.move(startPosition, Speed));
             }
             animPause = false;
             while (increment < 1f)
             { //increment increases slowly to 1 over the frames
-                increment += (1f / speed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
+                increment += (1f / Speed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
                 if (increment > 1)
                 {
                     increment = 1;
@@ -878,11 +872,11 @@ public class PlayerMovement : MonoBehaviour
                 { //not a wall
                     if (destinationTag == 2)
                     { //surf tile
-                        StartCoroutine(PlayerMovement.player.wildEncounter(WildPokemonInitialiser.Location.Surfing));
+                        StartCoroutine(wildEncounter(WildPokemonInitialiser.Location.Surfing));
                     }
                     else
                     { //land tile
-                        StartCoroutine(PlayerMovement.player.wildEncounter(WildPokemonInitialiser.Location.Standard));
+                        StartCoroutine(wildEncounter(WildPokemonInitialiser.Location.Standard));
                     }
                 }
             }
@@ -927,7 +921,7 @@ public class PlayerMovement : MonoBehaviour
         overrideAnimPause = true;
         for (int i = 0; i < spaces; i++)
         {
-            Vector3 movement = getForwardVector();
+            Vector3 movement = GetForwardVector();
 
             //check destination for transparents
             //Collider objectCollider = null;
@@ -956,7 +950,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void interact()
     {
-        Vector3 spaceInFront = getForwardVector();
+        Vector3 spaceInFront = GetForwardVector();
 
         Collider[] hitColliders = Physics.OverlapSphere((new Vector3(transform.position.x, (transform.position.y + 0.5f), transform.position.z) + spaceInFront), 0.4f);
         Collider currentInteraction = null;
@@ -984,7 +978,7 @@ public class PlayerMovement : MonoBehaviour
             currentInteraction.transform.parent.gameObject.SendMessage("interact", SendMessageOptions.DontRequireReceiver);
             currentInteraction = null;
         }
-        else if (!surfing)
+        else if (!IsSurfing)
         {
             if (currentMap.getTileTag(transform.position + spaceInFront) == 2)
             { //water tile tag
@@ -1006,7 +1000,7 @@ public class PlayerMovement : MonoBehaviour
 
         while (increment < 1)
         {
-            increment += (1 / walkSpeed) * Time.deltaTime;
+            increment += (1 / WalkSpeed) * Time.deltaTime;
             if (increment > 1)
             {
                 increment = 1;
@@ -1027,7 +1021,7 @@ public class PlayerMovement : MonoBehaviour
         float hIncrement = 0f;
         while (hIncrement < 1)
         {
-            hIncrement += (1 / speed) * Time.deltaTime;
+            hIncrement += (1 / Speed) * Time.deltaTime;
             mount.transform.position = holdPosition;
             yield return null;
         }
@@ -1048,7 +1042,7 @@ public class PlayerMovement : MonoBehaviour
         Pokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty("Surf");
         if (targetPokemon != null)
         {
-            if (getForwardVector(direction, false) != Vector3.zero)
+            if (GetForwardVector(Direction, false) != Vector3.zero)
             {
                 if (setCheckBusyWith(this.gameObject))
                 {
@@ -1067,31 +1061,13 @@ public class PlayerMovement : MonoBehaviour
                         {
                             yield return null;
                         }
-                        surfing = true;
+                        IsSurfing = true;
                         updateMount(true, "surf");
 
                         BgmHandler.main.PlayMain(GlobalVariables.global.surfBGM, GlobalVariables.global.surfBgmLoopStart);
 
                         //determine the vector for the space in front of the player by checking direction
-                        Vector3 spaceInFront = new Vector3(0, 0, 0);
-                        if (direction == 0)
-                        {
-                            spaceInFront = new Vector3(0, 0, 1);
-                        }
-                        else if (direction == 1)
-                        {
-                            spaceInFront = new Vector3(1, 0, 0);
-                        }
-                        else if (direction == 2)
-                        {
-                            spaceInFront = new Vector3(0, 0, -1);
-                        }
-                        else if (direction == 3)
-                        {
-                            spaceInFront = new Vector3(-1, 0, 0);
-                        }
-
-                        mount.transform.position = mount.transform.position + spaceInFront;
+                        mount.transform.position = mount.transform.position + GetForwardVectorRaw();
 
                         followerScript.StartCoroutine("withdrawToBall");
                         StartCoroutine("stillMount");
@@ -1099,7 +1075,7 @@ public class PlayerMovement : MonoBehaviour
                         yield return StartCoroutine("jump");
 
                         updateAnimation("surf", walkFPS);
-                        speed = surfSpeed;
+                        Speed = SurfSpeed;
                     }
                     Dialog.undrawDialogBox();
                     unsetCheckBusyWith(this.gameObject);
@@ -1167,7 +1143,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!PlayerAudio.isPlaying)
         {
-            if (!moving && !overrideAnimPause)
+            if (!IsMoving && !overrideAnimPause)
             {
                 playClip(bumpClip);
             }

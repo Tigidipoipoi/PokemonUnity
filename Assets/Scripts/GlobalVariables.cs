@@ -10,7 +10,7 @@ public class GlobalVariables : MonoBehaviour
     public static GlobalVariables global;
 
     public Vector3 playerPosition;
-    public int playerDirection;
+    public Direction PlayerDirection;
     public bool playerForwardOnLoad;
     public bool fadeIn;
     public Texture fadeTex;
@@ -243,18 +243,18 @@ public class GlobalVariables : MonoBehaviour
 
                     //if fading in to the scene.
                     Player.transform.position = global.playerPosition;
-                    PlayerMovement.player.direction = global.playerDirection;
+                    PlayerMovement.Instance.Direction = global.PlayerDirection;
                     if (!respawning)
                     {
-                        PlayerMovement.player.pauseInput(0.6f);
+                        PlayerMovement.Instance.pauseInput(0.6f);
                     }
                     else
                     {
-                        PlayerMovement.player.pauseInput(0.4f);
+                        PlayerMovement.Instance.pauseInput(0.4f);
                     }
                     if (playerForwardOnLoad)
                     {
-                        PlayerMovement.player.forceMoveForward();
+                        PlayerMovement.Instance.forceMoveForward();
                         playerForwardOnLoad = false;
                     }
                 }
@@ -275,7 +275,7 @@ public class GlobalVariables : MonoBehaviour
         fadeIn = true;
         playerForwardOnLoad = false;
         playerPosition = SaveData.currentSave.respawnScenePosition;
-        playerDirection = SaveData.currentSave.respawnSceneDirection;
+        PlayerDirection = SaveData.currentSave.RespawnSceneDirection;
 
         if (string.IsNullOrEmpty(SaveData.currentSave.respawnSceneName))
         {

@@ -95,7 +95,7 @@ public class MapSettings : MonoBehaviour
 
         //Check for bridge at player						        //0.5f to adjust for stair height
         //cast a ray directly downwards from the player		        //1f to check in line with player's head
-        RaycastHit[] hitColliders = Physics.RaycastAll(PlayerMovement.player.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
+        RaycastHit[] hitColliders = Physics.RaycastAll(PlayerMovement.Instance.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
         BridgeHandler bridge = null;
         //cycle through each of the collisions
         if (hitColliders.Length > 0)
@@ -156,7 +156,7 @@ public class MapSettings : MonoBehaviour
 
         //Check for bridge at player						        //0.5f to adjust for stair height
         //cast a ray directly downwards from the player		        //1f to check in line with player's head
-        RaycastHit[] hitColliders = Physics.RaycastAll(PlayerMovement.player.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
+        RaycastHit[] hitColliders = Physics.RaycastAll(PlayerMovement.Instance.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
         BridgeHandler bridge = null;
         //cycle through each of the collisions
         if (hitColliders.Length > 0)

@@ -58,7 +58,7 @@ public class InteractBreak : MonoBehaviour
         Pokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty(fieldEffect);
         if (targetPokemon != null)
         {
-            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
             {
                 Dialog.drawDialogBox();     //yield return StartCoroutine blocks the next code from running until coroutine is done.
                 yield return Dialog.StartCoroutine("drawText", interactText);
@@ -103,12 +103,12 @@ public class InteractBreak : MonoBehaviour
                 }
                 Dialog.undrawDialogBox();
                 yield return new WaitForSeconds(0.2f);
-                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
             }
         }
         else
         {
-            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
             {
                 Dialog.drawDialogBox();     //yield return StartCoroutine blocks the next code from running until coroutine is done.
                 yield return Dialog.StartCoroutine("drawText", examineText);
@@ -118,7 +118,7 @@ public class InteractBreak : MonoBehaviour
                 }
                 Dialog.undrawDialogBox();
                 yield return new WaitForSeconds(0.2f);
-                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
             }
         }
     }

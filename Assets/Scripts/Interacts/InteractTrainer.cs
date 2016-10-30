@@ -54,7 +54,7 @@ public class InteractTrainer : MonoBehaviour
     private SpriteRenderer pawnReflectionSprite;
     public Transform hitBox;
 
-    public int direction = 2;
+    public Direction Direction = Direction.DOWN;
 
     public MapCollider currentMap;
     public MapCollider destinationMap;
@@ -144,13 +144,13 @@ public class InteractTrainer : MonoBehaviour
             }
         }
 
-        updateDirection(direction);
+        updateDirection(Direction);
         StartCoroutine(refireSightColliders());
     }
 
-    public void updateDirection(int newDirection)
+    public void updateDirection(Direction pNewDirection)
     {
-        direction = newDirection;
+        Direction = pNewDirection;
         if (trainerBehaviour == TrainerBehaviour.Turn)
         {
             StartCoroutine(updateSightColliders(true));
@@ -197,7 +197,7 @@ public class InteractTrainer : MonoBehaviour
                     sightCollider[i].size = sizes[i];
                 }
             }
-            else if (i == direction)
+            else if (i == (int)Direction)
             {
                 if (sightRange > 0)
                 {
@@ -256,7 +256,7 @@ public class InteractTrainer : MonoBehaviour
         {
             for (int i = 0; i < 5; i++)
             {
-                while (PlayerMovement.player.busyWith != null && PlayerMovement.player.busyWith != this.gameObject)
+                while (PlayerMovement.Instance.busyWith != null && PlayerMovement.Instance.busyWith != this.gameObject)
                 {
                     yield return null;
                 }
@@ -264,7 +264,7 @@ public class InteractTrainer : MonoBehaviour
                 {
                     frame -= 1;
                 }
-                pawnSprite.sprite = spriteSheet[direction * frames + frame];
+                pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
                 pawnReflectionSprite.sprite = pawnSprite.sprite;
                 yield return new WaitForSeconds(secPerFrame / 5);
 
@@ -291,12 +291,12 @@ public class InteractTrainer : MonoBehaviour
                 waitTime = Random.Range(-0.8f, 1.6f);
                 waitTime = 1.1f + (waitTime * waitTime * waitTime);
 
-                turnableDirections[direction] = true; //ensure the current direction can't be turned off
+                turnableDirections[(int)Direction] = true; //ensure the current direction can't be turned off
 
-                updateDirection(Random.Range(0, 4));
-                while (!turnableDirections[direction])
+                updateDirection((Direction)Random.Range(0, 4));
+                while (!turnableDirections[(int)Direction])
                 { //ensure trainer is facing valid direction
-                    updateDirection(Random.Range(0, 4));
+                    updateDirection((Direction)Random.Range(0, 4));
                 }
                 yield return new WaitForSeconds(waitTime);
             }
@@ -318,7 +318,7 @@ public class InteractTrainer : MonoBehaviour
                 }
                 if (!recentlyDefeated)
                 {
-                    updateDirection(patrol[i].direction);
+                    updateDirection(patrol[i].Direction);
                     yield return null; //2 frame delay to prevent taking a step before initialising battle.
                     yield return null;
                 }
@@ -365,27 +365,11 @@ public class InteractTrainer : MonoBehaviour
 
     public Vector3 getForwardsVector()
     {
-        return getForwardsVector(transform.position, direction);
+        return getForwardsVector(transform.position, Direction);
     }
-    public Vector3 getForwardsVector(Vector3 position, int direction)
+    public Vector3 getForwardsVector(Vector3 position, Direction pDirection)
     {
-        Vector3 forwardsVector = new Vector3(0, 0, 0);
-        if (direction == 0)
-        {
-            forwardsVector = new Vector3(0, 0, 1f);
-        }
-        else if (direction == 1)
-        {
-            forwardsVector = new Vector3(1f, 0, 0);
-        }
-        else if (direction == 2)
-        {
-            forwardsVector = new Vector3(0, 0, -1f);
-        }
-        else if (direction == 3)
-        {
-            forwardsVector = new Vector3(-1f, 0, 0);
-        }
+        Vector3 forwardsVector = PlayerMovement.Instance.GetForwardVectorRaw(pDirection);
 
         Vector3 movement = forwardsVector;
 
@@ -423,8 +407,8 @@ public class InteractTrainer : MonoBehaviour
         }
 
 
-        float currentSlope = Mathf.Abs(MapCollider.getSlopeOfPosition(position, direction));
-        float destinationSlope = Mathf.Abs(MapCollider.getSlopeOfPosition(position + forwardsVector, direction));
+        float currentSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(position, pDirection));
+        float destinationSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(position + forwardsVector, pDirection));
         float yDistance = Mathf.Abs((position.y + movement.y) - position.y);
         yDistance = Mathf.Round(yDistance * 100f) / 100f;
 
@@ -488,14 +472,14 @@ public class InteractTrainer : MonoBehaviour
     private IEnumerator move(Vector3 movement)
     {
         float increment = 0f;
-        float speed = PlayerMovement.player.walkSpeed;
+        float speed = PlayerMovement.Instance.WalkSpeed;
         Vector3 startPosition = transform.position;
         Vector3 destinationPosition = startPosition + movement;
 
         animPause = false;
         while (increment < 1f)
         { //increment increases slowly to 1 over the frames
-            if (PlayerMovement.player.busyWith == null || PlayerMovement.player.busyWith == this.gameObject)
+            if (PlayerMovement.Instance.busyWith == null || PlayerMovement.Instance.busyWith == this.gameObject)
             {
                 increment += (1f / speed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
                 if (increment > 1)
@@ -516,7 +500,7 @@ public class InteractTrainer : MonoBehaviour
         if (!defeated && !busy)
         {
             //if the player isn't busy with any other object
-            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
             {
                 busy = true;
                 BgmHandler.main.PlayOverlay(introBGM, samplesLoopStart);
@@ -532,12 +516,8 @@ public class InteractTrainer : MonoBehaviour
                     movement = getForwardsVector();
                 }
 
-                int flippedDirection = direction + 2;
-                if (flippedDirection > 3)
-                {
-                    flippedDirection -= 4;
-                }
-                PlayerMovement.player.direction = flippedDirection;
+                int flippedDirection = (int)Direction + 2 % 4;
+                PlayerMovement.Instance.Direction = (Direction)flippedDirection;
 
                 StartCoroutine(interact());
             }
@@ -548,28 +528,28 @@ public class InteractTrainer : MonoBehaviour
 
     private IEnumerator interact()
     {
-        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.Instance.setCheckBusyWith(gameObject))
         {
             busy = true;
 
             //calculate Player's position relative to target object's and set direction accordingly.
-            float xDistance = this.transform.position.x - PlayerMovement.player.transform.position.x;
-            float zDistance = this.transform.position.z - PlayerMovement.player.transform.position.z;
+            float xDistance = transform.position.x - PlayerMovement.Instance.transform.position.x;
+            float zDistance = transform.position.z - PlayerMovement.Instance.transform.position.z;
             if (xDistance >= Mathf.Abs(zDistance))
             { //Mathf.Abs() converts zDistance to a positive always.
-                updateDirection(3);
+                updateDirection(Direction.LEFT);
             }           //this allows for better accuracy when checking orientation.
             else if (xDistance <= Mathf.Abs(zDistance) * -1)
             {
-                updateDirection(1);
+                updateDirection(Direction.RIGHT);
             }
             else if (zDistance >= Mathf.Abs(xDistance))
             {
-                updateDirection(2);
+                updateDirection(Direction.DOWN);
             }
             else
             {
-                updateDirection(0);
+                updateDirection(Direction.UP);
             }
 
             if (!defeated)
@@ -651,7 +631,7 @@ public class InteractTrainer : MonoBehaviour
             }
 
             busy = false;
-            PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
+            PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
         }
     }
 

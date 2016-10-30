@@ -481,7 +481,7 @@ public class PauseHandler : MonoBehaviour
                         }
                         playerTime = SaveData.currentSave.playerHours + " : " + playerTime;
 
-                        mapName.text = PlayerMovement.player.accessedMapSettings.mapName;
+                        mapName.text = PlayerMovement.Instance.accessedMapSettings.mapName;
                         dataText.text = SaveData.currentSave.playerName + "\n" +
                                         badgeTotal + "\n" +
                                         "0" + "\n" + //pokedex not yet implemented
@@ -503,9 +503,9 @@ public class PauseHandler : MonoBehaviour
 
                             // Old: Application.loadedLevelName
                             SaveData.currentSave.levelName = SceneManager.GetActiveScene().name;
-                            SaveData.currentSave.playerPosition = new SeriV3(PlayerMovement.player.transform.position);
-                            SaveData.currentSave.playerDirection = PlayerMovement.player.direction;
-                            SaveData.currentSave.mapName = PlayerMovement.player.accessedMapSettings.mapName;
+                            SaveData.currentSave.playerPosition = new SeriV3(PlayerMovement.Instance.transform.position);
+                            SaveData.currentSave.PlayerDirection = PlayerMovement.Instance.Direction;
+                            SaveData.currentSave.mapName = PlayerMovement.Instance.accessedMapSettings.mapName;
 
                             NonResettingHandler.saveDataToGlobal();
 

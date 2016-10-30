@@ -3243,11 +3243,11 @@ public class BattleHandler : MonoBehaviour
         string opponentName = trainer.GetName();
 
         //GET BATTLE BACKGROUNDS
-        int currentTileTag = PlayerMovement.player.currentMap.getTileTag(PlayerMovement.player.transform.position);
+        int currentTileTag = PlayerMovement.Instance.currentMap.getTileTag(PlayerMovement.Instance.transform.position);
         Debug.Log(currentTileTag);
-        background.sprite = PlayerMovement.player.accessedMapSettings.getBattleBackground(currentTileTag);
+        background.sprite = PlayerMovement.Instance.accessedMapSettings.getBattleBackground(currentTileTag);
 
-        playerBase.sprite = PlayerMovement.player.accessedMapSettings.getBattleBase(currentTileTag);
+        playerBase.sprite = PlayerMovement.Instance.accessedMapSettings.getBattleBase(currentTileTag);
         opponentBase.sprite = playerBase.sprite;
 
 

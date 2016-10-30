@@ -217,7 +217,7 @@ public class MainMenuHandler : MonoBehaviour
                     Debug.Log(SaveLoad.savedGames[1]);
                     Debug.Log(SaveLoad.savedGames[2]);
                     GlobalVariables.global.playerPosition = SaveData.currentSave.playerPosition.v3;
-                    GlobalVariables.global.playerDirection = SaveData.currentSave.playerDirection;
+                    GlobalVariables.global.PlayerDirection = SaveData.currentSave.PlayerDirection;
 
                     SceneManager.LoadScene(SaveData.currentSave.levelName);
                 }
@@ -231,7 +231,7 @@ public class MainMenuHandler : MonoBehaviour
                     GlobalVariables.global.SetDEBUGFileData();
 
                     GlobalVariables.global.playerPosition = new Vector3(78, 0, 29);
-                    GlobalVariables.global.playerDirection = 2;
+                    GlobalVariables.global.PlayerDirection = Direction.DOWN;
                     GlobalVariables.global.fadeIn = true;
                     SceneManager.LoadScene("indoorsNW");
                 }

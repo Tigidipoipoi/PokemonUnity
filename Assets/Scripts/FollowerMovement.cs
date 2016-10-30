@@ -18,7 +18,7 @@ public class FollowerMovement : MonoBehaviour
 
     public bool moving = false;
     public float speed;
-    public int direction = 2;
+    public Direction Direction = Direction.DOWN;
 
     public int pokemonID = 6;
     private int followerIndex = 0;
@@ -48,7 +48,7 @@ public class FollowerMovement : MonoBehaviour
     {
 
         Dialog = GameObject.Find("GUI").GetComponent<DialogBoxHandler>();
-        Player = PlayerMovement.player;
+        Player = PlayerMovement.Instance;
 
         pawn = transform.FindChild("Pawn");
         pawnLight = transform.FindChild("PawnLight");
@@ -70,7 +70,7 @@ public class FollowerMovement : MonoBehaviour
 
     void Start()
     {
-        Player = PlayerMovement.player;
+        Player = PlayerMovement.Instance;
         startPosition = transform.position;
 
         followerLight.color = lightColor;
@@ -84,23 +84,8 @@ public class FollowerMovement : MonoBehaviour
         }
 
         transform.position = Player.transform.position;
-        direction = Player.direction;
-        if (direction == 0)
-        {
-            transform.Translate(Vector3.back);
-        }
-        else if (direction == 1)
-        {
-            transform.Translate(Vector3.left);
-        }
-        else if (direction == 2)
-        {
-            transform.Translate(Vector3.forward);
-        }
-        else if (direction == 3)
-        {
-            transform.Translate(Vector3.right);
-        }
+        Direction = Player.Direction;
+        transform.Translate(-PlayerMovement.Instance.GetForwardVectorRaw(Direction));
 
         changeFollower(followerIndex);
         StartCoroutine("animateSprite");
@@ -119,20 +104,21 @@ public class FollowerMovement : MonoBehaviour
             Vector3 movement = destinationPosition - startPosition;
             if (Mathf.Round(movement.x) > 0)
             {
-                direction = 1;
+                Direction = Direction.RIGHT;
             }
             else if (Mathf.Round(movement.x) < 0)
             {
-                direction = 3;
+                Direction = Direction.LEFT;
             }
             else if (Mathf.Round(movement.z) > 0)
             {
-                direction = 0;
+                Direction = Direction.UP;
             }
             else if (Mathf.Round(movement.z) < 0)
             {
-                direction = 2;
+                Direction = Direction.DOWN;
             }
+
             while (Player.increment < 1)
             { //because fak trying to use this thing's own increment. shit doesn't work for some reason.
                 transform.position = startPosition + (destinationPosition - startPosition) * Player.increment;
@@ -238,8 +224,8 @@ public class FollowerMovement : MonoBehaviour
             {
                 if (!hide)
                 {
-                    sRenderer.sprite = spriteSheet[direction * 2 + frame];
-                    sLRenderer.sprite = lightSheet[direction * 2 + frame];
+                    sRenderer.sprite = spriteSheet[(int)Direction * 2 + frame];
+                    sLRenderer.sprite = lightSheet[(int)Direction * 2 + frame];
                     pawnShadow.enabled = true;
                 }
                 else
@@ -278,19 +264,19 @@ public class FollowerMovement : MonoBehaviour
                 float zDistance = this.transform.position.z - Player.gameObject.transform.position.z;
                 if (xDistance >= Mathf.Abs(zDistance))
                 { //Mathf.Abs() converts zDistance to a positive always.
-                    direction = 3;          //this allows for better accuracy when checking orientation.
+                    Direction = Direction.LEFT;          //this allows for better accuracy when checking orientation.
                 }
                 else if (xDistance <= Mathf.Abs(zDistance) * -1)
                 {
-                    direction = 1;
+                    Direction = Direction.RIGHT;
                 }
                 else if (zDistance >= Mathf.Abs(xDistance))
                 {
-                    direction = 2;
+                    Direction = Direction.DOWN;
                 }
                 else
                 {
-                    direction = 0;
+                    Direction = Direction.UP;
                 }
 
                 Dialog.drawDialogBox();

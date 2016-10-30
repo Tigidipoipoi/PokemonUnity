@@ -22,12 +22,12 @@ public class InteractTrainerSight : MonoBehaviour
     {
         if (other.name == "Player_Transparent")
         {
-            if (PlayerMovement.player.busyWith != trainer.gameObject)
+            if (PlayerMovement.Instance.busyWith != trainer.gameObject)
             {
                 int playerLocation = -1;
 
-                float playerX = Mathf.Round(PlayerMovement.player.hitBox.position.x);
-                float playerZ = Mathf.Round(PlayerMovement.player.hitBox.position.z);
+                float playerX = Mathf.Round(PlayerMovement.Instance.hitBox.position.x);
+                float playerZ = Mathf.Round(PlayerMovement.Instance.hitBox.position.z);
 
                 if (playerX == Mathf.Round(transform.position.x))
                 { //player is up or down from
@@ -53,9 +53,11 @@ public class InteractTrainerSight : MonoBehaviour
                 }
 
                 //if running past a random turner
-                if (PlayerMovement.player.running && playerLocation != -1 && trainer.trainerBehaviour == InteractTrainer.TrainerBehaviour.Turn)
+                if (PlayerMovement.Instance.IsRunning
+                    && playerLocation != -1
+                    && trainer.trainerBehaviour == InteractTrainer.TrainerBehaviour.Turn)
                 {
-                    trainer.direction = playerLocation;
+                    trainer.Direction = (Direction)playerLocation;
                     Vector3 checkPositionVector = trainer.hitBox.position;
                     for (int i = 0; i < trainer.sightRange; i++)
                     {
@@ -70,7 +72,7 @@ public class InteractTrainerSight : MonoBehaviour
                         StartCoroutine(trainer.spotPlayer());
                     }
                 }
-                else if (trainer.direction == playerLocation)
+                else if (trainer.Direction == (Direction)playerLocation)
                 {
                     Vector3 checkPositionVector = trainer.hitBox.position;
                     for (int i = 0; i < trainer.sightRange; i++)
@@ -171,23 +173,7 @@ public class InteractTrainerSight : MonoBehaviour
 
         //Vector3 nextPosition = position;
 
-        Vector3 forwardsVector = new Vector3(0, 0, 0);
-        if (trainer.direction == 0)
-        {
-            forwardsVector = new Vector3(0, 0, 1f);
-        }
-        else if (trainer.direction == 1)
-        {
-            forwardsVector = new Vector3(1f, 0, 0);
-        }
-        else if (trainer.direction == 2)
-        {
-            forwardsVector = new Vector3(0, 0, -1f);
-        }
-        else if (trainer.direction == 3)
-        {
-            forwardsVector = new Vector3(-1f, 0, 0);
-        }
+        Vector3 forwardsVector = PlayerMovement.Instance.GetForwardVectorRaw(trainer.Direction);
 
         Vector3 movement = forwardsVector;
 
@@ -227,8 +213,8 @@ public class InteractTrainerSight : MonoBehaviour
         }
 
 
-        float currentSlope = Mathf.Abs(MapCollider.getSlopeOfPosition(position, trainer.direction));
-        float destinationSlope = Mathf.Abs(MapCollider.getSlopeOfPosition(position + forwardsVector, trainer.direction));
+        float currentSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(position, trainer.Direction));
+        float destinationSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(position + forwardsVector, trainer.Direction));
         float yDistance = Mathf.Abs((position.y + movement.y) - position.y);
         yDistance = Mathf.Round(yDistance * 100f) / 100f;
 

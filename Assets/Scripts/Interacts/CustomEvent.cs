@@ -57,7 +57,7 @@ public class CustomEvent : MonoBehaviour
         if (treesArray.Length > 0)
         {
             eventTreeIndex = 0;
-            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
             {
                 setThisNPCHandlerBusy(true);
 
@@ -74,7 +74,7 @@ public class CustomEvent : MonoBehaviour
                 }
 
                 setThisNPCHandlerBusy(false);
-                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
             }
             if (deactivateOnFinish)
             {
@@ -109,23 +109,23 @@ public class CustomEvent : MonoBehaviour
                 {
                     targetNPC = currentEvent.object0.GetComponent<NPCHandler>();
 
-                    int initialDirection = targetNPC.direction;
-                    targetNPC.direction = (int)currentEvent.dir;
+                    Direction initialDirection = targetNPC.Direction;
+                    targetNPC.Direction = currentEvent.Direction;
                     for (int i = 0; i < currentEvent.int0; i++)
                     {
-                        targetNPC.direction = (int)currentEvent.dir;
+                        targetNPC.Direction = currentEvent.Direction;
                         Vector3 forwardsVector = targetNPC.getForwardsVector(true);
                         if (currentEvent.bool0)
                         { //if direction locked in
-                            targetNPC.direction = initialDirection;
+                            targetNPC.Direction = initialDirection;
                         }
                         while (forwardsVector == new Vector3(0, 0, 0))
                         {
-                            targetNPC.direction = (int)currentEvent.dir;
+                            targetNPC.Direction = currentEvent.Direction;
                             forwardsVector = targetNPC.getForwardsVector(true);
                             if (currentEvent.bool0)
                             { //if direction locked in
-                                targetNPC.direction = initialDirection;
+                                targetNPC.Direction = initialDirection;
                             }
                             yield return new WaitForSeconds(0.1f);
                         }
@@ -136,30 +136,30 @@ public class CustomEvent : MonoBehaviour
                     }
                     targetNPC.setFrameStill();
                 }       //Move the player if set to player
-                if (currentEvent.object0 == PlayerMovement.player.gameObject)
+                if (currentEvent.object0 == PlayerMovement.Instance.gameObject)
                 {
-                    int initialDirection = PlayerMovement.player.direction;
+                    Direction initialDirection = PlayerMovement.Instance.Direction;
 
-                    PlayerMovement.player.speed = (currentEvent.float0 > 0) ? PlayerMovement.player.walkSpeed / currentEvent.float0 : PlayerMovement.player.walkSpeed;
+                    PlayerMovement.Instance.Speed = (currentEvent.float0 > 0) ? PlayerMovement.Instance.WalkSpeed / currentEvent.float0 : PlayerMovement.Instance.WalkSpeed;
                     for (int i = 0; i < currentEvent.int0; i++)
                     {
-                        PlayerMovement.player.updateDirection((int)currentEvent.dir);
-                        Vector3 forwardsVector = PlayerMovement.player.getForwardVector();
+                        PlayerMovement.Instance.updateDirection(currentEvent.Direction);
+                        Vector3 forwardsVector = PlayerMovement.Instance.GetForwardVector();
                         if (currentEvent.bool0)
                         { //if direction locked in
-                            PlayerMovement.player.updateDirection(initialDirection);
+                            PlayerMovement.Instance.updateDirection(initialDirection);
                         }
 
-                        PlayerMovement.player.setOverrideAnimPause(true);
-                        yield return StartCoroutine(PlayerMovement.player.move(forwardsVector, false, currentEvent.bool0));
-                        PlayerMovement.player.setOverrideAnimPause(false);
+                        PlayerMovement.Instance.setOverrideAnimPause(true);
+                        yield return StartCoroutine(PlayerMovement.Instance.move(forwardsVector, false, currentEvent.bool0));
+                        PlayerMovement.Instance.setOverrideAnimPause(false);
                     }
-                    PlayerMovement.player.speed = PlayerMovement.player.walkSpeed;
+                    PlayerMovement.Instance.Speed = PlayerMovement.Instance.WalkSpeed;
                 }
                 break;
 
             case (CustomEventDetails.CustomEventType.TurnTo):
-                int direction;
+                Direction direction;
                 float xDistance;
                 float zDistance;
                 if (currentEvent.object0.GetComponent<NPCHandler>() != null)
@@ -175,34 +175,27 @@ public class CustomEvent : MonoBehaviour
                         zDistance = targetNPC.hitBox.position.z - currentEvent.object1.transform.position.z;
                         if (xDistance >= Mathf.Abs(zDistance))
                         { //Mathf.Abs() converts zDistance to a positive always.
-                            direction = 3;
+                            direction = Direction.LEFT;
                         }           //this allows for better accuracy when checking orientation.
                         else if (xDistance <= Mathf.Abs(zDistance) * -1)
                         {
-                            direction = 1;
+                            direction = Direction.RIGHT;
                         }
                         else if (zDistance >= Mathf.Abs(xDistance))
                         {
-                            direction = 2;
+                            direction = Direction.DOWN;
                         }
                         else
                         {
-                            direction = 0;
+                            direction = Direction.UP;
                         }
-                        targetNPC.setDirection(direction);
+                        targetNPC.SetDirection(direction);
                     }
                     if (currentEvent.int0 != 0)
                     {
-                        direction = targetNPC.direction + currentEvent.int0;
-                        while (direction > 3)
-                        {
-                            direction -= 4;
-                        }
-                        while (direction < 0)
-                        {
-                            direction += 4;
-                        }
-                        targetNPC.setDirection(direction);
+                        direction = (Direction)(((int)targetNPC.Direction + currentEvent.int0) % 4);
+
+                        targetNPC.SetDirection(direction);
                     }
                 }
                 break;
@@ -465,7 +458,7 @@ public class CustomEvent : MonoBehaviour
                     {
                         deactivateOnFinish = true;
                     }
-                    else if (currentEvent.object0 != PlayerMovement.player.gameObject)
+                    else if (currentEvent.object0 != PlayerMovement.Instance.gameObject)
                     { //important to never deactivate the player
                         currentEvent.object0.SetActive(false);
                     }
@@ -676,14 +669,6 @@ public class CustomEventDetails
         TrainerBattle   //object0: trainer script | bool0: allowed to lose | int0: tree to jump to on loss
     }
 
-    public enum Direction
-    {
-        Up,
-        Right,
-        Down,
-        Left
-    }
-
     public enum Logic
     {
         CVariableEquals,
@@ -697,7 +682,7 @@ public class CustomEventDetails
 
     public CustomEventType eventType;
 
-    public Direction dir;
+    public Direction Direction;
 
     public Logic logic;
 

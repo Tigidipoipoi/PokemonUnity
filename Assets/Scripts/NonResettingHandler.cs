@@ -4,11 +4,12 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Non resetters are things like trainers and items. 
+/// These are remembered by the save file so that they don't reappear.
+/// </summary>
 public class NonResettingHandler : MonoBehaviour
 {
-
-    //Non resetters are things like trainers and items. These are remembered by the save file so that they don't reappear.
-
     private static NonResettingHandler currentActive;
 
     private NonResettingList listOfNonResetters;

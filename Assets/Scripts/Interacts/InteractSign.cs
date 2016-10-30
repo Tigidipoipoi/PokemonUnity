@@ -20,7 +20,7 @@ public class InteractSign : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
         {
 
             StartCoroutine(Dialog.drawSignBox(signTint));
@@ -44,13 +44,13 @@ public class InteractSign : MonoBehaviour
             StartCoroutine(Dialog.undrawSignBox());
 
             yield return null;
-            PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
+            PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
         }
     }
 
     public IEnumerator bump()
     {
-        if (PlayerMovement.player.direction == 0)
+        if (PlayerMovement.Instance.Direction == 0)
         {
             yield return StartCoroutine(interact());
         }

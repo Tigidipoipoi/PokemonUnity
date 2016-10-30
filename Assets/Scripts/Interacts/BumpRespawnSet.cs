@@ -8,13 +8,13 @@ public class BumpRespawnSet : MonoBehaviour
 {
 
     public Vector3 respawnPositionOffset;
-    public int respawnDirection;
+    public Direction RespawnDirection;
     public string respawnText;
 
     private IEnumerator bump()
     {
         SaveData.currentSave.respawnScenePosition = new SeriV3(transform.position + respawnPositionOffset);
-        SaveData.currentSave.respawnSceneDirection = respawnDirection;
+        SaveData.currentSave.RespawnSceneDirection = RespawnDirection;
         SaveData.currentSave.respawnText = respawnText;
         //Old:  Application.loadedLevelName
         SaveData.currentSave.respawnSceneName = SceneManager.GetActiveScene().name;

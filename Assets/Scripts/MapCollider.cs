@@ -118,33 +118,13 @@ public class MapCollider : MonoBehaviour
     }
 
     /// returns the slope of the map geometry on the tile of the given position (in the given direction) 
-    public static float getSlopeOfPosition(Vector3 position, int direction)
-    {
-        return getSlopeOfPosition(position, direction, true);
-    }
-    public static float getSlopeOfPosition(Vector3 position, int direction, bool checkForBridge)
+    public static float GetSlopeOfPosition(Vector3 pPosition, Direction pDirection, bool pDoCheckForBridge = true)
     {
         //set vector3 based off of direction
-        Vector3 movement = new Vector3(0, 0, 0);
-        if (direction == 0)
-        {
-            movement = new Vector3(0, 0, 1f);
-        }
-        else if (direction == 1)
-        {
-            movement = new Vector3(1f, 0, 0);
-        }
-        else if (direction == 2)
-        {
-            movement = new Vector3(0, 0, -1f);
-        }
-        else if (direction == 3)
-        {
-            movement = new Vector3(-1f, 0, 0);
-        }
+        Vector3 movement = PlayerMovement.Instance.GetForwardVectorRaw(pDirection);
 
         //cast a ray directly downwards from the edge of the tile, closest to original position (1.5f height to account for stairs)
-        RaycastHit[] mapHitColliders = Physics.RaycastAll(position - (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);
+        RaycastHit[] mapHitColliders = Physics.RaycastAll(pPosition - (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);
         RaycastHit map1Hit = new RaycastHit();
 
         float shortestHit = Mathf.Infinity;
@@ -153,7 +133,7 @@ public class MapCollider : MonoBehaviour
         for (int i = 0; i < mapHitColliders.Length; i++)
         {
             //if a collision's gameObject has a MapCollider or a BridgeHandler, it is a valid tile.
-            if (checkForBridge)
+            if (pDoCheckForBridge)
             {
                 if (mapHitColliders[i].collider.gameObject.GetComponent<BridgeHandler>() != null ||
                    mapHitColliders[i].collider.gameObject.GetComponent<MapCollider>() != null)
@@ -187,7 +167,7 @@ public class MapCollider : MonoBehaviour
 
 
         //cast another ray at the edge of the tile, further from original position (1.5f height to account for stairs)
-        mapHitColliders = Physics.RaycastAll(position + (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);
+        mapHitColliders = Physics.RaycastAll(pPosition + (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);
         RaycastHit map2Hit = new RaycastHit();
 
         shortestHit = Mathf.Infinity;
@@ -196,7 +176,7 @@ public class MapCollider : MonoBehaviour
         for (int i = 0; i < mapHitColliders.Length; i++)
         {
             //if a collision's gameObject has a MapCollider or a BridgeHandler, it is a valid tile.
-            if (checkForBridge)
+            if (pDoCheckForBridge)
             {
                 if (mapHitColliders[i].collider.gameObject.GetComponent<BridgeHandler>() != null ||
                    mapHitColliders[i].collider.gameObject.GetComponent<MapCollider>() != null)

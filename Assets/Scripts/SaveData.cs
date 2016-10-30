@@ -18,7 +18,7 @@ public class SaveData
     //file loading data
     public string levelName;
     public SeriV3 playerPosition;
-    public int playerDirection;
+    public Direction PlayerDirection;
 
 
     //Important player data
@@ -53,7 +53,7 @@ public class SaveData
     //Important gameplay data
     public string respawnSceneName;
     public SeriV3 respawnScenePosition;
-    public int respawnSceneDirection;
+    public Direction RespawnSceneDirection;
     public string respawnText;
 
 

@@ -72,7 +72,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
         {
 
             for (int i = 0; i < 6; i++)
@@ -104,10 +104,10 @@ public class InteractPokemonCenter : MonoBehaviour
                 Dialog.drawDialogBox();
                 yield return StartCoroutine(Dialog.drawText("Okay, I'll take your Pokémon for \na few seconds."));
                 yield return new WaitForSeconds(0.1f);
-                StartCoroutine(PlayerMovement.player.followerScript.withdrawToBall());
+                StartCoroutine(PlayerMovement.Instance.followerScript.withdrawToBall());
                 yield return new WaitForSeconds(0.5f);
 
-                nurse.setDirection(3);
+                nurse.SetDirection(Direction.LEFT);
 
                 yield return new WaitForSeconds(0.2f);
 
@@ -154,7 +154,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
                 yield return new WaitForSeconds(0.2f);
 
-                nurse.setDirection(2);
+                nurse.SetDirection(Direction.DOWN);
 
                 Dialog.drawDialogBox();
                 yield return StartCoroutine(Dialog.drawText("Thank you for waiting."));
@@ -169,7 +169,7 @@ public class InteractPokemonCenter : MonoBehaviour
                     yield return null;
                 }
 
-                PlayerMovement.player.followerScript.canMove = true;
+                PlayerMovement.Instance.followerScript.canMove = true;
             }
 
             Dialog.drawDialogBox();
@@ -181,13 +181,13 @@ public class InteractPokemonCenter : MonoBehaviour
 
             Dialog.undrawDialogBox();
 
-            PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
+            PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
         }
     }
 
     public IEnumerator respawnHeal()
     {
-        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
         {
             for (int i = 0; i < 6; i++)
             {
@@ -200,7 +200,7 @@ public class InteractPokemonCenter : MonoBehaviour
             yield return StartCoroutine(Dialog.drawText("First, let's restore your Pokémon\nto full health."));
             yield return new WaitForSeconds(0.5f);
 
-            nurse.setDirection(3);
+            nurse.SetDirection(Direction.LEFT);
 
             yield return new WaitForSeconds(0.2f);
 
@@ -247,7 +247,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
             yield return new WaitForSeconds(0.2f);
 
-            nurse.setDirection(2);
+            nurse.SetDirection(Direction.DOWN);
 
             Dialog.drawDialogBox();
             yield return StartCoroutine(Dialog.drawText("Your Pokémon have been healed to\nperfect health."));
@@ -268,7 +268,7 @@ public class InteractPokemonCenter : MonoBehaviour
                 yield return null;
             }
 
-            PlayerMovement.player.followerScript.canMove = true;
+            PlayerMovement.Instance.followerScript.canMove = true;
 
             Dialog.drawDialogBox();
             yield return StartCoroutine(Dialog.drawText("Good luck, Trainer!"));
@@ -279,7 +279,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
             Dialog.undrawDialogBox();
 
-            PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
+            PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
         }
     }
 
