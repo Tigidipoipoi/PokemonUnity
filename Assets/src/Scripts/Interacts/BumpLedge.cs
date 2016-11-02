@@ -9,7 +9,7 @@ public class BumpLedge : MonoBehaviour
 
     private IEnumerator bump()
     {
-        if (PlayerMovement.Instance.Direction == movementDirection)
+        if (PlayerMovement.Instance.CurrentDirection == movementDirection)
         {
             PlayerMovement.Instance.pauseInput();
 
@@ -17,16 +17,16 @@ public class BumpLedge : MonoBehaviour
             PlayerMovement.Instance.followerScript.canMove = false;
             if (!PlayerMovement.Instance.IsRunning)
             {
-                yield return new WaitForSeconds(PlayerMovement.Instance.Speed * 0.5f);
+                yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed * 0.5f);
                 StartCoroutine(PlayerMovement.Instance.jump());
-                yield return new WaitForSeconds(PlayerMovement.Instance.Speed * 0.5f);
+                yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed * 0.5f);
             }
             else
             {
                 StartCoroutine(PlayerMovement.Instance.jump());
-                yield return new WaitForSeconds(PlayerMovement.Instance.Speed);
+                yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed);
             }
-            yield return new WaitForSeconds(PlayerMovement.Instance.Speed);
+            yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed);
 
             PlayerMovement.Instance.followerScript.canMove = true;
             PlayerMovement.Instance.unpauseInput();

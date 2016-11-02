@@ -243,7 +243,7 @@ public class GlobalVariables : MonoBehaviour
 
                     //if fading in to the scene.
                     Player.transform.position = global.playerPosition;
-                    PlayerMovement.Instance.Direction = global.PlayerDirection;
+                    PlayerMovement.Instance.CurrentDirection = global.PlayerDirection;
                     if (!respawning)
                     {
                         PlayerMovement.Instance.pauseInput(0.6f);

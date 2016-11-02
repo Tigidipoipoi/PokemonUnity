@@ -32,8 +32,8 @@ public class PlayerMovement : MonoBehaviour
     /// Time in seconds taken to surf 1 square.
     /// </summary>
     public float SurfSpeed = 0.2f;
-    public float Speed;
-    public Direction Direction = Direction.DOWN;
+    public float CurrentSpeed;
+    public Direction CurrentDirection = Direction.DOWN;
 
     public bool CanInput = true;
 
@@ -78,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
     public int runFPS = 12;
 
     private Direction _mostRecentDirectionPressed;
-    private float directionChangeInputDelay = 0.08f;
+    private float _directionChangeInputDelay = 0.08f;
 
     //	private SceneTransition sceneTransition;
 
@@ -101,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
         MapName = GameObject.Find("GUI").GetComponent<MapNameBoxHandler>();
 
         CanInput = true;
-        Speed = WalkSpeed;
+        CurrentSpeed = WalkSpeed;
 
         follower = transform.FindChild("Follower").gameObject;
         followerScript = follower.GetComponent<FollowerMovement>();
@@ -140,11 +140,7 @@ public class PlayerMovement : MonoBehaviour
         reflect(false);
         followerScript.reflect(false);
 
-        updateDirection(Direction);
-
-        StartCoroutine(control());
-
-
+        updateDirection(CurrentDirection);
 
         //Check current map
         RaycastHit[] hitRays = Physics.RaycastAll(transform.position + Vector3.up, Vector3.down);
@@ -253,39 +249,60 @@ public class PlayerMovement : MonoBehaviour
         GlobalVariables.global.resetFollower();
     }
 
-
-
-    void Update()
+    private void OnEnable()
     {
+        StartCoroutine(control_Coroutine());
+    }
 
-        //check for new inputs, so that the new direction can be set accordingly
-        if (Input.GetButtonDown("Horizontal"))
-        {
-            if (Input.GetAxisRaw("Horizontal") > 0)
-            {
-                //	Debug.Log("NEW INPUT: Right");
-                _mostRecentDirectionPressed = Direction.RIGHT;
-            }
-            else if (Input.GetAxisRaw("Horizontal") < 0)
-            {
-                //	Debug.Log("NEW INPUT: Left");
-                _mostRecentDirectionPressed = Direction.LEFT;
-            }
-        }
-        else if (Input.GetButtonDown("Vertical"))
-        {
-            if (Input.GetAxisRaw("Vertical") > 0)
-            {
-                //	Debug.Log("NEW INPUT: Up");
-                _mostRecentDirectionPressed = Direction.UP;
-            }
-            else if (Input.GetAxisRaw("Vertical") < 0)
-            {
-                //	Debug.Log("NEW INPUT: Down");
-                _mostRecentDirectionPressed = Direction.DOWN;
-            }
-        }
+    private void Update()
+    {
+        setMostRecentDirectionPressed();
 
+        if (Input.GetButtonDown("ToggleFollowing"))
+        {
+            togglePokemonFollowing();
+        }
+    }
+
+    /// <summary>
+    /// Withdraws following pokemon to its pokeball if there is one;
+    /// Summons it otherwise.
+    /// </summary>
+    private void togglePokemonFollowing()
+    {
+        Debug.Log(currentMap.getTileTag(transform.position));
+        if (followerScript.canMove)
+            followerScript.StartCoroutine("withdrawToBall");
+        else
+            followerScript.canMove = true;
+    }
+
+    /// <summary>
+    /// Checks inputs and set <see cref="_mostRecentDirectionPressed"/> accordingly.
+    /// </summary>
+    private void setMostRecentDirectionPressed()
+    {
+        float rawHorizontalAxis = Input.GetAxisRaw("Horizontal");
+        float rawVerticalAxis = Input.GetAxisRaw("Vertical");
+
+        // Horizontal axis.
+        if (!Mathf.Approximately(rawHorizontalAxis, 0))
+        {
+            _mostRecentDirectionPressed = rawHorizontalAxis > 0
+                ? Direction.RIGHT
+                : Direction.LEFT;
+        }
+        // Vertical axis.
+        else if (!Mathf.Approximately(rawVerticalAxis, 0))
+        {
+            _mostRecentDirectionPressed = rawVerticalAxis > 0
+                ? Direction.UP
+                : Direction.DOWN;
+        }
+        else
+        {
+            _mostRecentDirectionPressed = Direction.NONE;
+        }
     }
 
     private bool isDirectionKeyHeld(Direction pDirection)
@@ -309,14 +326,13 @@ public class PlayerMovement : MonoBehaviour
         return false;
     }
 
-    private IEnumerator control()
+    private IEnumerator control_Coroutine()
     {
-        bool still;
+        // ie: not moving.
+        bool isStill;
         while (isActiveAndEnabled)
         {
-            // The player is still, but if they've just finished moving a space, 
-            // moving is still true for this frame (see end of coroutine)
-            still = true;
+            isStill = true;
             if (CanInput)
             {
                 if (!IsSurfing
@@ -325,6 +341,7 @@ public class PlayerMovement : MonoBehaviour
                     checkRunning();
                 }
 
+                #region ToDo: Move this elsewhere !!!
                 // Open Pause Menu.
                 if (Input.GetButton("Start"))
                 {
@@ -347,54 +364,55 @@ public class PlayerMovement : MonoBehaviour
                 {
                     interact();
                 }
-                //if pausing/interacting/etc. is not being called, then moving is possible.
-                //		(if any direction input is being entered)
-                else if (Input.GetAxisRaw("Horizontal") != 0
-                    || Input.GetAxisRaw("Vertical") != 0)
+                #endregion
+                // Movement handling.
+                #region Movement handling
+                else if (_mostRecentDirectionPressed != Direction.NONE)
                 {
                     //if most recent direction pressed is held, but it isn't the current direction, set it to be
-                    if (_mostRecentDirectionPressed != Direction
+                    if (_mostRecentDirectionPressed != CurrentDirection
                         && isDirectionKeyHeld(_mostRecentDirectionPressed))
                     {
                         updateDirection(_mostRecentDirectionPressed);
+
                         if (!IsMoving)
                         {   // unless player has just moved, wait a small amount of time to ensure that they have time to
-                            yield return new WaitForSeconds(directionChangeInputDelay);
+                            yield return new WaitForSeconds(_directionChangeInputDelay);
                         } // let go before moving (allows only turning)
                     }
                     //if a new direction wasn't found, direction would have been set, thus ending the update
                     else
                     {
                         //if current direction is not held down, check for the new direction to turn to
-                        if (!isDirectionKeyHeld(Direction))
+                        if (!isDirectionKeyHeld(CurrentDirection))
                         {
                             //it's least likely to have held the opposite direction by accident
-                            int directionCheck = ((int)Direction + 2) % 4;
+                            int directionCheck = ((int)CurrentDirection + 2) % 4;
 
                             if (isDirectionKeyHeld((Direction)directionCheck))
                             {
                                 updateDirection((Direction)directionCheck);
                                 if (!IsMoving)
                                 {
-                                    yield return new WaitForSeconds(directionChangeInputDelay);
+                                    yield return new WaitForSeconds(_directionChangeInputDelay);
                                 }
                             }
                             else
                             {
                                 //it's either 90 degrees clockwise, counter, or none at this point. prioritise clockwise.
-                                directionCheck = ((int)Direction + 1) % 4;
+                                directionCheck = ((int)CurrentDirection + 1) % 4;
 
                                 if (isDirectionKeyHeld((Direction)directionCheck))
                                 {
                                     updateDirection((Direction)directionCheck);
                                     if (!IsMoving)
                                     {
-                                        yield return new WaitForSeconds(directionChangeInputDelay);
+                                        yield return new WaitForSeconds(_directionChangeInputDelay);
                                     }
                                 }
                                 else
                                 {
-                                    directionCheck = (int)Direction - 1;
+                                    directionCheck = (int)CurrentDirection - 1;
                                     if (directionCheck < 0)
                                         directionCheck += 4;
 
@@ -403,7 +421,7 @@ public class PlayerMovement : MonoBehaviour
                                         updateDirection((Direction)directionCheck);
                                         if (!IsMoving)
                                         {
-                                            yield return new WaitForSeconds(directionChangeInputDelay);
+                                            yield return new WaitForSeconds(_directionChangeInputDelay);
                                         }
                                     }
                                 }
@@ -419,28 +437,15 @@ public class PlayerMovement : MonoBehaviour
                     //if moving is true (including by momentum from the previous step) then attempt to move forward.
                     if (IsMoving)
                     {
-                        still = false;
+                        isStill = false;
                         yield return StartCoroutine(moveForward());
                     }
-
-
                 }
-                else if (Input.GetKeyDown("g"))
-                {
-                    Debug.Log(currentMap.getTileTag(transform.position));
-                    if (followerScript.canMove)
-                    {
-                        followerScript.StartCoroutine("withdrawToBall");
-                    }
-                    else
-                    {
-                        followerScript.canMove = true;
-                    }
-                }
+                #endregion
             }
 
             // If still is true at this point, then no move function has been called.
-            if (still)
+            if (isStill)
             {
                 animPause = true;
                 // The player loses his momentum.
@@ -451,6 +456,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Determines if we are pressing the run button.
+    /// Sets <see cref="IsRunning"/> and <see cref="CurrentSpeed"/>.
+    /// </summary>
     private void checkRunning()
     {
         IsRunning = Input.GetButton("Run");
@@ -461,19 +470,19 @@ public class PlayerMovement : MonoBehaviour
             else
                 updateAnimation("walk", walkFPS);
 
-            Speed = RunSpeed;
+            CurrentSpeed = RunSpeed;
         }
         else
         {
             updateAnimation("walk", walkFPS);
-            Speed = WalkSpeed;
+            CurrentSpeed = WalkSpeed;
         }
     }
 
     public void updateDirection(Direction pDirection)
     {
-        Direction = pDirection;
-        pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
+        CurrentDirection = pDirection;
+        pawnSprite.sprite = spriteSheet[(int)CurrentDirection * frames + frame];
         pawnReflectionSprite.sprite = pawnSprite.sprite;
         //pawnReflectionSprite.SetTextureOffset("_MainTex", GetUVSpriteMap(direction*frames+frame));
         if (mount.enabled)
@@ -491,7 +500,7 @@ public class PlayerMovement : MonoBehaviour
     {
         mount.enabled = enabled;
         mountSpriteSheet = Resources.LoadAll<Sprite>("PlayerSprites/" + spriteName);
-        mount.sprite = mountSpriteSheet[(int)Direction];
+        mount.sprite = mountSpriteSheet[(int)CurrentDirection];
     }
 
     public void updateAnimation(string newAnimationName, int fps)
@@ -538,7 +547,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     frame -= 1;
                 }
-                pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
+                pawnSprite.sprite = spriteSheet[(int)CurrentDirection * frames + frame];
                 pawnReflectionSprite.sprite = pawnSprite.sprite;
                 //pawnReflectionSprite.SetTextureOffset("_MainTex", GetUVSpriteMap(direction*frames+frame));
                 yield return new WaitForSeconds(secPerFrame / 4f);
@@ -631,7 +640,7 @@ public class PlayerMovement : MonoBehaviour
     ///returns the vector relative to the player direction, without any modifications.
     public Vector3 GetForwardVectorRaw()
     {
-        return GetForwardVectorRaw(Direction);
+        return GetForwardVectorRaw(CurrentDirection);
     }
     public Vector3 GetForwardVectorRaw(Direction pDirection)
     {
@@ -653,7 +662,7 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 GetForwardVector()
     {
-        return GetForwardVector(Direction);
+        return GetForwardVector(CurrentDirection);
     }
     public Vector3 GetForwardVector(Direction pDirection, bool pDoCheckForBridge = true)
     {
@@ -782,7 +791,7 @@ public class PlayerMovement : MonoBehaviour
                         if (IsSurfing && destinationTileTag != 2f)
                         { //disable surfing if not headed to water tile
                             updateAnimation("walk", walkFPS);
-                            Speed = WalkSpeed;
+                            CurrentSpeed = WalkSpeed;
                             IsSurfing = false;
                             StartCoroutine("dismount");
                             BgmHandler.main.PlayMain(accessedAudio, accessedAudioLoopStartSamples);
@@ -849,12 +858,12 @@ public class PlayerMovement : MonoBehaviour
 
             if (!lockFollower)
             {
-                StartCoroutine(followerScript.move(startPosition, Speed));
+                StartCoroutine(followerScript.move(startPosition, CurrentSpeed));
             }
             animPause = false;
             while (increment < 1f)
             { //increment increases slowly to 1 over the frames
-                increment += (1f / Speed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
+                increment += (1f / CurrentSpeed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
                 if (increment > 1)
                 {
                     increment = 1;
@@ -1021,7 +1030,7 @@ public class PlayerMovement : MonoBehaviour
         float hIncrement = 0f;
         while (hIncrement < 1)
         {
-            hIncrement += (1 / Speed) * Time.deltaTime;
+            hIncrement += (1 / CurrentSpeed) * Time.deltaTime;
             mount.transform.position = holdPosition;
             yield return null;
         }
@@ -1042,7 +1051,7 @@ public class PlayerMovement : MonoBehaviour
         Pokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty("Surf");
         if (targetPokemon != null)
         {
-            if (GetForwardVector(Direction, false) != Vector3.zero)
+            if (GetForwardVector(CurrentDirection, false) != Vector3.zero)
             {
                 if (setCheckBusyWith(this.gameObject))
                 {
@@ -1075,7 +1084,7 @@ public class PlayerMovement : MonoBehaviour
                         yield return StartCoroutine("jump");
 
                         updateAnimation("surf", walkFPS);
-                        Speed = SurfSpeed;
+                        CurrentSpeed = SurfSpeed;
                     }
                     Dialog.undrawDialogBox();
                     unsetCheckBusyWith(this.gameObject);

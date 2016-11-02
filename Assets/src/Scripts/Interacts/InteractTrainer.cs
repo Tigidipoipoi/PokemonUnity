@@ -517,7 +517,7 @@ public class InteractTrainer : MonoBehaviour
                 }
 
                 int flippedDirection = (int)Direction + 2 % 4;
-                PlayerMovement.Instance.Direction = (Direction)flippedDirection;
+                PlayerMovement.Instance.CurrentDirection = (Direction)flippedDirection;
 
                 StartCoroutine(interact());
             }

@@ -1,17 +1,15 @@
 ﻿//Original Scripts by IIColour (IIColour_Spectrum)
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 public static class SaveLoad
 {
-
-    public static SaveData[] savedGames = new SaveData[]{
-        null, null, null};
-
+    public static SaveData[] savedGames = new SaveData[]
+    {
+        null, null, null
+    };
 
     public static void Save()
     {
@@ -35,7 +33,7 @@ public static class SaveLoad
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/playerData.pkud", FileMode.Open);
-            SaveLoad.savedGames = (SaveData[])bf.Deserialize(file);
+            savedGames = (SaveData[])bf.Deserialize(file);
             file.Close();
             return true;
         }

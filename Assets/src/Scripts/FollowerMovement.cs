@@ -84,7 +84,7 @@ public class FollowerMovement : MonoBehaviour
         }
 
         transform.position = Player.transform.position;
-        Direction = Player.Direction;
+        Direction = Player.CurrentDirection;
         transform.Translate(-PlayerMovement.Instance.GetForwardVectorRaw(Direction));
 
         changeFollower(followerIndex);

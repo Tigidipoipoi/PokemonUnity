@@ -139,7 +139,7 @@ public class InteractDoorway : MonoBehaviour
                 if (entranceStyle == EntranceStyle.SWINGRIGHT)
                 {
                     PlayerMovement.Instance.IsRunning = false;
-                    PlayerMovement.Instance.Speed = PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
                     PlayerMovement.Instance.updateAnimation("walk", PlayerMovement.Instance.walkFPS);
 
                     float increment = 0f;
@@ -162,7 +162,7 @@ public class InteractDoorway : MonoBehaviour
                 else if (entranceStyle == EntranceStyle.SLIDE)
                 {
                     PlayerMovement.Instance.IsRunning = false;
-                    PlayerMovement.Instance.Speed = PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
                     PlayerMovement.Instance.updateAnimation("walk", PlayerMovement.Instance.walkFPS);
 
                     float increment = 0f;
@@ -222,7 +222,7 @@ public class InteractDoorway : MonoBehaviour
 
                     //transfer to current scene, no saving/loading nessecary
                     PlayerMovement.Instance.updateAnimation("walk", PlayerMovement.Instance.walkFPS);
-                    PlayerMovement.Instance.Speed = PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
 
                     PlayerMovement.Instance.transform.position = transferPosition;
                     PlayerMovement.Instance.updateDirection(TransferDirection);

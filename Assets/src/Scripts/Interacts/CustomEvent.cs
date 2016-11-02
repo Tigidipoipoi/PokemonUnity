@@ -138,9 +138,9 @@ public class CustomEvent : MonoBehaviour
                 }       //Move the player if set to player
                 if (currentEvent.object0 == PlayerMovement.Instance.gameObject)
                 {
-                    Direction initialDirection = PlayerMovement.Instance.Direction;
+                    Direction initialDirection = PlayerMovement.Instance.CurrentDirection;
 
-                    PlayerMovement.Instance.Speed = (currentEvent.float0 > 0) ? PlayerMovement.Instance.WalkSpeed / currentEvent.float0 : PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovement.Instance.CurrentSpeed = (currentEvent.float0 > 0) ? PlayerMovement.Instance.WalkSpeed / currentEvent.float0 : PlayerMovement.Instance.WalkSpeed;
                     for (int i = 0; i < currentEvent.int0; i++)
                     {
                         PlayerMovement.Instance.updateDirection(currentEvent.Direction);
@@ -154,7 +154,7 @@ public class CustomEvent : MonoBehaviour
                         yield return StartCoroutine(PlayerMovement.Instance.move(forwardsVector, false, currentEvent.bool0));
                         PlayerMovement.Instance.setOverrideAnimPause(false);
                     }
-                    PlayerMovement.Instance.Speed = PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
                 }
                 break;
 
