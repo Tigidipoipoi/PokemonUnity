@@ -121,12 +121,10 @@ public class InteractDoorway : MonoBehaviour
     public IEnumerator bump()
     {
         if (!isLocked
-            && !PlayerMovement.Instance.CanInput)
+            && PlayerMovement.Instance.CanInput)
         {
-
             if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
             {
-
                 if (enterSound != null)
                 {
                     if (!enterSound.isPlaying)
@@ -181,7 +179,6 @@ public class InteractDoorway : MonoBehaviour
                     yield return new WaitForSeconds(0.2f);
                 }
 
-
                 if (entranceStyle != EntranceStyle.STANDSTILL)
                 {
                     if (entranceStyle != EntranceStyle.OPEN)
@@ -202,8 +199,8 @@ public class InteractDoorway : MonoBehaviour
                 {
                     BgmHandler.main.PlayMain(null, 0);
                 }
-                yield return new WaitForSeconds(fadeTime);
 
+                yield return new WaitForSeconds(fadeTime);
 
                 if (!string.IsNullOrEmpty(transferScene))
                 {
@@ -237,8 +234,6 @@ public class InteractDoorway : MonoBehaviour
 
                     yield return new WaitForSeconds(0.1f);
                     PlayerMovement.Instance.pauseInput(0.2f);
-
-
                 }
             }
         }
