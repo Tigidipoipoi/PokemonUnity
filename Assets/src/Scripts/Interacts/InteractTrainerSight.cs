@@ -22,12 +22,12 @@ public class InteractTrainerSight : MonoBehaviour
     {
         if (other.name == "Player_Transparent")
         {
-            if (PlayerMovement.Instance.busyWith != trainer.gameObject)
+            if (PlayerMovementOld.Instance.busyWith != trainer.gameObject)
             {
                 int playerLocation = -1;
 
-                float playerX = Mathf.Round(PlayerMovement.Instance.hitBox.position.x);
-                float playerZ = Mathf.Round(PlayerMovement.Instance.hitBox.position.z);
+                float playerX = Mathf.Round(PlayerMovementOld.Instance.hitBox.position.x);
+                float playerZ = Mathf.Round(PlayerMovementOld.Instance.hitBox.position.z);
 
                 if (playerX == Mathf.Round(transform.position.x))
                 { //player is up or down from
@@ -53,7 +53,7 @@ public class InteractTrainerSight : MonoBehaviour
                 }
 
                 //if running past a random turner
-                if (PlayerMovement.Instance.IsRunning
+                if (PlayerMovementOld.Instance.IsRunning
                     && playerLocation != -1
                     && trainer.trainerBehaviour == InteractTrainer.TrainerBehaviour.Turn)
                 {
@@ -173,7 +173,7 @@ public class InteractTrainerSight : MonoBehaviour
 
         //Vector3 nextPosition = position;
 
-        Vector3 forwardsVector = PlayerMovement.Instance.GetForwardVectorRaw(trainer.Direction);
+        Vector3 forwardsVector = PlayerMovementOld.Instance.GetForwardVectorRaw(trainer.Direction);
 
         Vector3 movement = forwardsVector;
 

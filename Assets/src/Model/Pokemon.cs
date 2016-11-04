@@ -179,11 +179,11 @@ public class Pokemon
         }
 
         this.metLevel = level;
-        if (PlayerMovement.Instance != null)
+        if (PlayerMovementOld.Instance != null)
         {
-            if (PlayerMovement.Instance.accessedMapSettings != null)
+            if (PlayerMovementOld.Instance.accessedMapSettings != null)
             {
-                this.metMap = PlayerMovement.Instance.accessedMapSettings.mapName;
+                this.metMap = PlayerMovementOld.Instance.accessedMapSettings.mapName;
             }
             else
             {
@@ -295,11 +295,11 @@ public class Pokemon
         this.heldItem = heldItem;
 
         this.metLevel = level;
-        if (PlayerMovement.Instance != null)
+        if (PlayerMovementOld.Instance != null)
         {
-            if (PlayerMovement.Instance.accessedMapSettings != null)
+            if (PlayerMovementOld.Instance.accessedMapSettings != null)
             {
-                this.metMap = PlayerMovement.Instance.accessedMapSettings.mapName;
+                this.metMap = PlayerMovementOld.Instance.accessedMapSettings.mapName;
             }
             else
             {
@@ -409,9 +409,9 @@ public class Pokemon
         this.IDno = SaveData.currentSave.playerID;
 
         this.metLevel = level;
-        if (PlayerMovement.Instance.accessedMapSettings != null)
+        if (PlayerMovementOld.Instance.accessedMapSettings != null)
         {
-            this.metMap = PlayerMovement.Instance.accessedMapSettings.mapName;
+            this.metMap = PlayerMovementOld.Instance.accessedMapSettings.mapName;
         }
         else
         {
@@ -784,7 +784,7 @@ public class Pokemon
             }
             else if (methods[i] == "Map")
             { //if method contains a Map requirement
-                string mapName = PlayerMovement.Instance.currentMap.name;
+                string mapName = PlayerMovementOld.Instance.currentMap.name;
                 if (mapName != parameters[i])
                 { //and current map is not the required map to evolve,
                     return false; //cannot evolve. return false and stop checking.

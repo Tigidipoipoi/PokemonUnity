@@ -121,7 +121,7 @@ public class MapCollider : MonoBehaviour
     public static float GetSlopeOfPosition(Vector3 pPosition, Direction pDirection, bool pDoCheckForBridge = true)
     {
         //set vector3 based off of direction
-        Vector3 movement = PlayerMovement.Instance.GetForwardVectorRaw(pDirection);
+        Vector3 movement = PlayerMovementOld.Instance.GetForwardVectorRaw(pDirection);
 
         //cast a ray directly downwards from the edge of the tile, closest to original position (1.5f height to account for stairs)
         RaycastHit[] mapHitColliders = Physics.RaycastAll(pPosition - (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);

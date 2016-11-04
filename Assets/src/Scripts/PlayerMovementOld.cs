@@ -3,10 +3,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovementOld : MonoBehaviour
 {
 
-    public static PlayerMovement Instance;
+    public static PlayerMovementOld Instance;
 
     private DialogBoxHandler Dialog;
     private MapNameBoxHandler MapName;
@@ -598,13 +598,13 @@ public class PlayerMovement : MonoBehaviour
     public IEnumerator checkBusinessBeforeUnpause(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        if (PlayerMovement.Instance.busyWith == null)
+        if (PlayerMovementOld.Instance.busyWith == null)
         {
             unpauseInput();
         }
         else
         {
-            Debug.Log("Busy with " + PlayerMovement.Instance.busyWith);
+            Debug.Log("Busy with " + PlayerMovementOld.Instance.busyWith);
         }
     }
 

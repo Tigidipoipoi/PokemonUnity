@@ -32,15 +32,15 @@ public class InteractShop : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
         {
 
             if (thisNPC != null)
             {
                 Direction direction;
                 //calculate player's position relative to this npc's and set direction accordingly.
-                float xDistance = thisNPC.transform.position.x - PlayerMovement.Instance.transform.position.x;
-                float zDistance = thisNPC.transform.position.z - PlayerMovement.Instance.transform.position.z;
+                float xDistance = thisNPC.transform.position.x - PlayerMovementOld.Instance.transform.position.x;
+                float zDistance = thisNPC.transform.position.z - PlayerMovementOld.Instance.transform.position.z;
                 if (xDistance >= Mathf.Abs(zDistance))
                 { //Mathf.Abs() converts zDistance to a positive always.
                     direction = Direction.LEFT;
@@ -74,7 +74,7 @@ public class InteractShop : MonoBehaviour
                 if (chosenIndex == 1)
                 {
                     Dialog.undrawDialogBox();
-                    yield return StartCoroutine(PlayerMovement.Instance.moveCameraTo(new Vector3(7, 0, 0), 0.35f));
+                    yield return StartCoroutine(PlayerMovementOld.Instance.moveCameraTo(new Vector3(7, 0, 0), 0.35f));
 
                     Scene.main.Bag.gameObject.SetActive(true);
                     StartCoroutine(Scene.main.Bag.control(itemCatalog));
@@ -84,7 +84,7 @@ public class InteractShop : MonoBehaviour
                         yield return null;
                     }
 
-                    yield return StartCoroutine(PlayerMovement.Instance.moveCameraTo(new Vector3(0, 0, 0), 0.35f));
+                    yield return StartCoroutine(PlayerMovementOld.Instance.moveCameraTo(new Vector3(0, 0, 0), 0.35f));
 
                 }
 
@@ -104,7 +104,7 @@ public class InteractShop : MonoBehaviour
             }
             Dialog.undrawDialogBox();
         }
-        PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+        PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
     }
 
 }

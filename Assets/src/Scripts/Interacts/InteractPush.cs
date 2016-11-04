@@ -7,7 +7,7 @@ public class InteractPush : MonoBehaviour
 {
 
     private DialogBoxHandler Dialog;
-    private PlayerMovement Player;
+    private PlayerMovementOld Player;
 
     private AudioSource pushSound;
 
@@ -45,7 +45,7 @@ public class InteractPush : MonoBehaviour
     void Start()
     {
 
-        Player = PlayerMovement.Instance;
+        Player = PlayerMovementOld.Instance;
 
     }
 

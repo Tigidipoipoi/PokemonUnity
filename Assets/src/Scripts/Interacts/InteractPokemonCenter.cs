@@ -72,7 +72,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
         {
 
             for (int i = 0; i < 6; i++)
@@ -104,7 +104,7 @@ public class InteractPokemonCenter : MonoBehaviour
                 Dialog.drawDialogBox();
                 yield return StartCoroutine(Dialog.drawText("Okay, I'll take your Pokémon for \na few seconds."));
                 yield return new WaitForSeconds(0.1f);
-                StartCoroutine(PlayerMovement.Instance.followerScript.withdrawToBall());
+                StartCoroutine(PlayerMovementOld.Instance.followerScript.withdrawToBall());
                 yield return new WaitForSeconds(0.5f);
 
                 nurse.SetDirection(Direction.LEFT);
@@ -169,7 +169,7 @@ public class InteractPokemonCenter : MonoBehaviour
                     yield return null;
                 }
 
-                PlayerMovement.Instance.followerScript.canMove = true;
+                PlayerMovementOld.Instance.followerScript.canMove = true;
             }
 
             Dialog.drawDialogBox();
@@ -181,13 +181,13 @@ public class InteractPokemonCenter : MonoBehaviour
 
             Dialog.undrawDialogBox();
 
-            PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+            PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
         }
     }
 
     public IEnumerator respawnHeal()
     {
-        if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
         {
             for (int i = 0; i < 6; i++)
             {
@@ -268,7 +268,7 @@ public class InteractPokemonCenter : MonoBehaviour
                 yield return null;
             }
 
-            PlayerMovement.Instance.followerScript.canMove = true;
+            PlayerMovementOld.Instance.followerScript.canMove = true;
 
             Dialog.drawDialogBox();
             yield return StartCoroutine(Dialog.drawText("Good luck, Trainer!"));
@@ -279,7 +279,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
             Dialog.undrawDialogBox();
 
-            PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+            PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
         }
     }
 

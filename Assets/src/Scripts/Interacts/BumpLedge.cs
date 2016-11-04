@@ -9,27 +9,27 @@ public class BumpLedge : MonoBehaviour
 
     private IEnumerator bump()
     {
-        if (PlayerMovement.Instance.CurrentDirection == movementDirection)
+        if (PlayerMovementOld.Instance.CurrentDirection == movementDirection)
         {
-            PlayerMovement.Instance.pauseInput();
+            PlayerMovementOld.Instance.pauseInput();
 
-            PlayerMovement.Instance.forceMoveForward(2);
-            PlayerMovement.Instance.followerScript.canMove = false;
-            if (!PlayerMovement.Instance.IsRunning)
+            PlayerMovementOld.Instance.forceMoveForward(2);
+            PlayerMovementOld.Instance.followerScript.canMove = false;
+            if (!PlayerMovementOld.Instance.IsRunning)
             {
-                yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed * 0.5f);
-                StartCoroutine(PlayerMovement.Instance.jump());
-                yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed * 0.5f);
+                yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed * 0.5f);
+                StartCoroutine(PlayerMovementOld.Instance.jump());
+                yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed * 0.5f);
             }
             else
             {
-                StartCoroutine(PlayerMovement.Instance.jump());
-                yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed);
+                StartCoroutine(PlayerMovementOld.Instance.jump());
+                yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed);
             }
-            yield return new WaitForSeconds(PlayerMovement.Instance.CurrentSpeed);
+            yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed);
 
-            PlayerMovement.Instance.followerScript.canMove = true;
-            PlayerMovement.Instance.unpauseInput();
+            PlayerMovementOld.Instance.followerScript.canMove = true;
+            PlayerMovementOld.Instance.unpauseInput();
         }
     }
 }

@@ -173,7 +173,7 @@ public class NPCHandler : MonoBehaviour
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    while (PlayerMovement.Instance.busyWith != null && PlayerMovement.Instance.busyWith != this.gameObject && !overrideBusy)
+                    while (PlayerMovementOld.Instance.busyWith != null && PlayerMovementOld.Instance.busyWith != this.gameObject && !overrideBusy)
                     {
                         yield return null;
                     }
@@ -366,7 +366,7 @@ public class NPCHandler : MonoBehaviour
     }
     public Vector3 getForwardsVector(bool noClip)
     {
-        Vector3 forwardsVector = PlayerMovement.Instance.GetForwardVectorRaw(Direction);
+        Vector3 forwardsVector = PlayerMovementOld.Instance.GetForwardVectorRaw(Direction);
 
         Vector3 movement = forwardsVector;
 
@@ -481,7 +481,7 @@ public class NPCHandler : MonoBehaviour
         float increment = 0f;
 
         if (speedMod <= 0) { speedMod = 1f; }
-        float speed = PlayerMovement.Instance.WalkSpeed / speedMod;
+        float speed = PlayerMovementOld.Instance.WalkSpeed / speedMod;
         framesPerSec = Mathf.RoundToInt(7f * speedMod);
 
         Vector3 startPosition = transform.position;
@@ -490,7 +490,7 @@ public class NPCHandler : MonoBehaviour
         animPause = false;
         while (increment < 1f)
         { //increment increases slowly to 1 over the frames
-            if (PlayerMovement.Instance.busyWith == null || PlayerMovement.Instance.busyWith == this.gameObject || overrideBusy)
+            if (PlayerMovementOld.Instance.busyWith == null || PlayerMovementOld.Instance.busyWith == this.gameObject || overrideBusy)
             {
                 increment += (1f / speed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
                 if (increment > 1)

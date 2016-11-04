@@ -256,7 +256,7 @@ public class InteractTrainer : MonoBehaviour
         {
             for (int i = 0; i < 5; i++)
             {
-                while (PlayerMovement.Instance.busyWith != null && PlayerMovement.Instance.busyWith != this.gameObject)
+                while (PlayerMovementOld.Instance.busyWith != null && PlayerMovementOld.Instance.busyWith != this.gameObject)
                 {
                     yield return null;
                 }
@@ -369,7 +369,7 @@ public class InteractTrainer : MonoBehaviour
     }
     public Vector3 getForwardsVector(Vector3 position, Direction pDirection)
     {
-        Vector3 forwardsVector = PlayerMovement.Instance.GetForwardVectorRaw(pDirection);
+        Vector3 forwardsVector = PlayerMovementOld.Instance.GetForwardVectorRaw(pDirection);
 
         Vector3 movement = forwardsVector;
 
@@ -472,14 +472,14 @@ public class InteractTrainer : MonoBehaviour
     private IEnumerator move(Vector3 movement)
     {
         float increment = 0f;
-        float speed = PlayerMovement.Instance.WalkSpeed;
+        float speed = PlayerMovementOld.Instance.WalkSpeed;
         Vector3 startPosition = transform.position;
         Vector3 destinationPosition = startPosition + movement;
 
         animPause = false;
         while (increment < 1f)
         { //increment increases slowly to 1 over the frames
-            if (PlayerMovement.Instance.busyWith == null || PlayerMovement.Instance.busyWith == this.gameObject)
+            if (PlayerMovementOld.Instance.busyWith == null || PlayerMovementOld.Instance.busyWith == this.gameObject)
             {
                 increment += (1f / speed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
                 if (increment > 1)
@@ -500,7 +500,7 @@ public class InteractTrainer : MonoBehaviour
         if (!defeated && !busy)
         {
             //if the player isn't busy with any other object
-            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
             {
                 busy = true;
                 BgmHandler.main.PlayOverlay(introBGM, samplesLoopStart);
@@ -517,7 +517,7 @@ public class InteractTrainer : MonoBehaviour
                 }
 
                 int flippedDirection = (int)Direction + 2 % 4;
-                PlayerMovement.Instance.CurrentDirection = (Direction)flippedDirection;
+                PlayerMovementOld.Instance.CurrentDirection = (Direction)flippedDirection;
 
                 StartCoroutine(interact());
             }
@@ -528,13 +528,13 @@ public class InteractTrainer : MonoBehaviour
 
     private IEnumerator interact()
     {
-        if (PlayerMovement.Instance.setCheckBusyWith(gameObject))
+        if (PlayerMovementOld.Instance.setCheckBusyWith(gameObject))
         {
             busy = true;
 
             //calculate Player's position relative to target object's and set direction accordingly.
-            float xDistance = transform.position.x - PlayerMovement.Instance.transform.position.x;
-            float zDistance = transform.position.z - PlayerMovement.Instance.transform.position.z;
+            float xDistance = transform.position.x - PlayerMovementOld.Instance.transform.position.x;
+            float zDistance = transform.position.z - PlayerMovementOld.Instance.transform.position.z;
             if (xDistance >= Mathf.Abs(zDistance))
             { //Mathf.Abs() converts zDistance to a positive always.
                 updateDirection(Direction.LEFT);
@@ -631,7 +631,7 @@ public class InteractTrainer : MonoBehaviour
             }
 
             busy = false;
-            PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+            PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
         }
     }
 

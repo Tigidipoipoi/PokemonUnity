@@ -243,18 +243,18 @@ public class GlobalVariables : MonoBehaviour
 
                     //if fading in to the scene.
                     Player.transform.position = global.playerPosition;
-                    PlayerMovement.Instance.CurrentDirection = global.PlayerDirection;
+                    PlayerMovementOld.Instance.CurrentDirection = global.PlayerDirection;
                     if (!respawning)
                     {
-                        PlayerMovement.Instance.pauseInput(0.6f);
+                        PlayerMovementOld.Instance.pauseInput(0.6f);
                     }
                     else
                     {
-                        PlayerMovement.Instance.pauseInput(0.4f);
+                        PlayerMovementOld.Instance.pauseInput(0.4f);
                     }
                     if (playerForwardOnLoad)
                     {
-                        PlayerMovement.Instance.forceMoveForward();
+                        PlayerMovementOld.Instance.forceMoveForward();
                         playerForwardOnLoad = false;
                     }
                 }

@@ -7,7 +7,7 @@ public class FollowerMovement : MonoBehaviour
 {
 
     private DialogBoxHandler Dialog;
-    private PlayerMovement Player;
+    private PlayerMovementOld Player;
 
     private Vector3 startPosition;
     private Vector3 destinationPosition;
@@ -48,7 +48,7 @@ public class FollowerMovement : MonoBehaviour
     {
 
         Dialog = GameObject.Find("GUI").GetComponent<DialogBoxHandler>();
-        Player = PlayerMovement.Instance;
+        Player = PlayerMovementOld.Instance;
 
         pawn = transform.FindChild("Pawn");
         pawnLight = transform.FindChild("PawnLight");
@@ -70,7 +70,7 @@ public class FollowerMovement : MonoBehaviour
 
     void Start()
     {
-        Player = PlayerMovement.Instance;
+        Player = PlayerMovementOld.Instance;
         startPosition = transform.position;
 
         followerLight.color = lightColor;
@@ -85,7 +85,7 @@ public class FollowerMovement : MonoBehaviour
 
         transform.position = Player.transform.position;
         Direction = Player.CurrentDirection;
-        transform.Translate(-PlayerMovement.Instance.GetForwardVectorRaw(Direction));
+        transform.Translate(-PlayerMovementOld.Instance.GetForwardVectorRaw(Direction));
 
         changeFollower(followerIndex);
         StartCoroutine("animateSprite");

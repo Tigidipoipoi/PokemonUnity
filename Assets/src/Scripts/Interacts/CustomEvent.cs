@@ -57,7 +57,7 @@ public class CustomEvent : MonoBehaviour
         if (treesArray.Length > 0)
         {
             eventTreeIndex = 0;
-            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
             {
                 setThisNPCHandlerBusy(true);
 
@@ -74,7 +74,7 @@ public class CustomEvent : MonoBehaviour
                 }
 
                 setThisNPCHandlerBusy(false);
-                PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
             }
             if (deactivateOnFinish)
             {
@@ -136,25 +136,25 @@ public class CustomEvent : MonoBehaviour
                     }
                     targetNPC.setFrameStill();
                 }       //Move the player if set to player
-                if (currentEvent.object0 == PlayerMovement.Instance.gameObject)
+                if (currentEvent.object0 == PlayerMovementOld.Instance.gameObject)
                 {
-                    Direction initialDirection = PlayerMovement.Instance.CurrentDirection;
+                    Direction initialDirection = PlayerMovementOld.Instance.CurrentDirection;
 
-                    PlayerMovement.Instance.CurrentSpeed = (currentEvent.float0 > 0) ? PlayerMovement.Instance.WalkSpeed / currentEvent.float0 : PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovementOld.Instance.CurrentSpeed = (currentEvent.float0 > 0) ? PlayerMovementOld.Instance.WalkSpeed / currentEvent.float0 : PlayerMovementOld.Instance.WalkSpeed;
                     for (int i = 0; i < currentEvent.int0; i++)
                     {
-                        PlayerMovement.Instance.updateDirection(currentEvent.Direction);
-                        Vector3 forwardsVector = PlayerMovement.Instance.GetForwardVector();
+                        PlayerMovementOld.Instance.updateDirection(currentEvent.Direction);
+                        Vector3 forwardsVector = PlayerMovementOld.Instance.GetForwardVector();
                         if (currentEvent.bool0)
                         { //if direction locked in
-                            PlayerMovement.Instance.updateDirection(initialDirection);
+                            PlayerMovementOld.Instance.updateDirection(initialDirection);
                         }
 
-                        PlayerMovement.Instance.setOverrideAnimPause(true);
-                        yield return StartCoroutine(PlayerMovement.Instance.move(forwardsVector, false, currentEvent.bool0));
-                        PlayerMovement.Instance.setOverrideAnimPause(false);
+                        PlayerMovementOld.Instance.setOverrideAnimPause(true);
+                        yield return StartCoroutine(PlayerMovementOld.Instance.move(forwardsVector, false, currentEvent.bool0));
+                        PlayerMovementOld.Instance.setOverrideAnimPause(false);
                     }
-                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovementOld.Instance.CurrentSpeed = PlayerMovementOld.Instance.WalkSpeed;
                 }
                 break;
 
@@ -458,7 +458,7 @@ public class CustomEvent : MonoBehaviour
                     {
                         deactivateOnFinish = true;
                     }
-                    else if (currentEvent.object0 != PlayerMovement.Instance.gameObject)
+                    else if (currentEvent.object0 != PlayerMovementOld.Instance.gameObject)
                     { //important to never deactivate the player
                         currentEvent.object0.SetActive(false);
                     }

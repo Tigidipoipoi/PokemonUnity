@@ -62,9 +62,9 @@ public class InteractPC : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovement.Instance.CurrentDirection == 0)
+        if (PlayerMovementOld.Instance.CurrentDirection == 0)
         {
-            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
             {
                 spriteLight.enabled = true;
                 PClight.enabled = true;
@@ -136,7 +136,7 @@ public class InteractPC : MonoBehaviour
                 PClight.enabled = false;
                 SfxHandler.Play(offClip);
                 yield return new WaitForSeconds(0.2f);
-                PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
             }
         }
     }

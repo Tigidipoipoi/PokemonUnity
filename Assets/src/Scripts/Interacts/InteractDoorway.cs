@@ -74,7 +74,7 @@ public class InteractDoorway : MonoBehaviour
     {
         if (lockPlayerCamera)
         {
-            PlayerMovement.Instance.mainCamera.transform.position = lockedPosition;
+            PlayerMovementOld.Instance.mainCamera.transform.position = lockedPosition;
         }
     }
 
@@ -84,7 +84,7 @@ public class InteractDoorway : MonoBehaviour
         {
             if (lockedExamineText.Length > 0)
             {
-                if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+                if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
                 {
                     Dialog.drawDialogBox();     //yield return StartCoroutine blocks the next code from running until coroutine is done.
                     yield return Dialog.StartCoroutine("drawText", lockedExamineText);
@@ -94,7 +94,7 @@ public class InteractDoorway : MonoBehaviour
                     }
                     Dialog.undrawDialogBox();
                     yield return new WaitForSeconds(0.2f);
-                    PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+                    PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
                 }
             }
         }
@@ -102,7 +102,7 @@ public class InteractDoorway : MonoBehaviour
         {
             if (examineText.Length > 0)
             {
-                if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+                if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
                 {
                     Dialog.drawDialogBox();     //yield return StartCoroutine blocks the next code from running until coroutine is done.
                     yield return Dialog.StartCoroutine("drawText", examineText);
@@ -112,7 +112,7 @@ public class InteractDoorway : MonoBehaviour
                     }
                     Dialog.undrawDialogBox();
                     yield return new WaitForSeconds(0.2f);
-                    PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+                    PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
                 }
             }
         }
@@ -121,9 +121,9 @@ public class InteractDoorway : MonoBehaviour
     public IEnumerator bump()
     {
         if (!isLocked
-            && PlayerMovement.Instance.CanInput)
+            && PlayerMovementOld.Instance.CanInput)
         {
-            if (PlayerMovement.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
             {
                 if (enterSound != null)
                 {
@@ -136,9 +136,9 @@ public class InteractDoorway : MonoBehaviour
 
                 if (entranceStyle == EntranceStyle.SWINGRIGHT)
                 {
-                    PlayerMovement.Instance.IsRunning = false;
-                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
-                    PlayerMovement.Instance.updateAnimation("walk", PlayerMovement.Instance.walkFPS);
+                    PlayerMovementOld.Instance.IsRunning = false;
+                    PlayerMovementOld.Instance.CurrentSpeed = PlayerMovementOld.Instance.WalkSpeed;
+                    PlayerMovementOld.Instance.updateAnimation("walk", PlayerMovementOld.Instance.walkFPS);
 
                     float increment = 0f;
                     float speed = 0.25f;
@@ -151,7 +151,7 @@ public class InteractDoorway : MonoBehaviour
                             increment = 1;
                         }
                         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, yRotation + (90f * increment), transform.localEulerAngles.z);
-                        PlayerMovement.Instance.mainCamera.fieldOfView = 20f - (2f * increment);
+                        PlayerMovementOld.Instance.mainCamera.fieldOfView = 20f - (2f * increment);
                         yield return null;
                     }
 
@@ -159,9 +159,9 @@ public class InteractDoorway : MonoBehaviour
                 }
                 else if (entranceStyle == EntranceStyle.SLIDE)
                 {
-                    PlayerMovement.Instance.IsRunning = false;
-                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
-                    PlayerMovement.Instance.updateAnimation("walk", PlayerMovement.Instance.walkFPS);
+                    PlayerMovementOld.Instance.IsRunning = false;
+                    PlayerMovementOld.Instance.CurrentSpeed = PlayerMovementOld.Instance.WalkSpeed;
+                    PlayerMovementOld.Instance.updateAnimation("walk", PlayerMovementOld.Instance.walkFPS);
 
                     float increment = 0f;
                     float speed = 0.25f;
@@ -173,7 +173,7 @@ public class InteractDoorway : MonoBehaviour
                             increment = 1;
                         }
                         transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, 1f - (0.92f * increment));
-                        PlayerMovement.Instance.mainCamera.fieldOfView = 20f - (2f * increment);
+                        PlayerMovementOld.Instance.mainCamera.fieldOfView = 20f - (2f * increment);
                         yield return null;
                     }
                     yield return new WaitForSeconds(0.2f);
@@ -186,7 +186,7 @@ public class InteractDoorway : MonoBehaviour
                         StartCoroutine(lockCameraPosition());
                         yield return new WaitForSeconds(0.1f);
                     }
-                    PlayerMovement.Instance.forceMoveForward();
+                    PlayerMovementOld.Instance.forceMoveForward();
                 }
 
                 //fade out the scene and load a new scene
@@ -215,17 +215,17 @@ public class InteractDoorway : MonoBehaviour
                 else
                 {
                     //uncheck busy with to ensure events at destination can be run.
-                    PlayerMovement.Instance.unsetCheckBusyWith(this.gameObject);
+                    PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
 
                     //transfer to current scene, no saving/loading nessecary
-                    PlayerMovement.Instance.updateAnimation("walk", PlayerMovement.Instance.walkFPS);
-                    PlayerMovement.Instance.CurrentSpeed = PlayerMovement.Instance.WalkSpeed;
+                    PlayerMovementOld.Instance.updateAnimation("walk", PlayerMovementOld.Instance.walkFPS);
+                    PlayerMovementOld.Instance.CurrentSpeed = PlayerMovementOld.Instance.WalkSpeed;
 
-                    PlayerMovement.Instance.transform.position = transferPosition;
-                    PlayerMovement.Instance.updateDirection(TransferDirection);
+                    PlayerMovementOld.Instance.transform.position = transferPosition;
+                    PlayerMovementOld.Instance.updateDirection(TransferDirection);
                     if (movesForward)
                     {
-                        PlayerMovement.Instance.forceMoveForward();
+                        PlayerMovementOld.Instance.forceMoveForward();
                     }
 
                     GlobalVariables.global.fadeIn = true;
@@ -233,7 +233,7 @@ public class InteractDoorway : MonoBehaviour
                     StartCoroutine(ScreenFade.main.Fade(true, ScreenFade.slowedSpeed));
 
                     yield return new WaitForSeconds(0.1f);
-                    PlayerMovement.Instance.pauseInput(0.2f);
+                    PlayerMovementOld.Instance.pauseInput(0.2f);
                 }
             }
         }
@@ -242,7 +242,7 @@ public class InteractDoorway : MonoBehaviour
     private IEnumerator lockCameraPosition()
     {
         lockPlayerCamera = true;
-        lockedPosition = PlayerMovement.Instance.mainCamera.transform.position;
+        lockedPosition = PlayerMovementOld.Instance.mainCamera.transform.position;
         yield return new WaitForSeconds(2f);
         lockPlayerCamera = false;
     }
