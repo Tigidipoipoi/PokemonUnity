@@ -1940,7 +1940,7 @@ public static class PokemonDatabase
             new int[] {}, new string[] {})
     };
 
-
+    // ToDo: replace these tables by formula: http://bulbapedia.bulbagarden.net/wiki/Experience
     private static int[] expTableErratic = new int[]
     {
         0, 15, 52, 122, 237, 406, 637, 942, 1326, 1800,
