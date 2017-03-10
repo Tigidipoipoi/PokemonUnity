@@ -5,31 +5,32 @@ using System.Collections;
 
 public class BumpLedge : MonoBehaviour
 {
-    public Direction movementDirection = Direction.DOWN;
+    public int movementDirection = 2;
+
 
     private IEnumerator bump()
     {
-        if (PlayerMovementOld.Instance.CurrentDirection == movementDirection)
+        if (PlayerMovement.player.direction == movementDirection)
         {
-            PlayerMovementOld.Instance.pauseInput();
+            PlayerMovement.player.pauseInput();
 
-            PlayerMovementOld.Instance.forceMoveForward(2);
-            PlayerMovementOld.Instance.followerScript.canMove = false;
-            if (!PlayerMovementOld.Instance.IsRunning)
+            PlayerMovement.player.forceMoveForward(2);
+            PlayerMovement.player.followerScript.canMove = false;
+            if (!PlayerMovement.player.running)
             {
-                yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed * 0.5f);
-                StartCoroutine(PlayerMovementOld.Instance.jump());
-                yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed * 0.5f);
+                yield return new WaitForSeconds(PlayerMovement.player.speed * 0.5f);
+                StartCoroutine(PlayerMovement.player.jump());
+                yield return new WaitForSeconds(PlayerMovement.player.speed * 0.5f);
             }
             else
             {
-                StartCoroutine(PlayerMovementOld.Instance.jump());
-                yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed);
+                StartCoroutine(PlayerMovement.player.jump());
+                yield return new WaitForSeconds(PlayerMovement.player.speed);
             }
-            yield return new WaitForSeconds(PlayerMovementOld.Instance.CurrentSpeed);
+            yield return new WaitForSeconds(PlayerMovement.player.speed);
 
-            PlayerMovementOld.Instance.followerScript.canMove = true;
-            PlayerMovementOld.Instance.unpauseInput();
+            PlayerMovement.player.followerScript.canMove = true;
+            PlayerMovement.player.unpauseInput();
         }
     }
 }

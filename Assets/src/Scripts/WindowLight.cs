@@ -6,7 +6,6 @@ using System.Collections;
 [RequireComponent(typeof(MeshRenderer))]
 public class WindowLight : MonoBehaviour
 {
-
     public float activateTime = 20f;
     public float deactivateTime = 3.5f;
 
@@ -44,13 +43,15 @@ public class WindowLight : MonoBehaviour
     }
 
     private IEnumerator CheckActivation()
-    { //repeat every second
+    {
+        //repeat every second
         while (true)
         {
-            currentTime = (float)System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
+            currentTime = (float) System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
 
             if (activateTime < deactivateTime)
-            { //if time does not extend past midnight
+            {
+                //if time does not extend past midnight
                 if (currentTime >= activateTime && currentTime < deactivateTime)
                 {
                     setLightActive(true);
@@ -74,6 +75,5 @@ public class WindowLight : MonoBehaviour
 
             yield return new WaitForSeconds(1f); //wait a second before repeating
         }
-
     }
 }

@@ -5,7 +5,6 @@ using System.Collections;
 
 public class SetSortingOrder : MonoBehaviour
 {
-
     public string layerName;
     public int order;
 
@@ -13,7 +12,6 @@ public class SetSortingOrder : MonoBehaviour
 
     void Awake()
     {
-
         meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
         if (layerName.Length > 0)
@@ -22,5 +20,4 @@ public class SetSortingOrder : MonoBehaviour
         }
         meshRenderer.sortingOrder = order;
     }
-
 }

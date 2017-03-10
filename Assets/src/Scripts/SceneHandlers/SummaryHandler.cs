@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class SummaryHandler : MonoBehaviour
 {
-
     public string replacedMove;
 
     private Image
@@ -14,6 +13,7 @@ public class SummaryHandler : MonoBehaviour
         selectedSprite,
         selectedStatus,
         selectedShiny;
+
     private Text
         selectedName,
         selectedNameShadow,
@@ -23,6 +23,7 @@ public class SummaryHandler : MonoBehaviour
         selectedLevelShadow,
         selectedHeldItem,
         selectedHeldItemShadow;
+
     private int frame = 0;
     private Sprite[] selectedSpriteAnimation;
 
@@ -41,6 +42,7 @@ public class SummaryHandler : MonoBehaviour
         expPointsShadow,
         toNextLevel,
         toNextLevelShadow;
+
     private Image
         type1,
         type2,
@@ -59,11 +61,10 @@ public class SummaryHandler : MonoBehaviour
         characteristicShadow;
 
     private Image HPBar;
+
     private Text
-        /* [UNHANDLED YET]
-        HPText,
-        HPTextShadow,
-        //*/
+        //HPText,
+        //HPTextShadow,
         HP,
         HPShadow,
         StatsTextShadow,
@@ -75,6 +76,7 @@ public class SummaryHandler : MonoBehaviour
         abilityDescriptionShadow;
 
     private RectTransform moves;
+
     private Image
         moveSelector,
         selectedMove,
@@ -83,6 +85,7 @@ public class SummaryHandler : MonoBehaviour
         move2Type,
         move3Type,
         move4Type;
+
     private Text
         move1Name,
         move1NameShadow,
@@ -118,8 +121,10 @@ public class SummaryHandler : MonoBehaviour
     private GameObject learnScreen;
 
     private RectTransform newMove;
+
     private Image
         moveNewType;
+
     private Text
         moveNewName,
         moveNewNameShadow,
@@ -127,6 +132,7 @@ public class SummaryHandler : MonoBehaviour
         moveNewPPTextShadow,
         moveNewPP,
         moveNewPPShadow;
+
     private GameObject forget;
 
     //ribbons not yet implemented.
@@ -138,7 +144,6 @@ public class SummaryHandler : MonoBehaviour
 
     void Awake()
     {
-
         Transform selectedInfo = transform.FindChild("SelectedInfo");
 
         selectedCaughtBall = selectedInfo.FindChild("SelectedCaughtBall").GetComponent<Image>();
@@ -187,11 +192,8 @@ public class SummaryHandler : MonoBehaviour
 
         pages[3] = transform.FindChild("3").gameObject;
 
-        /* [UNHANDLED YET]
-        HPTextShadow = pages[3].transform.FindChild("HPText").GetComponent<Text>();
-        HPText = HPTextShadow.transform.FindChild("Text").GetComponent<Text>();
-        //*/
-
+        //HPTextShadow = pages[3].transform.FindChild("HPText").GetComponent<Text>();
+        //HPText = HPTextShadow.transform.FindChild("Text").GetComponent<Text>();
         HPShadow = pages[3].transform.FindChild("HP").GetComponent<Text>();
         HP = HPShadow.transform.FindChild("Text").GetComponent<Text>();
         HPBar = pages[3].transform.FindChild("HPBar").GetComponent<Image>();
@@ -271,7 +273,6 @@ public class SummaryHandler : MonoBehaviour
     }
 
 
-
     private void updateSelection(Pokemon selectedPokemon)
     {
         frame = 0;
@@ -349,7 +350,8 @@ public class SummaryHandler : MonoBehaviour
             type2.sprite = Resources.Load<Sprite>("PCSprites/type" + type2string);
         }
         else
-        { //if single type pokemon, center the type icon
+        {
+            //if single type pokemon, center the type icon
             type1.rectTransform.localPosition = new Vector3(89, type1.rectTransform.localPosition.y);
         }
         OT.text = selectedPokemon.getOT();
@@ -358,8 +360,12 @@ public class SummaryHandler : MonoBehaviour
         IDNoShadow.text = IDNo.text;
         expPoints.text = "" + selectedPokemon.getExp();
         expPointsShadow.text = expPoints.text;
-        float expCurrentLevel = PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(), selectedPokemon.getLevel());
-        float expNextlevel = PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(), selectedPokemon.getLevel() + 1);
+        float expCurrentLevel =
+            PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(),
+                selectedPokemon.getLevel());
+        float expNextlevel =
+            PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(),
+                selectedPokemon.getLevel() + 1);
         float expAlong = selectedPokemon.getExp() - expCurrentLevel;
         float expDistance = expAlong / (expNextlevel - expCurrentLevel);
         toNextLevel.text = "" + (expNextlevel - selectedPokemon.getExp());
@@ -377,19 +383,33 @@ public class SummaryHandler : MonoBehaviour
         metLevel.text = "Met at Level " + selectedPokemon.getMetLevel() + ".";
         metLevelShadow.text = metLevel.text;
 
-        string[][] characteristics = new string[][]{
-            new string[]{
-                "Loves to eat", "Takes plenty of siestas", "Nods off a lot", "Scatters things often", "Likes to relax" },
-            new string[]{
-                "Proud of its power", "Likes to thrash about", "A little quick tempered", "Likes to fight", "Quick tempered" },
-            new string[]{
-                "Sturdy body", "Capable of taking hits", "Highly persistent", "Good endurance", "Good perseverance" },
-            new string[]{
-                "Highly curious", "Mischievous", "Thoroughly cunning", "Often lost in thought", "Very finicky" },
-            new string[]{
-                "Strong willed", "Somewhat vain", "Strongly defiant", "Hates to lose", "Somewhat stubborn" },
-            new string[]{
-                "Likes to run", "Alert to sounds", "Impetuous and silly", "Somewhat of a clown", "Quick to flee" }
+        string[][] characteristics = new string[][]
+        {
+            new string[]
+            {
+                "Loves to eat", "Takes plenty of siestas", "Nods off a lot", "Scatters things often", "Likes to relax"
+            },
+            new string[]
+            {
+                "Proud of its power", "Likes to thrash about", "A little quick tempered", "Likes to fight",
+                "Quick tempered"
+            },
+            new string[]
+            {
+                "Sturdy body", "Capable of taking hits", "Highly persistent", "Good endurance", "Good perseverance"
+            },
+            new string[]
+            {
+                "Highly curious", "Mischievous", "Thoroughly cunning", "Often lost in thought", "Very finicky"
+            },
+            new string[]
+            {
+                "Strong willed", "Somewhat vain", "Strongly defiant", "Hates to lose", "Somewhat stubborn"
+            },
+            new string[]
+            {
+                "Likes to run", "Alert to sounds", "Impetuous and silly", "Somewhat of a clown", "Quick to flee"
+            }
         };
         int highestIV = selectedPokemon.GetHighestIV();
         characteristic.text = characteristics[highestIV][selectedPokemon.GetIV(highestIV) % 5] + ".";
@@ -399,7 +419,8 @@ public class SummaryHandler : MonoBehaviour
         float maxHP = selectedPokemon.getHP();
         HP.text = currentHP + "/" + maxHP;
         HPShadow.text = HP.text;
-        HPBar.rectTransform.sizeDelta = new Vector2(selectedPokemon.getPercentHP() * 48f, HPBar.rectTransform.sizeDelta.y);
+        HPBar.rectTransform.sizeDelta = new Vector2(selectedPokemon.getPercentHP() * 48f,
+            HPBar.rectTransform.sizeDelta.y);
 
         if (currentHP < (maxHP / 4f))
         {
@@ -414,27 +435,38 @@ public class SummaryHandler : MonoBehaviour
             HPBar.color = new Color(0.125f, 1, 0.065f, 1);
         }
 
-        float[] natureMod = new float[]{
+        float[] natureMod = new float[]
+        {
             NatureDatabase.getNature(selectedPokemon.getNature()).getATK(),
             NatureDatabase.getNature(selectedPokemon.getNature()).getDEF(),
             NatureDatabase.getNature(selectedPokemon.getNature()).getSPA(),
             NatureDatabase.getNature(selectedPokemon.getNature()).getSPD(),
-            NatureDatabase.getNature(selectedPokemon.getNature()).getSPE()};
+            NatureDatabase.getNature(selectedPokemon.getNature()).getSPE()
+        };
         Stats.text =
             selectedPokemon.getATK() + "\n" +
-                selectedPokemon.getDEF() + "\n" +
-                selectedPokemon.getSPA() + "\n" +
-                selectedPokemon.getSPD() + "\n" +
-                selectedPokemon.getSPE();
+            selectedPokemon.getDEF() + "\n" +
+            selectedPokemon.getSPA() + "\n" +
+            selectedPokemon.getSPD() + "\n" +
+            selectedPokemon.getSPE();
         StatsShadow.text = Stats.text;
 
         string[] statsLines = new string[] { "Attack", "Defence", "Sp. Atk", "Sp. Def", "Speed" };
         StatsTextShadow.text = "";
         for (int i = 0; i < 5; i++)
         {
-            if (natureMod[i] > 1) { StatsTextShadow.text += "<color=#A01010FF>" + statsLines[i] + "</color>\n"; }
-            else if (natureMod[i] < 1) { StatsTextShadow.text += "<color=#0030A2FF>" + statsLines[i] + "</color>\n"; }
-            else { StatsTextShadow.text += statsLines[i] + "\n"; }
+            if (natureMod[i] > 1)
+            {
+                StatsTextShadow.text += "<color=#A01010FF>" + statsLines[i] + "</color>\n";
+            }
+            else if (natureMod[i] < 1)
+            {
+                StatsTextShadow.text += "<color=#0030A2FF>" + statsLines[i] + "</color>\n";
+            }
+            else
+            {
+                StatsTextShadow.text += statsLines[i] + "\n";
+            }
         }
 
 
@@ -456,7 +488,8 @@ public class SummaryHandler : MonoBehaviour
         {
             move1Name.text = moveset[0];
             move1NameShadow.text = move1Name.text;
-            move1Type.sprite = Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[0]).getType().ToString());
+            move1Type.sprite =
+                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[0]).getType().ToString());
             move1PPText.text = "PP";
             move1PPTextShadow.text = move1PPText.text;
             move1PP.text = PP[0] + "/" + maxPP[0];
@@ -476,7 +509,8 @@ public class SummaryHandler : MonoBehaviour
         {
             move2Name.text = moveset[1];
             move2NameShadow.text = move2Name.text;
-            move2Type.sprite = Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[1]).getType().ToString());
+            move2Type.sprite =
+                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[1]).getType().ToString());
             move2PPText.text = "PP";
             move2PPTextShadow.text = move2PPText.text;
             move2PP.text = PP[1] + "/" + maxPP[1];
@@ -496,7 +530,8 @@ public class SummaryHandler : MonoBehaviour
         {
             move3Name.text = moveset[2];
             move3NameShadow.text = move3Name.text;
-            move3Type.sprite = Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[2]).getType().ToString());
+            move3Type.sprite =
+                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[2]).getType().ToString());
             move3PPText.text = "PP";
             move3PPTextShadow.text = move3PPText.text;
             move3PP.text = PP[2] + "/" + maxPP[2];
@@ -516,7 +551,8 @@ public class SummaryHandler : MonoBehaviour
         {
             move4Name.text = moveset[3];
             move4NameShadow.text = move4Name.text;
-            move4Type.sprite = Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[3]).getType().ToString());
+            move4Type.sprite =
+                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[3]).getType().ToString());
             move4PPText.text = "PP";
             move4PPTextShadow.text = move4PPText.text;
             move4PP.text = PP[3] + "/" + maxPP[3];
@@ -563,7 +599,8 @@ public class SummaryHandler : MonoBehaviour
         else
         {
             MoveData selectedMove = MoveDatabase.getMove(moveName);
-            selectedCategory.sprite = Resources.Load<Sprite>("PCSprites/category" + selectedMove.getCategory().ToString());
+            selectedCategory.sprite =
+                Resources.Load<Sprite>("PCSprites/category" + selectedMove.getCategory().ToString());
             selectedPower.text = "" + selectedMove.getPower();
             if (selectedPower.text == "0")
             {
@@ -580,6 +617,7 @@ public class SummaryHandler : MonoBehaviour
             selectedDescriptionShadow.text = selectedDescription.text;
         }
     }
+
     private IEnumerator moveMoveSelector(Vector3 destinationPosition)
     {
         Vector3 startPosition = moveSelector.rectTransform.localPosition;
@@ -590,7 +628,10 @@ public class SummaryHandler : MonoBehaviour
         while (increment < 1)
         {
             increment += (1f / speed) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
             moveSelector.rectTransform.localPosition = startPosition + (distance * increment);
             yield return null;
         }
@@ -614,9 +655,6 @@ public class SummaryHandler : MonoBehaviour
     {
         SfxHandler.Play(pokemon.GetCry(), pokemon.GetCryPitch());
     }
-
-
-
 
 
     public IEnumerator control(Pokemon[] pokemonList, int currentPosition)
@@ -648,7 +686,10 @@ public class SummaryHandler : MonoBehaviour
         pages[6].SetActive(false);
 
         updateSelection(pokemonList[currentPosition]);
-        if (learning) { updateMoveToLearn(newMoveString); }
+        if (learning)
+        {
+            updateMoveToLearn(newMoveString);
+        }
 
         StartCoroutine("animatePokemon");
 
@@ -736,7 +777,8 @@ public class SummaryHandler : MonoBehaviour
                     if (currentPage == 4)
                     {
                         if (pokemonList[currentPosition].getMoveset()[0] != null)
-                        { //if there are moves to rearrange
+                        {
+                            //if there are moves to rearrange
                             SfxHandler.Play(selectClip);
                             yield return StartCoroutine(NavigateMoves(pokemonList[currentPosition], false, ""));
                         }
@@ -765,17 +807,24 @@ public class SummaryHandler : MonoBehaviour
         newMove.gameObject.SetActive(learning);
         Vector3 positionMod = (learning) ? new Vector3(0, 32) : new Vector3(0, 0);
         moves.localPosition = positionMod;
-        if (learning) { updateMoveToLearn(newMoveString); }
+        if (learning)
+        {
+            updateMoveToLearn(newMoveString);
+        }
 
         string[] pokeMoveset = pokemon.getMoveset();
-        string[] moveset = new string[]{
+        string[] moveset = new string[]
+        {
             pokeMoveset[0], pokeMoveset[1],
             pokeMoveset[2], pokeMoveset[3],
-            newMoveString, newMoveString };
-        Vector3[] positions = new Vector3[]{
-            new Vector3(21,32), new Vector3(108,32),
+            newMoveString, newMoveString
+        };
+        Vector3[] positions = new Vector3[]
+        {
+            new Vector3(21, 32), new Vector3(108, 32),
             new Vector3(21, 0), new Vector3(108, 0),
-            new Vector3(64, -32), new Vector3(64, -32)};
+            new Vector3(64, -32), new Vector3(64, -32)
+        };
 
         moveSelector.enabled = true;
         selectedMove.enabled = false;
@@ -955,7 +1004,6 @@ public class SummaryHandler : MonoBehaviour
                         yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
                     }
                 }
-
             }
             else if (Input.GetButtonDown("Back"))
             {
@@ -977,7 +1025,8 @@ public class SummaryHandler : MonoBehaviour
                     }
                 }
                 else
-                {   //Cancel learning move
+                {
+                    //Cancel learning move
                     navigatingMoves = false;
                     SfxHandler.Play(returnClip);
                     yield return new WaitForSeconds(0.2f);
@@ -1011,7 +1060,8 @@ public class SummaryHandler : MonoBehaviour
                 else
                 {
                     if (currentMoveNumber < 4)
-                    {   //Forget learned move
+                    {
+                        //Forget learned move
                         forget.SetActive(true);
                         selectedMove.enabled = true;
                         selectedMove.rectTransform.localPosition = positions[currentMoveNumber] + positionMod;
@@ -1046,7 +1096,8 @@ public class SummaryHandler : MonoBehaviour
                         }
                     }
                     else
-                    {   //Cancel learning move
+                    {
+                        //Cancel learning move
                         navigatingMoves = false;
                         SfxHandler.Play(selectClip);
                         yield return new WaitForSeconds(0.2f);
@@ -1055,10 +1106,6 @@ public class SummaryHandler : MonoBehaviour
             }
 
             yield return null;
-
         }
     }
-
-
-
 }

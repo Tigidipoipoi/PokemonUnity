@@ -5,7 +5,6 @@ using System.Collections;
 
 public class MapCollider : MonoBehaviour
 {
-
     //Collision Map String provided by DeKay's Collision Map Compiler for Pokémon Essentials
     //See TOOLS folder for details
 
@@ -21,11 +20,8 @@ public class MapCollider : MonoBehaviour
 
     void Awake()
     {
-
         setCollisionMap();
-
     }
-
 
 
     //Tile Tags:
@@ -36,13 +32,18 @@ public class MapCollider : MonoBehaviour
 
     public int getTileTag(Vector3 position)
     {
-        int mapX = Mathf.RoundToInt(Mathf.Round(position.x) - Mathf.Round(transform.position.x) + Mathf.Floor((float)width / 2f) - xModifier);
-        int mapZ = Mathf.RoundToInt(length - (Mathf.Round(position.z) - Mathf.Round(transform.position.z) + Mathf.Floor((float)length / 2f) - zModifier));
+        int mapX =
+            Mathf.RoundToInt(Mathf.Round(position.x) - Mathf.Round(transform.position.x) +
+                             Mathf.Floor((float) width / 2f) - xModifier);
+        int mapZ =
+            Mathf.RoundToInt(length -
+                             (Mathf.Round(position.z) - Mathf.Round(transform.position.z) +
+                              Mathf.Floor((float) length / 2f) - zModifier));
 
         if (mapX < 0 || mapX >= width ||
-           mapZ < 0 || mapZ >= length)
+            mapZ < 0 || mapZ >= length)
         {
-            //			Debug.Log (mapX +" "+ mapZ +", "+ width +" "+ length);
+//			Debug.Log (mapX +" "+ mapZ +", "+ width +" "+ length);
             return -1;
         }
         int tag = collisionMap[Mathf.FloorToInt(mapX), Mathf.FloorToInt(mapZ)];
@@ -66,10 +67,12 @@ public class MapCollider : MonoBehaviour
             // (breaks "0x10" into {"0", "10"} ready for processing)
             contains2 = contains[i].Split('x');
             if (contains2.Length == 1)
-            { //if length of contains2 is 1, there is no multiplier attached
+            {
+                //if length of contains2 is 1, there is no multiplier attached
                 if (x >= this.width)
-                { //if x exceeds the map width,
-                    x = 0;      //move to the first x on the next line down
+                {
+                    //if x exceeds the map width,
+                    x = 0; //move to the first x on the next line down
                     z += 1;
                 }
                 collisionMap[x, z] = int.Parse(contains2[0]); //add tag to current co-ordinates
@@ -78,9 +81,11 @@ public class MapCollider : MonoBehaviour
             else
             {
                 for (int i2 = 0; i2 < int.Parse(contains2[1]); i2++)
-                { //repeat for multiplier amount of times
+                {
+                    //repeat for multiplier amount of times
                     if (x >= this.width)
-                    { //same procedure as above
+                    {
+                        //same procedure as above
                         x = 0;
                         z += 1;
                     }
@@ -90,7 +95,6 @@ public class MapCollider : MonoBehaviour
             }
         }
     }
-
 
 
     /// if bridge was found, returned RaycastHit will have a collider
@@ -118,13 +122,35 @@ public class MapCollider : MonoBehaviour
     }
 
     /// returns the slope of the map geometry on the tile of the given position (in the given direction) 
-    public static float GetSlopeOfPosition(Vector3 pPosition, Direction pDirection, bool pDoCheckForBridge = true)
+    public static float getSlopeOfPosition(Vector3 position, int direction)
+    {
+        return getSlopeOfPosition(position, direction, true);
+    }
+
+    public static float getSlopeOfPosition(Vector3 position, int direction, bool checkForBridge)
     {
         //set vector3 based off of direction
-        Vector3 movement = PlayerMovementOld.Instance.GetForwardVectorRaw(pDirection);
+        Vector3 movement = new Vector3(0, 0, 0);
+        if (direction == 0)
+        {
+            movement = new Vector3(0, 0, 1f);
+        }
+        else if (direction == 1)
+        {
+            movement = new Vector3(1f, 0, 0);
+        }
+        else if (direction == 2)
+        {
+            movement = new Vector3(0, 0, -1f);
+        }
+        else if (direction == 3)
+        {
+            movement = new Vector3(-1f, 0, 0);
+        }
 
         //cast a ray directly downwards from the edge of the tile, closest to original position (1.5f height to account for stairs)
-        RaycastHit[] mapHitColliders = Physics.RaycastAll(pPosition - (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);
+        RaycastHit[] mapHitColliders = Physics.RaycastAll(position - (movement * 0.45f) + new Vector3(0, 1.5f, 0),
+            Vector3.down);
         RaycastHit map1Hit = new RaycastHit();
 
         float shortestHit = Mathf.Infinity;
@@ -133,10 +159,10 @@ public class MapCollider : MonoBehaviour
         for (int i = 0; i < mapHitColliders.Length; i++)
         {
             //if a collision's gameObject has a MapCollider or a BridgeHandler, it is a valid tile.
-            if (pDoCheckForBridge)
+            if (checkForBridge)
             {
                 if (mapHitColliders[i].collider.gameObject.GetComponent<BridgeHandler>() != null ||
-                   mapHitColliders[i].collider.gameObject.GetComponent<MapCollider>() != null)
+                    mapHitColliders[i].collider.gameObject.GetComponent<MapCollider>() != null)
                 {
                     //check if distance is shorter than last recorded shortest
                     if (mapHitColliders[i].distance < shortestHit)
@@ -167,7 +193,7 @@ public class MapCollider : MonoBehaviour
 
 
         //cast another ray at the edge of the tile, further from original position (1.5f height to account for stairs)
-        mapHitColliders = Physics.RaycastAll(pPosition + (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);
+        mapHitColliders = Physics.RaycastAll(position + (movement * 0.45f) + new Vector3(0, 1.5f, 0), Vector3.down);
         RaycastHit map2Hit = new RaycastHit();
 
         shortestHit = Mathf.Infinity;
@@ -176,10 +202,10 @@ public class MapCollider : MonoBehaviour
         for (int i = 0; i < mapHitColliders.Length; i++)
         {
             //if a collision's gameObject has a MapCollider or a BridgeHandler, it is a valid tile.
-            if (pDoCheckForBridge)
+            if (checkForBridge)
             {
                 if (mapHitColliders[i].collider.gameObject.GetComponent<BridgeHandler>() != null ||
-                   mapHitColliders[i].collider.gameObject.GetComponent<MapCollider>() != null)
+                    mapHitColliders[i].collider.gameObject.GetComponent<MapCollider>() != null)
                 {
                     //check if distance is shorter than last recorded shortest
                     if (mapHitColliders[i].distance < shortestHit)
@@ -209,7 +235,6 @@ public class MapCollider : MonoBehaviour
         }
 
 
-
         if (map1Hit.collider == null || map2Hit.collider == null)
         {
             if (map1Hit.collider == null && map2Hit.collider == null)
@@ -229,8 +254,8 @@ public class MapCollider : MonoBehaviour
         }
 
         //flatten the hit.point along the y, so that the distance between them will only calculate using x and z
-        //Vector3 flatHitPoint1 = new Vector3(map1Hit.point.x,0,map1Hit.point.z);
-        //Vector3 flatHitPoint2 = new Vector3(map2Hit.point.x,0,map2Hit.point.z);
+        //Vector3 flatHitPoint1 = new Vector3(map1Hit.point.x, 0, map1Hit.point.z);
+        //Vector3 flatHitPoint2 = new Vector3(map2Hit.point.x, 0, map2Hit.point.z);
 
         float rise = Mathf.Abs(map2Hit.point.y - map1Hit.point.y);
         float run = 0.9f;
@@ -238,5 +263,4 @@ public class MapCollider : MonoBehaviour
 
         return Mathf.Round(slope * 100f) / 100f;
     }
-
 }

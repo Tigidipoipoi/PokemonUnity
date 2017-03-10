@@ -5,7 +5,6 @@ using System.Collections;
 
 public class SpriteAnimation : MonoBehaviour
 {
-
     public float FPS = 8;
     private float secPerFrame;
 
@@ -33,7 +32,6 @@ public class SpriteAnimation : MonoBehaviour
         int frame = 0;
         while (true)
         {
-
             frame += 1;
             if (frame >= spriteSheet.Length)
             {

@@ -5,7 +5,6 @@ using System.Collections;
 
 public class BgmHandler : MonoBehaviour
 {
-
     public static BgmHandler main;
 
     private float baseVolume;
@@ -51,7 +50,6 @@ public class BgmHandler : MonoBehaviour
 
     void Update()
     {
-
         baseVolume = PlayerPrefs.GetFloat("musicVolume");
         if (fading == null)
         {
@@ -79,16 +77,15 @@ public class BgmHandler : MonoBehaviour
                 if (source.timeSamples >= source.clip.samples - samplesEndBuffer)
                 {
                     //jump back the relative amount so that the least audio possible is skipped
-                    int loopStartSamples = (currentTrack == Track.Main) ? mainTrack.loopStartSamples : overlayTrack.loopStartSamples;
+                    int loopStartSamples = (currentTrack == Track.Main)
+                        ? mainTrack.loopStartSamples
+                        : overlayTrack.loopStartSamples;
                     source.timeSamples -= source.clip.samples - samplesEndBuffer - loopStartSamples;
                     source.Play();
                 }
             }
-
         }
-
     }
-
 
 
     private IEnumerator Fade(float time)
@@ -97,7 +94,10 @@ public class BgmHandler : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / time) * Time.deltaTime;
-            if (increment > 1) { increment = 1f; }
+            if (increment > 1)
+            {
+                increment = 1f;
+            }
 
             //by reducing it by increment*1.2f, it will leave a silent gap on the end before the next track begins.
             source.volume = (1f - increment * 1.2f) * baseVolume;
@@ -157,7 +157,8 @@ public class BgmHandler : MonoBehaviour
                 StartCoroutine(PlayMainIE(bgm, loopStartSamples));
             }
             else
-            { //but if it is, set the next track to main, in case of fading
+            {
+                //but if it is, set the next track to main, in case of fading
                 mainTrackNext = new AudioTrack(bgm, loopStartSamples);
             }
         }
@@ -194,6 +195,7 @@ public class BgmHandler : MonoBehaviour
     {
         PlayOverlay(bgm, loopStartSamples, 0.1f);
     }
+
     public void PlayOverlay(AudioClip bgm, int loopStartSamples, float fadeTime)
     {
         //if overlay track is already playing the bgm, do not continue
@@ -238,11 +240,13 @@ public class BgmHandler : MonoBehaviour
     {
         StartCoroutine(PlayMfxIE(mfx));
     }
+
     /// Plays an MFX with a slight delay to prevent musical glitches
     public void PlayMFXConsecutive(AudioClip mfx)
     {
         StartCoroutine(PlayMfxConsecutiveIE(mfx));
     }
+
     private IEnumerator PlayMfxConsecutiveIE(AudioClip mfx)
     {
         yield return StartCoroutine(MuteIE(0.2f));
@@ -275,14 +279,17 @@ public class BgmHandler : MonoBehaviour
     {
         ResumeMain(defaultFadeSpeed, mainTrack);
     }
+
     public void ResumeMain(float time)
     {
         ResumeMain(time, mainTrack);
     }
+
     public void ResumeMain(AudioClip clip, int loopStartSamples)
     {
         ResumeMain(defaultFadeSpeed, new AudioTrack(clip, loopStartSamples));
     }
+
     public void ResumeMain(float time, AudioClip clip, int loopStartSamples)
     {
         ResumeMain(time, new AudioTrack(clip, loopStartSamples));
@@ -313,18 +320,17 @@ public class BgmHandler : MonoBehaviour
     {
         StartCoroutine(MuteIE(time));
     }
+
     private IEnumerator MuteIE(float time)
     {
         source.mute = true;
         yield return new WaitForSeconds(time);
         source.mute = false;
     }
-
 }
 
 public class AudioTrack
 {
-
     public AudioClip clip;
     public int loopStartSamples;
     public int samplesPosition;
@@ -342,5 +348,4 @@ public class AudioTrack
         this.loopStartSamples = loopStartSamples;
         this.samplesPosition = 0;
     }
-
 }

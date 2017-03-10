@@ -5,7 +5,6 @@ using System.Collections;
 
 public class InteractItem : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
 
     public string item;
@@ -51,16 +50,20 @@ public class InteractItem : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
         {
-            AudioClip itemGetMFX = (TM) ? Resources.Load<AudioClip>("Audio/mfx/GetGood") : Resources.Load<AudioClip>("Audio/mfx/GetDecent");
+            AudioClip itemGetMFX = (TM)
+                ? Resources.Load<AudioClip>("Audio/mfx/GetGood")
+                : Resources.Load<AudioClip>("Audio/mfx/GetDecent");
             BgmHandler.main.PlayMFX(itemGetMFX);
 
             string firstLetter = item.Substring(0, 1).ToLowerInvariant();
             Dialog.drawDialogBox();
             if (TM)
             {
-                Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " found TM" + ItemDatabase.getItem(item).getTMNo() + ": " + item + "!");
+                Dialog.StartCoroutine("drawText",
+                    SaveData.currentSave.playerName + " found TM" + ItemDatabase.getItem(item).getTMNo() + ": " + item +
+                    "!");
             }
             else
             {
@@ -68,7 +71,8 @@ public class InteractItem : MonoBehaviour
                 {
                     Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " found " + item + "s!");
                 }
-                else if (firstLetter == "a" || firstLetter == "e" || firstLetter == "i" || firstLetter == "o" || firstLetter == "u")
+                else if (firstLetter == "a" || firstLetter == "e" || firstLetter == "i" || firstLetter == "o" ||
+                         firstLetter == "u")
                 {
                     Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " found an " + item + "!");
                 }
@@ -91,17 +95,24 @@ public class InteractItem : MonoBehaviour
 
                 if (TM)
                 {
-                    yield return Dialog.StartCoroutine("drawTextSilent", SaveData.currentSave.playerName + " put the TM" + ItemDatabase.getItem(item).getTMNo() + " \\away into the bag.");
+                    yield return
+                        Dialog.StartCoroutine("drawTextSilent",
+                            SaveData.currentSave.playerName + " put the TM" + ItemDatabase.getItem(item).getTMNo() +
+                            " \\away into the bag.");
                 }
                 else
                 {
                     if (quantity > 1)
                     {
-                        yield return Dialog.StartCoroutine("drawTextSilent", SaveData.currentSave.playerName + " put the " + item + "s \\away into the bag.");
+                        yield return
+                            Dialog.StartCoroutine("drawTextSilent",
+                                SaveData.currentSave.playerName + " put the " + item + "s \\away into the bag.");
                     }
                     else
                     {
-                        yield return Dialog.StartCoroutine("drawTextSilent", SaveData.currentSave.playerName + " put the " + item + " \\away into the bag.");
+                        yield return
+                            Dialog.StartCoroutine("drawTextSilent",
+                                SaveData.currentSave.playerName + " put the " + item + " \\away into the bag.");
                     }
                 }
                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
@@ -110,7 +121,7 @@ public class InteractItem : MonoBehaviour
                 }
                 Dialog.undrawDialogBox();
 
-                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
                 gameObject.SetActive(false);
             }
             else
@@ -122,7 +133,7 @@ public class InteractItem : MonoBehaviour
                 }
                 Dialog.undrawDialogBox();
 
-                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
             }
         }
     }
@@ -135,5 +146,4 @@ public class InteractItem : MonoBehaviour
         transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         gameObject.SetActive(false);
     }
-
 }

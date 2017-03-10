@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class TypingHandler : MonoBehaviour
 {
-
     public string typedString;
 
     public int selectorIndex = 0;
@@ -17,9 +16,7 @@ public class TypingHandler : MonoBehaviour
     private Sprite[] iconAnim;
 
     private Image icon;
-    /* [UNHANDLED YET]
-    private Image iconShadow;
-    //*/
+    //private Image iconShadow;
 
     private Text genderText;
     private Text genderTextShadow;
@@ -35,14 +32,21 @@ public class TypingHandler : MonoBehaviour
     private Image keySelector;
 
     private RectTransform[] page = new RectTransform[4];
-    private Text[][] key = new Text[][]{
+
+    private Text[][] key = new Text[][]
+    {
         new Text[65],
         new Text[65],
-        new Text[65]};
-    private Text[][] keyShadow = new Text[][]{
+        new Text[65]
+    };
+
+    private Text[][] keyShadow = new Text[][]
+    {
         new Text[65],
         new Text[65],
-        new Text[65]};
+        new Text[65]
+    };
+
     private Text keyboardText;
     private Text keyboardTextShadow;
 
@@ -53,9 +57,7 @@ public class TypingHandler : MonoBehaviour
     {
         Transform typeFrame = transform.FindChild("typeFrame");
         icon = typeFrame.FindChild("icon").GetComponent<Image>();
-        /* [UNHANDLED YET]
-        iconShadow = typeFrame.FindChild("iconShadow").GetComponent<Image>();
-        //*/
+        //iconShadow = typeFrame.FindChild("iconShadow").GetComponent<Image>();
 
         genderTextShadow = typeFrame.FindChild("gender").GetComponent<Text>();
         genderText = genderTextShadow.transform.FindChild("Text").GetComponent<Text>();
@@ -89,7 +91,8 @@ public class TypingHandler : MonoBehaviour
                 for (int i3 = 0; i3 < 13; i3++)
                 {
                     keyShadow[i][(i2 * 13) + i3] = row.FindChild("key" + i3).GetComponent<Text>();
-                    key[i][(i2 * 13) + i3] = keyShadow[i][(i2 * 13) + i3].transform.FindChild("Text").GetComponent<Text>();
+                    key[i][(i2 * 13) + i3] =
+                        keyShadow[i][(i2 * 13) + i3].transform.FindChild("Text").GetComponent<Text>();
                 }
             }
         }
@@ -99,14 +102,11 @@ public class TypingHandler : MonoBehaviour
 
     void Start()
     {
-
         gameObject.SetActive(false);
-
     }
 
     void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.Y))
         {
             int newHeirIndex = page[0].GetSiblingIndex();
@@ -114,11 +114,7 @@ public class TypingHandler : MonoBehaviour
             page[0].SetSiblingIndex(oldHeirIndex);
             page[2].SetSiblingIndex(newHeirIndex);
         }
-
     }
-
-
-
 
 
     private float flipIncrement(float increment, bool flip)
@@ -138,6 +134,7 @@ public class TypingHandler : MonoBehaviour
             yield return null;
         }
     }
+
     private IEnumerator animateTypeSpace()
     {
         for (int i = 0; i < 12; i++)
@@ -164,11 +161,16 @@ public class TypingHandler : MonoBehaviour
                 {
                     if (i == typeSpaceIndex)
                     {
-                        typeSpace[i].rectTransform.localPosition = new Vector3(typeSpace[i].rectTransform.localPosition.x, typeSpaceY - (2f * flipIncrement(increment, flip)), typeSpace[i].rectTransform.localPosition.z);
+                        typeSpace[i].rectTransform.localPosition =
+                            new Vector3(typeSpace[i].rectTransform.localPosition.x,
+                                typeSpaceY - (2f * flipIncrement(increment, flip)),
+                                typeSpace[i].rectTransform.localPosition.z);
                     }
                     else
                     {
-                        typeSpace[i].rectTransform.localPosition = new Vector3(typeSpace[i].rectTransform.localPosition.x, typeSpaceY, typeSpace[i].rectTransform.localPosition.z);
+                        typeSpace[i].rectTransform.localPosition =
+                            new Vector3(typeSpace[i].rectTransform.localPosition.x, typeSpaceY,
+                                typeSpace[i].rectTransform.localPosition.z);
                     }
                 }
                 yield return null;
@@ -205,11 +207,13 @@ public class TypingHandler : MonoBehaviour
                 }
                 else if (pageIndex == 3)
                 {
-                    currentSelector.rectTransform.sizeDelta = new Vector2(146 + (4f * flipIncrement(increment, flip)), 14 + (4f * flipIncrement(increment, flip)));
+                    currentSelector.rectTransform.sizeDelta = new Vector2(146 + (4f * flipIncrement(increment, flip)),
+                        14 + (4f * flipIncrement(increment, flip)));
                 }
                 else
                 {
-                    currentSelector.rectTransform.sizeDelta = new Vector2(14 + (4f * flipIncrement(increment, flip)), 14 + (4f * flipIncrement(increment, flip)));
+                    currentSelector.rectTransform.sizeDelta = new Vector2(14 + (4f * flipIncrement(increment, flip)),
+                        14 + (4f * flipIncrement(increment, flip)));
                 }
                 yield return null;
             }
@@ -291,14 +295,20 @@ public class TypingHandler : MonoBehaviour
 
         selectorIndex = newPosition;
 
-        int[] panelColumn = new int[]{
-            -88,-56,-24,8,46,86};
+        int[] panelColumn = new int[]
+        {
+            -88, -56, -24, 8, 46, 86
+        };
         int panelRow = 33;
 
-        int[] keyColumn = new int[]{
-            -96,-80,-64,-48,-32,-16,0,16,32,48,64,80,96};
-        int[] keyRow = new int[]{
-            7,-12,-31,-50,-69};
+        int[] keyColumn = new int[]
+        {
+            -96, -80, -64, -48, -32, -16, 0, 16, 32, 48, 64, 80, 96
+        };
+        int[] keyRow = new int[]
+        {
+            7, -12, -31, -50, -69
+        };
 
         if (newPosition < 6)
         {
@@ -322,7 +332,8 @@ public class TypingHandler : MonoBehaviour
                 {
                     newPosition = 64;
                 }
-                selectorPosition = new Vector2(keyColumn[Mathf.FloorToInt((float)newPosition % 13)], keyRow[Mathf.FloorToInt((float)newPosition / 13f)]);
+                selectorPosition = new Vector2(keyColumn[Mathf.FloorToInt((float)newPosition % 13)],
+                    keyRow[Mathf.FloorToInt((float)newPosition / 13f)]);
             }
             currentSelector = keySelector;
             currentSelector.rectTransform.localPosition = new Vector3(selectorPosition.x, selectorPosition.y, 0);
@@ -330,7 +341,6 @@ public class TypingHandler : MonoBehaviour
             panelSelector.enabled = false;
             keySelector.enabled = true;
         }
-
     }
 
     private void addCurrentKeyToString()
@@ -393,9 +403,8 @@ public class TypingHandler : MonoBehaviour
     }
 
 
-
-
-    public IEnumerator control(int typeSpaces, string defaultString, Pokemon.Gender genderDisplay, Sprite[] iconAnimation)
+    public IEnumerator control(int typeSpaces, string defaultString, Pokemon.Gender genderDisplay,
+        Sprite[] iconAnimation)
     {
         typeSpaceCount = typeSpaces;
         iconAnim = iconAnimation;
@@ -460,7 +469,6 @@ public class TypingHandler : MonoBehaviour
         bool running = true;
         while (running)
         {
-
             if (Input.GetAxisRaw("Horizontal") > 0)
             {
                 if (selectorIndex < 5)
@@ -608,27 +616,33 @@ public class TypingHandler : MonoBehaviour
             else if (Input.GetButtonDown("Select"))
             {
                 if (selectorIndex == 0)
-                {           //Page0
+                {
+                    //Page0
                     yield return StartCoroutine(swapPages(0));
                 }
                 else if (selectorIndex == 1)
-                {   //Page1
+                {
+                    //Page1
                     yield return StartCoroutine(swapPages(1));
                 }
                 else if (selectorIndex == 2)
-                {   //Page2
+                {
+                    //Page2
                     yield return StartCoroutine(swapPages(2));
                 }
                 else if (selectorIndex == 3)
-                {   //Page3
+                {
+                    //Page3
                     yield return StartCoroutine(swapPages(3));
                 }
                 else if (selectorIndex == 4)
-                {   //Back
+                {
+                    //Back
                     yield return StartCoroutine(backspace());
                 }
                 else if (selectorIndex == 5)
-                {   //OK
+                {
+                    //OK
                     panelButton[5].enabled = true;
                     yield return new WaitForSeconds(0.1f);
                     panelButton[5].enabled = false;
@@ -638,11 +652,13 @@ public class TypingHandler : MonoBehaviour
                 else
                 {
                     if (pageIndex == 3)
-                    {   //Keyboard
+                    {
+                        //Keyboard
                         yield return StartCoroutine(typeWithKeyboard());
                     }
                     else
-                    {               //Keys
+                    {
+                        //Keys
                         addCurrentKeyToString();
                     }
                 }
@@ -869,7 +885,5 @@ public class TypingHandler : MonoBehaviour
 
         keyboardText.text = "Select to use the Keyboard";
         keyboardTextShadow.text = keyboardText.text;
-
     }
-
 }

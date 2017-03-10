@@ -5,7 +5,6 @@ using System.Collections;
 
 public class BumpPokemonCenterRespawn : MonoBehaviour
 {
-
     public InteractPokemonCenter pokemonCenter;
 
     private IEnumerator bump()
@@ -17,5 +16,4 @@ public class BumpPokemonCenterRespawn : MonoBehaviour
         }
         yield return null;
     }
-
 }

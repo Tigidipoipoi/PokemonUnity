@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class GUIParticleHandler : MonoBehaviour
 {
-
     private GameObject particles;
 
     private Image[] particle = new Image[32];
@@ -39,67 +38,64 @@ public class GUIParticleHandler : MonoBehaviour
     }
 
 
-
-
     public Image createParticle(Sprite particleSprite, Vector2 position, float size, float duration)
     {
         return createParticle(particleSprite, position, size, 0f, duration,
-                              position, 0f, size);
+            position, 0f, size);
     }
 
     public Image createParticle(Sprite particleSprite, Vector2 position, float size, float angle, float duration)
     {
         return createParticle(particleSprite, position, size, angle, duration,
-                              position, 0f, size);
+            position, 0f, size);
     }
 
     public Image createParticle(Sprite particleSprite, Vector2 position, float size, float angle, float duration,
-                                           Vector2 destinationPosition)
+        Vector2 destinationPosition)
     {
         return createParticle(particleSprite, position, size, angle, duration,
-                              destinationPosition, 0f, size);
+            destinationPosition, 0f, size);
     }
 
     public Image createParticle(Sprite particleSprite, Vector2 position, float size, float angle, float duration,
-                                           float rotationsPerSec)
+        float rotationsPerSec)
     {
         return createParticle(particleSprite, position, size, angle, duration,
-                              position, rotationsPerSec, size);
+            position, rotationsPerSec, size);
     }
 
     public Image createParticle(Sprite particleSprite, Vector2 position, float size, float angle, float duration,
-                                           Vector2 destinationPosition, float rotationsPerSec)
+        Vector2 destinationPosition, float rotationsPerSec)
     {
         return createParticle(particleSprite, position, size, angle, duration,
-                              destinationPosition, rotationsPerSec, size);
+            destinationPosition, rotationsPerSec, size);
     }
 
     public Image createParticle(Sprite particleSprite, Vector2 position, float size, float angle, float duration,
-                                           float rotationsPerSec, float finalSize)
+        float rotationsPerSec, float finalSize)
     {
         return createParticle(particleSprite, position, size, angle, duration,
-                              position, rotationsPerSec, finalSize);
+            position, rotationsPerSec, finalSize);
     }
 
     public Image createParticle(Sprite particleSprite, Vector2 position, float size, float angle, float duration,
-                                           Vector2 destinationPosition, float rotationsPerSec, float finalSize)
+        Vector2 destinationPosition, float rotationsPerSec, float finalSize)
     {
         int targetParticle = getFirstInactiveParticle();
         if (targetParticle > -1)
         {
             particleActive[targetParticle] = true;
-            return setUpParticle(targetParticle, particleSprite, position, size, angle, duration, destinationPosition, rotationsPerSec, finalSize);
+            return setUpParticle(targetParticle, particleSprite, position, size, angle, duration, destinationPosition,
+                rotationsPerSec, finalSize);
         }
         return null;
     }
 
 
-
-
-    private Image setUpParticle(int targetParticle, Sprite particleSprite, Vector2 position, float size, float angle, float duration,
-                                           Vector2 destinationPosition, float rotationsPerSec, float finalSize)
+    private Image setUpParticle(int targetParticle, Sprite particleSprite, Vector2 position, float size, float angle,
+        float duration,
+        Vector2 destinationPosition, float rotationsPerSec, float finalSize)
     {
-
         particle[targetParticle].sprite = particleSprite;
         particle[targetParticle].rectTransform.localPosition = new Vector3(position.x, position.y, 0);
         particle[targetParticle].rectTransform.sizeDelta = new Vector2(size, size);
@@ -111,28 +107,33 @@ public class GUIParticleHandler : MonoBehaviour
         return particle[targetParticle];
     }
 
-    private IEnumerator animateParticle(int targetParticle, Vector2 destinationPosition, float rotationsPerSec, float finalSize, float duration)
+    private IEnumerator animateParticle(int targetParticle, Vector2 destinationPosition, float rotationsPerSec,
+        float finalSize, float duration)
     {
         bool moving = false;
         bool rotating = false;
         bool scaling = false;
 
-        Vector2 startPosition = new Vector2(particle[targetParticle].transform.localPosition.x, particle[targetParticle].transform.localPosition.y);
+        Vector2 startPosition = new Vector2(particle[targetParticle].transform.localPosition.x,
+            particle[targetParticle].transform.localPosition.y);
         Vector2 distance = new Vector2(destinationPosition.x - startPosition.x, destinationPosition.y - startPosition.y);
         float degreesPerSec = rotationsPerSec * 360f;
         float startSize = particle[targetParticle].rectTransform.sizeDelta.x;
         float sizeDifference = finalSize - startSize;
 
         if (destinationPosition != startPosition)
-        { //if destination is not the same as current position
+        {
+            //if destination is not the same as current position
             moving = true;
         }
         if (rotationsPerSec > 0)
-        { //if rotations per sec is greater than 0
+        {
+            //if rotations per sec is greater than 0
             rotating = true;
         }
         if (finalSize != particle[targetParticle].rectTransform.sizeDelta.x)
-        { //if final size is not the same as current size
+        {
+            //if final size is not the same as current size
             scaling = true;
         }
 
@@ -146,16 +147,20 @@ public class GUIParticleHandler : MonoBehaviour
             }
             if (moving)
             {
-                particle[targetParticle].rectTransform.localPosition = new Vector3(startPosition.x + (distance.x * increment), startPosition.y + (distance.y * increment), 0);
+                particle[targetParticle].rectTransform.localPosition =
+                    new Vector3(startPosition.x + (distance.x * increment), startPosition.y + (distance.y * increment),
+                        0);
             }
             if (rotating)
             {
                 particle[targetParticle].rectTransform.localRotation =
-                    Quaternion.Euler(0, 0, particle[targetParticle].rectTransform.localRotation.z + (degreesPerSec * Time.deltaTime));
+                    Quaternion.Euler(0, 0,
+                        particle[targetParticle].rectTransform.localRotation.z + (degreesPerSec * Time.deltaTime));
             }
             if (scaling)
             {
-                particle[targetParticle].rectTransform.sizeDelta = new Vector2(startSize + (sizeDifference * increment), startSize + (sizeDifference * increment));
+                particle[targetParticle].rectTransform.sizeDelta = new Vector2(
+                    startSize + (sizeDifference * increment), startSize + (sizeDifference * increment));
             }
             yield return null;
         }
@@ -174,8 +179,4 @@ public class GUIParticleHandler : MonoBehaviour
             particleActive[i] = false;
         }
     }
-
-
-
-
 }

@@ -5,8 +5,8 @@ using System.Collections;
 
 public class TextureTileToScale : MonoBehaviour
 {
-
     public int scaleSizeReference = 16;
+
     public enum TextureAnimation
     {
         None,
@@ -17,6 +17,7 @@ public class TextureTileToScale : MonoBehaviour
         OceanWater,
         Waterfall_F
     }
+
     public TextureAnimation texAnimation = TextureAnimation.None;
 
     public bool tileHorizontally = true;
@@ -48,12 +49,12 @@ public class TextureTileToScale : MonoBehaviour
     void Start()
     {
         //get the pixel dimensions of the material's texture
-        texWidth = (float)mesh.material.GetTexture("_MainTex").width;
-        texHeight = (float)mesh.material.GetTexture("_MainTex").height;
+        texWidth = (float) mesh.material.GetTexture("_MainTex").width;
+        texHeight = (float) mesh.material.GetTexture("_MainTex").height;
 
         //get the ratio of texture size to size reference
-        wMod = (texWidth / (float)scaleSizeReference);
-        hMod = (texHeight / (float)scaleSizeReference);
+        wMod = (texWidth / (float) scaleSizeReference);
+        hMod = (texHeight / (float) scaleSizeReference);
 
         //get the offset distance per pixel
         xOffsetPixel = 1f / texWidth;
@@ -100,13 +101,13 @@ public class TextureTileToScale : MonoBehaviour
         {
             StartCoroutine(animateAsDownFlow(0.5f));
         }
-
     }
 
     private IEnumerator animateAsLava()
     {
         yield return StartCoroutine(animateAsLava(false));
     }
+
     private IEnumerator animateAsLava(bool animBackwards)
     {
         float speed = 1.6f;
@@ -184,8 +185,8 @@ public class TextureTileToScale : MonoBehaviour
                 }
 
                 //get the ratio of texture size to size reference
-                wMod = texWidth / ((float)scaleSizeReference * sMod);
-                hMod = texHeight / ((float)scaleSizeReference * sMod);
+                wMod = texWidth / ((float) scaleSizeReference * sMod);
+                hMod = texHeight / ((float) scaleSizeReference * sMod);
 
                 //get the offset distance per pixel
                 xOffsetPixel = sMod / texWidth;
@@ -253,8 +254,9 @@ public class TextureTileToScale : MonoBehaviour
 
                 for (int i = 0; i < mesh.materials.Length; i++)
                 {
-                    mesh.materials[i].SetTextureOffset("_MainTex", new Vector2(((xCornerPosition * scaleSizeReference)) * xOffsetPixel,
-                                                                           ((yCornerPosition * scaleSizeReference) + yMod) * yOffsetPixel));
+                    mesh.materials[i].SetTextureOffset("_MainTex",
+                        new Vector2(((xCornerPosition * scaleSizeReference)) * xOffsetPixel,
+                            ((yCornerPosition * scaleSizeReference) + yMod) * yOffsetPixel));
                 }
                 yield return null;
             }
@@ -306,8 +308,9 @@ public class TextureTileToScale : MonoBehaviour
                     yMod = (texQuarterHeight * 3) + (texQuarterHeight * increment);
                 }
 
-                mesh.material.SetTextureOffset("_MainTex", new Vector2(((xCornerPosition * scaleSizeReference) + xMod) * xOffsetPixel,
-                                                                       ((yCornerPosition * scaleSizeReference) + yMod) * yOffsetPixel));
+                mesh.material.SetTextureOffset("_MainTex",
+                    new Vector2(((xCornerPosition * scaleSizeReference) + xMod) * xOffsetPixel,
+                        ((yCornerPosition * scaleSizeReference) + yMod) * yOffsetPixel));
                 yield return null;
             }
             animState = (animState >= 3) ? 0 : animState + 1;
@@ -337,13 +340,12 @@ public class TextureTileToScale : MonoBehaviour
                 xMod = texWidth * increment;
                 yMod = texHeight * increment;
 
-                mesh.material.SetTextureOffset("_MainTex", new Vector2(((xCornerPosition * scaleSizeReference) + xMod) * xOffsetPixel,
-                                                                       ((yCornerPosition * scaleSizeReference) + yMod) * yOffsetPixel));
+                mesh.material.SetTextureOffset("_MainTex",
+                    new Vector2(((xCornerPosition * scaleSizeReference) + xMod) * xOffsetPixel,
+                        ((yCornerPosition * scaleSizeReference) + yMod) * yOffsetPixel));
 
                 yield return null;
             }
         }
     }
-
-
 }

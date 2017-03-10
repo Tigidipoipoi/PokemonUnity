@@ -5,7 +5,6 @@ using System.Collections;
 
 public class MapNameBoxHandler : MonoBehaviour
 {
-
     private Transform mapName;
     private GUITexture mapNameBox;
     private GUIText mapNameText;

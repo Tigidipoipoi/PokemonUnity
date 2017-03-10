@@ -5,7 +5,6 @@ using System.Collections;
 
 public class TextureTileAnimation : MonoBehaviour
 {
-
     public int matID = 0;
 
     public int width = 16;
@@ -32,11 +31,11 @@ public class TextureTileAnimation : MonoBehaviour
     void Start()
     {
         //get the pixel dimensions of the material's texture
-        float texWidth = (float)mesh.materials[matID].GetTexture("_MainTex").width;
-        float texHeight = (float)mesh.materials[matID].GetTexture("_MainTex").height;
+        float texWidth = (float) mesh.materials[matID].GetTexture("_MainTex").width;
+        float texHeight = (float) mesh.materials[matID].GetTexture("_MainTex").height;
 
-        xScale = (float)width / texWidth;
-        yScale = (float)height / texHeight;
+        xScale = (float) width / texWidth;
+        yScale = (float) height / texHeight;
         xTiles = Mathf.RoundToInt(1 / xScale);
         yTiles = Mathf.RoundToInt(1 / yScale);
 
@@ -72,7 +71,6 @@ public class TextureTileAnimation : MonoBehaviour
         int currentYTile = 0;
         while (true)
         {
-
             currentXTile += 1;
             if (currentXTile >= xTiles)
             {
@@ -90,17 +88,18 @@ public class TextureTileAnimation : MonoBehaviour
                 {
                     if (applyToMaterials[i])
                     {
-                        mesh.materials[i].SetTextureOffset("_MainTex", new Vector2(xScale * currentXTile, yScale * (yTiles - 1 - currentYTile)));
+                        mesh.materials[i].SetTextureOffset("_MainTex",
+                            new Vector2(xScale * currentXTile, yScale * (yTiles - 1 - currentYTile)));
                     }
                 }
             }
             else
             {
-                mesh.materials[matID].SetTextureOffset("_MainTex", new Vector2(xScale * currentXTile, yScale * (yTiles - 1 - currentYTile)));
+                mesh.materials[matID].SetTextureOffset("_MainTex",
+                    new Vector2(xScale * currentXTile, yScale * (yTiles - 1 - currentYTile)));
             }
 
             yield return new WaitForSeconds(secPerFrame);
         }
     }
-
 }

@@ -5,7 +5,6 @@ using System.Collections;
 
 public class CustomEvent : MonoBehaviour
 {
-
     public CustomEventTree[] interactEventTrees;
     public CustomEventTree[] bumpEventTrees;
 
@@ -36,12 +35,6 @@ public class CustomEvent : MonoBehaviour
     }
 
 
-
-
-
-
-
-
     private IEnumerator interact()
     {
         yield return StartCoroutine(runEventTrees(interactEventTrees));
@@ -57,11 +50,13 @@ public class CustomEvent : MonoBehaviour
         if (treesArray.Length > 0)
         {
             eventTreeIndex = 0;
-            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
             {
                 setThisNPCHandlerBusy(true);
 
-                for (currentEventIndex = 0; currentEventIndex < treesArray[eventTreeIndex].events.Length; currentEventIndex++)
+                for (currentEventIndex = 0;
+                    currentEventIndex < treesArray[eventTreeIndex].events.Length;
+                    currentEventIndex++)
                 {
                     if (!treesArray[eventTreeIndex].events[currentEventIndex].runSimultaneously)
                     {
@@ -74,7 +69,7 @@ public class CustomEvent : MonoBehaviour
                 }
 
                 setThisNPCHandlerBusy(false);
-                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
             }
             if (deactivateOnFinish)
             {
@@ -88,7 +83,8 @@ public class CustomEvent : MonoBehaviour
         CustomEventDetails currentEvent = treesArray[eventTreeIndex].events[index];
         CustomEventDetails nextEvent = null;
         if (index + 1 < treesArray[eventTreeIndex].events.Length)
-        { //if not the last event
+        {
+            //if not the last event
             nextEvent = treesArray[eventTreeIndex].events[index + 1];
         }
 
@@ -109,23 +105,25 @@ public class CustomEvent : MonoBehaviour
                 {
                     targetNPC = currentEvent.object0.GetComponent<NPCHandler>();
 
-                    Direction initialDirection = targetNPC.Direction;
-                    targetNPC.Direction = currentEvent.Direction;
+                    int initialDirection = targetNPC.direction;
+                    targetNPC.direction = (int) currentEvent.dir;
                     for (int i = 0; i < currentEvent.int0; i++)
                     {
-                        targetNPC.Direction = currentEvent.Direction;
+                        targetNPC.direction = (int) currentEvent.dir;
                         Vector3 forwardsVector = targetNPC.getForwardsVector(true);
                         if (currentEvent.bool0)
-                        { //if direction locked in
-                            targetNPC.Direction = initialDirection;
+                        {
+                            //if direction locked in
+                            targetNPC.direction = initialDirection;
                         }
                         while (forwardsVector == new Vector3(0, 0, 0))
                         {
-                            targetNPC.Direction = currentEvent.Direction;
+                            targetNPC.direction = (int) currentEvent.dir;
                             forwardsVector = targetNPC.getForwardsVector(true);
                             if (currentEvent.bool0)
-                            { //if direction locked in
-                                targetNPC.Direction = initialDirection;
+                            {
+                                //if direction locked in
+                                targetNPC.direction = initialDirection;
                             }
                             yield return new WaitForSeconds(0.1f);
                         }
@@ -135,31 +133,35 @@ public class CustomEvent : MonoBehaviour
                         targetNPC.setOverrideBusy(false);
                     }
                     targetNPC.setFrameStill();
-                }       //Move the player if set to player
-                if (currentEvent.object0 == PlayerMovementOld.Instance.gameObject)
+                } //Move the player if set to player
+                if (currentEvent.object0 == PlayerMovement.player.gameObject)
                 {
-                    Direction initialDirection = PlayerMovementOld.Instance.CurrentDirection;
+                    int initialDirection = PlayerMovement.player.direction;
 
-                    PlayerMovementOld.Instance.CurrentSpeed = (currentEvent.float0 > 0) ? PlayerMovementOld.Instance.WalkSpeed / currentEvent.float0 : PlayerMovementOld.Instance.WalkSpeed;
+                    PlayerMovement.player.speed = (currentEvent.float0 > 0)
+                        ? PlayerMovement.player.walkSpeed / currentEvent.float0
+                        : PlayerMovement.player.walkSpeed;
                     for (int i = 0; i < currentEvent.int0; i++)
                     {
-                        PlayerMovementOld.Instance.updateDirection(currentEvent.Direction);
-                        Vector3 forwardsVector = PlayerMovementOld.Instance.GetForwardVector();
+                        PlayerMovement.player.updateDirection((int) currentEvent.dir);
+                        Vector3 forwardsVector = PlayerMovement.player.getForwardVector();
                         if (currentEvent.bool0)
-                        { //if direction locked in
-                            PlayerMovementOld.Instance.updateDirection(initialDirection);
+                        {
+                            //if direction locked in
+                            PlayerMovement.player.updateDirection(initialDirection);
                         }
 
-                        PlayerMovementOld.Instance.setOverrideAnimPause(true);
-                        yield return StartCoroutine(PlayerMovementOld.Instance.move(forwardsVector, false, currentEvent.bool0));
-                        PlayerMovementOld.Instance.setOverrideAnimPause(false);
+                        PlayerMovement.player.setOverrideAnimPause(true);
+                        yield return
+                            StartCoroutine(PlayerMovement.player.move(forwardsVector, false, currentEvent.bool0));
+                        PlayerMovement.player.setOverrideAnimPause(false);
                     }
-                    PlayerMovementOld.Instance.CurrentSpeed = PlayerMovementOld.Instance.WalkSpeed;
+                    PlayerMovement.player.speed = PlayerMovement.player.walkSpeed;
                 }
                 break;
 
             case (CustomEventDetails.CustomEventType.TurnTo):
-                Direction direction;
+                int direction;
                 float xDistance;
                 float zDistance;
                 if (currentEvent.object0.GetComponent<NPCHandler>() != null)
@@ -174,28 +176,36 @@ public class CustomEvent : MonoBehaviour
                         xDistance = targetNPC.hitBox.position.x - currentEvent.object1.transform.position.x;
                         zDistance = targetNPC.hitBox.position.z - currentEvent.object1.transform.position.z;
                         if (xDistance >= Mathf.Abs(zDistance))
-                        { //Mathf.Abs() converts zDistance to a positive always.
-                            direction = Direction.LEFT;
-                        }           //this allows for better accuracy when checking orientation.
+                        {
+                            //Mathf.Abs() converts zDistance to a positive always.
+                            direction = 3;
+                        } //this allows for better accuracy when checking orientation.
                         else if (xDistance <= Mathf.Abs(zDistance) * -1)
                         {
-                            direction = Direction.RIGHT;
+                            direction = 1;
                         }
                         else if (zDistance >= Mathf.Abs(xDistance))
                         {
-                            direction = Direction.DOWN;
+                            direction = 2;
                         }
                         else
                         {
-                            direction = Direction.UP;
+                            direction = 0;
                         }
-                        targetNPC.SetDirection(direction);
+                        targetNPC.setDirection(direction);
                     }
                     if (currentEvent.int0 != 0)
                     {
-                        direction = (Direction)(((int)targetNPC.Direction + currentEvent.int0) % 4);
-
-                        targetNPC.SetDirection(direction);
+                        direction = targetNPC.direction + currentEvent.int0;
+                        while (direction > 3)
+                        {
+                            direction -= 4;
+                        }
+                        while (direction < 0)
+                        {
+                            direction += 4;
+                        }
+                        targetNPC.setDirection(direction);
                     }
                 }
                 break;
@@ -254,9 +264,10 @@ public class CustomEvent : MonoBehaviour
                 Dialog.undrawChoiceBox();
                 Dialog.undrawDialogBox();
                 if (chosenIndex < currentEvent.ints.Length)
-                { //only change tree if index is valid
+                {
+                    //only change tree if index is valid
                     if (currentEvent.ints[chosenIndex] != eventTreeIndex &&
-                       currentEvent.ints[chosenIndex] < treesArray.Length)
+                        currentEvent.ints[chosenIndex] < treesArray.Length)
                     {
                         JumpToTree(currentEvent.ints[chosenIndex]);
                     }
@@ -269,28 +280,36 @@ public class CustomEvent : MonoBehaviour
 
             case CustomEventDetails.CustomEventType.ReceiveItem:
                 //Play Good for TM, Average for Item
-                AudioClip itemGetMFX = (currentEvent.bool0) ? Resources.Load<AudioClip>("Audio/mfx/GetGood") : Resources.Load<AudioClip>("Audio/mfx/GetDecent");
+                AudioClip itemGetMFX = (currentEvent.bool0)
+                    ? Resources.Load<AudioClip>("Audio/mfx/GetGood")
+                    : Resources.Load<AudioClip>("Audio/mfx/GetDecent");
                 BgmHandler.main.PlayMFX(itemGetMFX);
 
                 string firstLetter = currentEvent.string0.Substring(0, 1).ToLowerInvariant();
                 Dialog.drawDialogBox();
                 if (currentEvent.bool0)
                 {
-                    Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " received TM" + ItemDatabase.getItem(currentEvent.string0).getTMNo() + ": " + currentEvent.string0 + "!");
+                    Dialog.StartCoroutine("drawText",
+                        SaveData.currentSave.playerName + " received TM" +
+                        ItemDatabase.getItem(currentEvent.string0).getTMNo() + ": " + currentEvent.string0 + "!");
                 }
                 else
                 {
                     if (currentEvent.int0 > 1)
                     {
-                        Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " received " + currentEvent.string0 + "s!");
+                        Dialog.StartCoroutine("drawText",
+                            SaveData.currentSave.playerName + " received " + currentEvent.string0 + "s!");
                     }
-                    else if (firstLetter == "a" || firstLetter == "e" || firstLetter == "i" || firstLetter == "o" || firstLetter == "u")
+                    else if (firstLetter == "a" || firstLetter == "e" || firstLetter == "i" || firstLetter == "o" ||
+                             firstLetter == "u")
                     {
-                        Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " received an " + currentEvent.string0 + "!");
+                        Dialog.StartCoroutine("drawText",
+                            SaveData.currentSave.playerName + " received an " + currentEvent.string0 + "!");
                     }
                     else
                     {
-                        Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " received a " + currentEvent.string0 + "!");
+                        Dialog.StartCoroutine("drawText",
+                            SaveData.currentSave.playerName + " received a " + currentEvent.string0 + "!");
                     }
                 }
                 yield return new WaitForSeconds(itemGetMFX.length);
@@ -302,17 +321,26 @@ public class CustomEvent : MonoBehaviour
                 {
                     if (currentEvent.bool0)
                     {
-                        yield return Dialog.StartCoroutine("drawTextSilent", SaveData.currentSave.playerName + " put the TM" + ItemDatabase.getItem(currentEvent.string0).getTMNo() + " \\away into the bag.");
+                        yield return
+                            Dialog.StartCoroutine("drawTextSilent",
+                                SaveData.currentSave.playerName + " put the TM" +
+                                ItemDatabase.getItem(currentEvent.string0).getTMNo() + " \\away into the bag.");
                     }
                     else
                     {
                         if (currentEvent.int0 > 1)
                         {
-                            yield return Dialog.StartCoroutine("drawTextSilent", SaveData.currentSave.playerName + " put the " + currentEvent.string0 + "s \\away into the bag.");
+                            yield return
+                                Dialog.StartCoroutine("drawTextSilent",
+                                    SaveData.currentSave.playerName + " put the " + currentEvent.string0 +
+                                    "s \\away into the bag.");
                         }
                         else
                         {
-                            yield return Dialog.StartCoroutine("drawTextSilent", SaveData.currentSave.playerName + " put the " + currentEvent.string0 + " \\away into the bag.");
+                            yield return
+                                Dialog.StartCoroutine("drawTextSilent",
+                                    SaveData.currentSave.playerName + " put the " + currentEvent.string0 +
+                                    " \\away into the bag.");
                         }
                     }
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
@@ -355,7 +383,8 @@ public class CustomEvent : MonoBehaviour
                         pkGender = Pokemon.Gender.MALE;
                     }
                     else
-                    {//if not a set gender
+                    {
+//if not a set gender
                         if (currentEvent.ints[2] == 0)
                         {
                             pkGender = Pokemon.Gender.MALE;
@@ -367,16 +396,22 @@ public class CustomEvent : MonoBehaviour
                     }
 
                     Dialog.drawDialogBox();
-                    yield return Dialog.StartCoroutine("drawText", SaveData.currentSave.playerName + " received the " + pkName + "!");
+                    yield return
+                        Dialog.StartCoroutine("drawText",
+                            SaveData.currentSave.playerName + " received the " + pkName + "!");
                     BgmHandler.main.PlayMFX(pokeGetMFX);
                     yield return new WaitForSeconds(pokeGetMFX.length);
 
                     string nickname = currentEvent.strings[0];
                     if (currentEvent.strings[1].Length == 0)
-                    { //If no OT set, allow nicknaming of Pokemon
+                    {
+                        //If no OT set, allow nicknaming of Pokemon
 
                         Dialog.drawDialogBox();
-                        yield return StartCoroutine(Dialog.drawTextSilent("Would you like to give a nickname to \nthe " + pkName + " you received?"));
+                        yield return
+                            StartCoroutine(
+                                Dialog.drawTextSilent("Would you like to give a nickname to \nthe " + pkName +
+                                                      " you received?"));
                         Dialog.drawChoiceBox();
                         yield return StartCoroutine(Dialog.choiceNavigate());
                         int nicknameCI = Dialog.chosenIndex;
@@ -384,19 +419,21 @@ public class CustomEvent : MonoBehaviour
                         Dialog.undrawChoiceBox();
 
                         if (nicknameCI == 1)
-                        { //give nickname
-                          //SfxHandler.Play(selectClip);
+                        {
+                            //give nickname
+                            //SfxHandler.Play(selectClip);
                             yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
 
-                            Scene.main.Typing.gameObject.SetActive(true);
-                            StartCoroutine(Scene.main.Typing.control(10, "", pkGender, Pokemon.GetIconsFromID_(currentEvent.ints[0], currentEvent.bool0)));
-                            while (Scene.main.Typing.gameObject.activeSelf)
+                            PKUScene.main.Typing.gameObject.SetActive(true);
+                            StartCoroutine(PKUScene.main.Typing.control(10, "", pkGender,
+                                Pokemon.GetIconsFromID_(currentEvent.ints[0], currentEvent.bool0)));
+                            while (PKUScene.main.Typing.gameObject.activeSelf)
                             {
                                 yield return null;
                             }
-                            if (Scene.main.Typing.typedString.Length > 0)
+                            if (PKUScene.main.Typing.typedString.Length > 0)
                             {
-                                nickname = Scene.main.Typing.typedString;
+                                nickname = PKUScene.main.Typing.typedString;
                             }
 
                             yield return StartCoroutine(ScreenFade.main.Fade(true, 0.4f));
@@ -407,11 +444,14 @@ public class CustomEvent : MonoBehaviour
                         Dialog.undrawDialogBox();
                     }
 
-                    int[] IVs = new int[]{
-                    Random.Range(0,32), Random.Range(0,32), Random.Range(0,32),
-                    Random.Range(0,32), Random.Range(0,32), Random.Range(0,32)};
+                    int[] IVs = new int[]
+                    {
+                        Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32),
+                        Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32)
+                    };
                     if (currentEvent.bool1)
-                    { //if using Custom IVs
+                    {
+                        //if using Custom IVs
                         IVs[0] = currentEvent.ints[5];
                         IVs[1] = currentEvent.ints[6];
                         IVs[2] = currentEvent.ints[7];
@@ -420,7 +460,9 @@ public class CustomEvent : MonoBehaviour
                         IVs[5] = currentEvent.ints[10];
                     }
 
-                    string pkNature = (currentEvent.ints[3] == 0) ? NatureDatabase.getRandomNature().getName() : NatureDatabase.getNature(currentEvent.ints[3] - 1).getName();
+                    string pkNature = (currentEvent.ints[3] == 0)
+                        ? NatureDatabase.getRandomNature().getName()
+                        : NatureDatabase.getNature(currentEvent.ints[3] - 1).getName();
 
                     string[] pkMoveset = pkd.GenerateMoveset(currentEvent.ints[1]);
                     for (int i = 0; i < 4; i++)
@@ -434,9 +476,11 @@ public class CustomEvent : MonoBehaviour
                     Debug.Log(pkMoveset[0] + ", " + pkMoveset[1] + ", " + pkMoveset[2] + ", " + pkMoveset[3]);
 
 
-                    Pokemon pk = new Pokemon(currentEvent.ints[0], nickname, pkGender, currentEvent.ints[1], currentEvent.bool0, currentEvent.strings[2], currentEvent.strings[3],
-                                             currentEvent.strings[1], IVs[0], IVs[1], IVs[2], IVs[3], IVs[4], IVs[5], 0, 0, 0, 0, 0, 0, pkNature, currentEvent.ints[4],
-                                             pkMoveset, new int[4]);
+                    Pokemon pk = new Pokemon(currentEvent.ints[0], nickname, pkGender, currentEvent.ints[1],
+                        currentEvent.bool0, currentEvent.strings[2], currentEvent.strings[3],
+                        currentEvent.strings[1], IVs[0], IVs[1], IVs[2], IVs[3], IVs[4], IVs[5], 0, 0, 0, 0, 0, 0,
+                        pkNature, currentEvent.ints[4],
+                        pkMoveset, new int[4]);
 
                     SaveData.currentSave.PC.addPokemon(pk);
                 }
@@ -458,8 +502,9 @@ public class CustomEvent : MonoBehaviour
                     {
                         deactivateOnFinish = true;
                     }
-                    else if (currentEvent.object0 != PlayerMovementOld.Instance.gameObject)
-                    { //important to never deactivate the player
+                    else if (currentEvent.object0 != PlayerMovement.player.gameObject)
+                    {
+                        //important to never deactivate the player
                         currentEvent.object0.SetActive(false);
                     }
                 }
@@ -496,8 +541,9 @@ public class CustomEvent : MonoBehaviour
                         break;
                     case CustomEventDetails.Logic.GymBadgeNoOwned:
                         if (Mathf.FloorToInt(currentEvent.float0) < SaveData.currentSave.gymsBeaten.Length &&
-                           Mathf.FloorToInt(currentEvent.float0) >= 0)
-                        { //ensure input number is valid
+                            Mathf.FloorToInt(currentEvent.float0) >= 0)
+                        {
+                            //ensure input number is valid
                             if (SaveData.currentSave.gymsBeaten[Mathf.FloorToInt(currentEvent.float0)])
                             {
                                 passedCheck = true;
@@ -523,7 +569,8 @@ public class CustomEvent : MonoBehaviour
                         {
                             if (SaveData.currentSave.PC.boxes[0][pi] != null)
                             {
-                                if (SaveData.currentSave.PC.boxes[0][pi].getID() == Mathf.FloorToInt(currentEvent.float0))
+                                if (SaveData.currentSave.PC.boxes[0][pi].getID() ==
+                                    Mathf.FloorToInt(currentEvent.float0))
                                 {
                                     passedCheck = true;
                                     pi = 6;
@@ -552,8 +599,8 @@ public class CustomEvent : MonoBehaviour
                 if (passedCheck)
                 {
                     int newTreeIndex = currentEvent.int0;
-                    if (newTreeIndex != eventTreeIndex &&   //only change tree if index is valid
-                       newTreeIndex < treesArray.Length)
+                    if (newTreeIndex != eventTreeIndex && //only change tree if index is valid
+                        newTreeIndex < treesArray.Length)
                     {
                         JumpToTree(newTreeIndex);
                     }
@@ -566,7 +613,7 @@ public class CustomEvent : MonoBehaviour
                 StartCoroutine(ScreenFade.main.FadeCutout(false, ScreenFade.slowedSpeed, null));
 
                 //Automatic LoopStart usage not yet implemented
-                Scene.main.Battle.gameObject.SetActive(true);
+                PKUScene.main.Battle.gameObject.SetActive(true);
 
                 Trainer trainer = currentEvent.object0.GetComponent<Trainer>();
 
@@ -577,15 +624,16 @@ public class CustomEvent : MonoBehaviour
                 }
                 else
                 {
-                    BgmHandler.main.PlayOverlay(Scene.main.Battle.defaultTrainerBGM, Scene.main.Battle.defaultTrainerBGMLoopStart);
+                    BgmHandler.main.PlayOverlay(PKUScene.main.Battle.defaultTrainerBGM,
+                        PKUScene.main.Battle.defaultTrainerBGMLoopStart);
                 }
-                Scene.main.Battle.gameObject.SetActive(false);
+                PKUScene.main.Battle.gameObject.SetActive(false);
                 yield return new WaitForSeconds(1.6f);
 
-                Scene.main.Battle.gameObject.SetActive(true);
-                StartCoroutine(Scene.main.Battle.control(true, trainer, currentEvent.bool0));
+                PKUScene.main.Battle.gameObject.SetActive(true);
+                StartCoroutine(PKUScene.main.Battle.control(true, trainer, currentEvent.bool0));
 
-                while (Scene.main.Battle.gameObject.activeSelf)
+                while (PKUScene.main.Battle.gameObject.activeSelf)
                 {
                     yield return null;
                 }
@@ -595,36 +643,28 @@ public class CustomEvent : MonoBehaviour
 
                 if (currentEvent.bool0)
                 {
-                    if (Scene.main.Battle.victor == 1)
+                    if (PKUScene.main.Battle.victor == 1)
                     {
-
                         int newTreeIndex = currentEvent.int0;
-                        if (newTreeIndex != eventTreeIndex &&   //only change tree if index is valid
-                           newTreeIndex < treesArray.Length)
+                        if (newTreeIndex != eventTreeIndex && //only change tree if index is valid
+                            newTreeIndex < treesArray.Length)
                         {
                             JumpToTree(newTreeIndex);
                         }
-
                     }
                 }
 
                 break;
-
-
-
-
-
         }
-
     }
 
     private bool EventRequiresDialogBox(CustomEventDetails.CustomEventType eventType)
     {
         //Events that require immediate use of the DialogBox
         if (eventType == CustomEventDetails.CustomEventType.Dialog ||
-           eventType == CustomEventDetails.CustomEventType.Choice ||
-           eventType == CustomEventDetails.CustomEventType.ReceiveItem ||
-           eventType == CustomEventDetails.CustomEventType.ReceivePokemon)
+            eventType == CustomEventDetails.CustomEventType.Choice ||
+            eventType == CustomEventDetails.CustomEventType.ReceiveItem ||
+            eventType == CustomEventDetails.CustomEventType.ReceivePokemon)
         {
             return true;
         }
@@ -639,7 +679,6 @@ public class CustomEvent : MonoBehaviour
 }
 
 
-
 [System.Serializable]
 public class CustomEventTree
 {
@@ -650,23 +689,30 @@ public class CustomEventTree
 [System.Serializable]
 public class CustomEventDetails
 {
-
     public enum CustomEventType
     {
-        Wait,           //float0: wait time
-        Walk,           //direction | int0: walk spaces | object0: Character to move | bool0: lock direction
-        TurnTo,         //int0: direction modifier | object0: NPC to turn | object1: Object to turn to
-        Dialog,         //strings: lines of dialog
-        Choice,         //strings: choices (none for Yes/No) | ints: eventTrees to jump to (same for continue)
-        Sound,          //sound: sound to play
+        Wait, //float0: wait time
+        Walk, //direction | int0: walk spaces | object0: Character to move | bool0: lock direction
+        TurnTo, //int0: direction modifier | object0: NPC to turn | object1: Object to turn to
+        Dialog, //strings: lines of dialog
+        Choice, //strings: choices (none for Yes/No) | ints: eventTrees to jump to (same for continue)
+        Sound, //sound: sound to play
         ReceiveItem,
         ReceivePokemon, //ints[0]: Pokemon ID | ints[1]: Level | ints[2]: Gender | ints[3]: Nature | ints[4]: Ability
-                        //strings[0]: Nickname | strings[1]: OT | strings[2]: Poké Ball | strings[3]: Held Item
-                        //ints[5-10]: Custom IVs | strings[4-7]: Custom Moves | bool0: Is Shiny | bool1: Use Custom IVs
-        SetActive,      //object0: game object to activate
-        SetCVariable,   //string0: CVariable name | float0: new value
-        LogicCheck,     //logic | float0: check value | string0: CVariable name
-        TrainerBattle   //object0: trainer script | bool0: allowed to lose | int0: tree to jump to on loss
+        //strings[0]: Nickname | strings[1]: OT | strings[2]: Poké Ball | strings[3]: Held Item
+        //ints[5-10]: Custom IVs | strings[4-7]: Custom Moves | bool0: Is Shiny | bool1: Use Custom IVs
+        SetActive, //object0: game object to activate
+        SetCVariable, //string0: CVariable name | float0: new value
+        LogicCheck, //logic | float0: check value | string0: CVariable name
+        TrainerBattle //object0: trainer script | bool0: allowed to lose | int0: tree to jump to on loss
+    }
+
+    public enum Direction
+    {
+        Up,
+        Right,
+        Down,
+        Left
     }
 
     public enum Logic
@@ -682,7 +728,7 @@ public class CustomEventDetails
 
     public CustomEventType eventType;
 
-    public Direction Direction;
+    public Direction dir;
 
     public Logic logic;
 
@@ -703,7 +749,6 @@ public class CustomEventDetails
 
 
     public bool runSimultaneously;
-
 }
 
 [System.Serializable]

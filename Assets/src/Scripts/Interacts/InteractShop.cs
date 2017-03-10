@@ -5,7 +5,6 @@ using System.Collections;
 
 public class InteractShop : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
 
     private NPCHandler thisNPC;
@@ -29,39 +28,40 @@ public class InteractShop : MonoBehaviour
     }
 
 
-
     public IEnumerator interact()
     {
-        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
         {
-
             if (thisNPC != null)
             {
-                Direction direction;
+                int direction;
                 //calculate player's position relative to this npc's and set direction accordingly.
-                float xDistance = thisNPC.transform.position.x - PlayerMovementOld.Instance.transform.position.x;
-                float zDistance = thisNPC.transform.position.z - PlayerMovementOld.Instance.transform.position.z;
+                float xDistance = thisNPC.transform.position.x - PlayerMovement.player.transform.position.x;
+                float zDistance = thisNPC.transform.position.z - PlayerMovement.player.transform.position.z;
                 if (xDistance >= Mathf.Abs(zDistance))
-                { //Mathf.Abs() converts zDistance to a positive always.
-                    direction = Direction.LEFT;
-                }           //this allows for better accuracy when checking orientation.
+                {
+                    //Mathf.Abs() converts zDistance to a positive always.
+                    direction = 3;
+                } //this allows for better accuracy when checking orientation.
                 else if (xDistance <= Mathf.Abs(zDistance) * -1)
                 {
-                    direction = Direction.RIGHT;
+                    direction = 1;
                 }
                 else if (zDistance >= Mathf.Abs(xDistance))
                 {
-                    direction = Direction.DOWN;
+                    direction = 2;
                 }
                 else
                 {
-                    direction = Direction.UP;
+                    direction = 0;
                 }
-                thisNPC.SetDirection(direction);
+                thisNPC.setDirection(direction);
             }
 
-            string[] choices = new string[]{
-                "Shop","Leave"};
+            string[] choices = new string[]
+            {
+                "Shop", "Leave"
+            };
 
             Dialog.drawDialogBox();
             yield return StartCoroutine(Dialog.drawText(interactDialog));
@@ -74,18 +74,17 @@ public class InteractShop : MonoBehaviour
                 if (chosenIndex == 1)
                 {
                     Dialog.undrawDialogBox();
-                    yield return StartCoroutine(PlayerMovementOld.Instance.moveCameraTo(new Vector3(7, 0, 0), 0.35f));
+                    yield return StartCoroutine(PlayerMovement.player.moveCameraTo(new Vector3(7, 0, 0), 0.35f));
 
-                    Scene.main.Bag.gameObject.SetActive(true);
-                    StartCoroutine(Scene.main.Bag.control(itemCatalog));
+                    PKUScene.main.Bag.gameObject.SetActive(true);
+                    StartCoroutine(PKUScene.main.Bag.control(itemCatalog));
 
-                    while (Scene.main.Bag.gameObject.activeSelf)
+                    while (PKUScene.main.Bag.gameObject.activeSelf)
                     {
                         yield return null;
                     }
 
-                    yield return StartCoroutine(PlayerMovementOld.Instance.moveCameraTo(new Vector3(0, 0, 0), 0.35f));
-
+                    yield return StartCoroutine(PlayerMovement.player.moveCameraTo(new Vector3(0, 0, 0), 0.35f));
                 }
 
                 Dialog.drawDialogBox();
@@ -104,7 +103,6 @@ public class InteractShop : MonoBehaviour
             }
             Dialog.undrawDialogBox();
         }
-        PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+        PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
     }
-
 }

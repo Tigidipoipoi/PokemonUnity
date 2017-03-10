@@ -5,7 +5,6 @@ using System.Collections;
 
 public class NPCHandler : MonoBehaviour
 {
-
     public int pokemonID = 0;
 
     public enum NPCBehaviour
@@ -39,7 +38,7 @@ public class NPCHandler : MonoBehaviour
 
     public Transform hitBox;
 
-    public Direction Direction = Direction.DOWN;
+    public int direction = 2;
 
     public MapCollider currentMap;
     public MapCollider destinationMap;
@@ -55,7 +54,6 @@ public class NPCHandler : MonoBehaviour
 
     void Awake()
     {
-
         pawnSprite = transform.FindChild("Pawn").GetComponent<SpriteRenderer>();
         pawnReflectionSprite = transform.FindChild("PawnReflection").GetComponent<SpriteRenderer>();
 
@@ -122,7 +120,6 @@ public class NPCHandler : MonoBehaviour
         }
 
 
-
         if (npcBehaviour == NPCBehaviour.Walk)
         {
             StartCoroutine("walkAtRandom");
@@ -131,9 +128,7 @@ public class NPCHandler : MonoBehaviour
         {
             StartCoroutine("patrolAround");
         }
-
     }
-
 
 
     //Better exclaimation not yet implemented
@@ -168,12 +163,13 @@ public class NPCHandler : MonoBehaviour
             frame = 0;
             frames = 4;
             framesPerSec = 7;
-            secPerFrame = 1f / (float)framesPerSec;
+            secPerFrame = 1f / (float) framesPerSec;
             while (true)
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    while (PlayerMovementOld.Instance.busyWith != null && PlayerMovementOld.Instance.busyWith != this.gameObject && !overrideBusy)
+                    while (PlayerMovement.player.busyWith != null && PlayerMovement.player.busyWith != this.gameObject &&
+                           !overrideBusy)
                     {
                         yield return null;
                     }
@@ -181,7 +177,7 @@ public class NPCHandler : MonoBehaviour
                     {
                         frame -= 1;
                     }
-                    pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
+                    pawnSprite.sprite = spriteSheet[direction * frames + frame];
                     pawnReflectionSprite.sprite = pawnSprite.sprite;
                     yield return new WaitForSeconds(secPerFrame / 4f);
                 }
@@ -202,8 +198,8 @@ public class NPCHandler : MonoBehaviour
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    pawnSprite.sprite = spriteSheet[(int)Direction * 2 + frame];
-                    pawnLightSprite.sprite = lightSheet[(int)Direction * 2 + frame];
+                    pawnSprite.sprite = spriteSheet[direction * 2 + frame];
+                    pawnLightSprite.sprite = lightSheet[direction * 2 + frame];
 
                     pawnReflectionSprite.sprite = pawnSprite.sprite;
                     pawnLightReflectionSprite.sprite = pawnLightSprite.sprite;
@@ -230,21 +226,21 @@ public class NPCHandler : MonoBehaviour
         {
             frame -= 1;
         }
-        pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
+        pawnSprite.sprite = spriteSheet[direction * frames + frame];
         pawnReflectionSprite.sprite = pawnSprite.sprite;
     }
 
-    public void SetDirection(Direction pNewDirection)
+    public void setDirection(int newDirection)
     {
-        Direction = pNewDirection;
-        pawnSprite.sprite = spriteSheet[(int)Direction * frames + frame];
+        direction = newDirection;
+        pawnSprite.sprite = spriteSheet[direction * frames + frame];
         pawnReflectionSprite.sprite = pawnSprite.sprite;
     }
 
     private IEnumerator walkAtRandom()
     {
         float waitTime;
-        Direction newDirection;
+        int newDirection;
         int walkDistance;
         while (true)
         {
@@ -253,10 +249,11 @@ public class NPCHandler : MonoBehaviour
                 waitTime = Random.Range(-0.8f, 1.6f);
                 waitTime = 1.1f + (waitTime * waitTime * waitTime);
 
-                newDirection = (Direction)Random.Range(0, 4);
+                newDirection = Random.Range(0, 4);
                 walkDistance = Random.Range(0, 5);
                 if (walkDistance > 1)
-                { //make movements of 1 more likely than others. 
+                {
+                    //make movements of 1 more likely than others. 
                     walkDistance -= 1;
                 }
 
@@ -264,7 +261,7 @@ public class NPCHandler : MonoBehaviour
                 {
                     yield return null;
                 }
-                Direction = newDirection;
+                direction = newDirection;
                 yield return null; //2 frame delay to prevent taking a step before initialising battle.
                 yield return null;
 
@@ -272,28 +269,28 @@ public class NPCHandler : MonoBehaviour
                 for (int i = 0; i < walkDistance; i++)
                 {
                     bool atEdge = false;
-                    if (newDirection == Direction.UP)
+                    if (newDirection == 0)
                     {
                         if (hitBox.position.z >= (initialPosition.z + walkRange.y))
                         {
                             atEdge = true;
                         }
                     }
-                    else if (newDirection == Direction.RIGHT)
+                    else if (newDirection == 1)
                     {
                         if (hitBox.position.x >= (initialPosition.x + walkRange.x))
                         {
                             atEdge = true;
                         }
                     }
-                    else if (newDirection == Direction.DOWN)
+                    else if (newDirection == 2)
                     {
                         if (hitBox.position.z <= (initialPosition.z - walkRange.y))
                         {
                             atEdge = true;
                         }
                     }
-                    else if (newDirection == Direction.LEFT)
+                    else if (newDirection == 3)
                     {
                         if (hitBox.position.x <= (initialPosition.x - walkRange.x))
                         {
@@ -327,7 +324,7 @@ public class NPCHandler : MonoBehaviour
                 {
                     yield return null;
                 }
-                Direction = patrol[i].Direction;
+                direction = patrol[i].direction;
                 yield return null; //2 frame delay to prevent taking a step before initialising battle.
                 yield return null;
 
@@ -364,15 +361,33 @@ public class NPCHandler : MonoBehaviour
     {
         return getForwardsVector(false);
     }
+
     public Vector3 getForwardsVector(bool noClip)
     {
-        Vector3 forwardsVector = PlayerMovementOld.Instance.GetForwardVectorRaw(Direction);
+        Vector3 forwardsVector = new Vector3(0, 0, 0);
+        if (direction == 0)
+        {
+            forwardsVector = new Vector3(0, 0, 1f);
+        }
+        else if (direction == 1)
+        {
+            forwardsVector = new Vector3(1f, 0, 0);
+        }
+        else if (direction == 2)
+        {
+            forwardsVector = new Vector3(0, 0, -1f);
+        }
+        else if (direction == 3)
+        {
+            forwardsVector = new Vector3(-1f, 0, 0);
+        }
 
         Vector3 movement = forwardsVector;
 
         //Check destination map																	//0.5f to adjust for stair height
         //cast a ray directly downwards from the position directly in front of the npc			//1f to check in line with player's head
-        RaycastHit[] mapHitColliders = Physics.RaycastAll(transform.position + movement + new Vector3(0, 1.5f, 0), Vector3.down);
+        RaycastHit[] mapHitColliders = Physics.RaycastAll(transform.position + movement + new Vector3(0, 1.5f, 0),
+            Vector3.down);
         RaycastHit mapHit = new RaycastHit();
         //cycle through each of the collisions
         if (mapHitColliders.Length > 0)
@@ -390,7 +405,8 @@ public class NPCHandler : MonoBehaviour
         }
 
         //check for a bridge at the destination
-        RaycastHit bridgeHit = MapCollider.getBridgeHitOfPosition(transform.position + movement + new Vector3(0, 1.5f, 0));
+        RaycastHit bridgeHit =
+            MapCollider.getBridgeHitOfPosition(transform.position + movement + new Vector3(0, 1.5f, 0));
         if (bridgeHit.collider != null)
         {
             //modify the forwards vector to align to the bridge.
@@ -404,8 +420,9 @@ public class NPCHandler : MonoBehaviour
         }
 
 
-        float currentSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(transform.position, Direction));
-        float destinationSlope = Mathf.Abs(MapCollider.GetSlopeOfPosition(transform.position + forwardsVector, Direction));
+        float currentSlope = Mathf.Abs(MapCollider.getSlopeOfPosition(transform.position, direction));
+        float destinationSlope =
+            Mathf.Abs(MapCollider.getSlopeOfPosition(transform.position + forwardsVector, direction));
         float yDistance = Mathf.Abs((transform.position.y + movement.y) - transform.position.y);
         yDistance = Mathf.Round(yDistance * 100f) / 100f;
 
@@ -415,7 +432,6 @@ public class NPCHandler : MonoBehaviour
             //if yDistance is greater than both slopes there is a vertical wall between them
             if (yDistance <= currentSlope || yDistance <= destinationSlope)
             {
-
                 //check destination tileTag for impassibles unless NoClipping
                 if (!noClip)
                 {
@@ -427,14 +443,16 @@ public class NPCHandler : MonoBehaviour
                     else
                     {
                         if (trainerSurfing)
-                        { //if a surf trainer, normal tiles are impassible
+                        {
+                            //if a surf trainer, normal tiles are impassible
                             if (destinationTileTag != 2)
                             {
                                 return Vector3.zero;
                             }
                         }
                         else
-                        { //if not a surf trainer, surf tiles are impassible
+                        {
+                            //if not a surf trainer, surf tiles are impassible
                             if (destinationTileTag == 2)
                             {
                                 return Vector3.zero;
@@ -452,8 +470,9 @@ public class NPCHandler : MonoBehaviour
                     {
                         for (int i = 0; i < hitColliders.Length; i++)
                         {
-                            if (hitColliders[i].name == "Player_Transparent" || hitColliders[i].name == "Follower_Transparent" ||
-                               hitColliders[i].name.ToLowerInvariant().Contains("_object"))
+                            if (hitColliders[i].name == "Player_Transparent" ||
+                                hitColliders[i].name == "Follower_Transparent" ||
+                                hitColliders[i].name.ToLowerInvariant().Contains("_object"))
                             {
                                 destinationPassable = false;
                             }
@@ -465,7 +484,6 @@ public class NPCHandler : MonoBehaviour
                 {
                     return movement;
                 }
-
             }
         }
         return Vector3.zero;
@@ -476,12 +494,16 @@ public class NPCHandler : MonoBehaviour
     {
         yield return StartCoroutine(move(movement, 1));
     }
+
     public IEnumerator move(Vector3 movement, float speedMod)
     {
         float increment = 0f;
 
-        if (speedMod <= 0) { speedMod = 1f; }
-        float speed = PlayerMovementOld.Instance.WalkSpeed / speedMod;
+        if (speedMod <= 0)
+        {
+            speedMod = 1f;
+        }
+        float speed = PlayerMovement.player.walkSpeed / speedMod;
         framesPerSec = Mathf.RoundToInt(7f * speedMod);
 
         Vector3 startPosition = transform.position;
@@ -489,10 +511,13 @@ public class NPCHandler : MonoBehaviour
 
         animPause = false;
         while (increment < 1f)
-        { //increment increases slowly to 1 over the frames
-            if (PlayerMovementOld.Instance.busyWith == null || PlayerMovementOld.Instance.busyWith == this.gameObject || overrideBusy)
+        {
+            //increment increases slowly to 1 over the frames
+            if (PlayerMovement.player.busyWith == null || PlayerMovement.player.busyWith == this.gameObject ||
+                overrideBusy)
             {
-                increment += (1f / speed) * Time.deltaTime; //speed is determined by how many squares are crossed in one second
+                increment += (1f / speed) * Time.deltaTime;
+                    //speed is determined by how many squares are crossed in one second
                 if (increment > 1)
                 {
                     increment = 1;
@@ -509,15 +534,12 @@ public class NPCHandler : MonoBehaviour
     {
         overrideBusy = set;
     }
-
 }
 
 [System.Serializable]
 public class WalkCommand
 {
-
-    public Direction Direction;
+    public int direction;
     public int steps;
     public float endWait;
-
 }

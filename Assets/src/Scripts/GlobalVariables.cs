@@ -2,15 +2,13 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class GlobalVariables : MonoBehaviour
 {
-
     public static GlobalVariables global;
 
     public Vector3 playerPosition;
-    public Direction PlayerDirection;
+    public int playerDirection;
     public bool playerForwardOnLoad;
     public bool fadeIn;
     public Texture fadeTex;
@@ -33,20 +31,20 @@ public class GlobalVariables : MonoBehaviour
     public string itemUsedLast;
 
 
-
     //Important gameplay data
     public bool respawning = false;
 
 
-
-
     void Awake()
     {
+        SceneManager.sceneLoaded += onSceneLoaded;
+
         if (SaveData.currentSave == null)
         {
             Debug.Log("save file created");
             SaveData.currentSave = new SaveData(-1);
         }
+
         if (global == null)
         {
             global = this;
@@ -57,11 +55,13 @@ public class GlobalVariables : MonoBehaviour
             Object.DontDestroyOnLoad(this.gameObject);
 
 
-
-            if (!PlayerPrefs.HasKey("textSpeed") || !PlayerPrefs.HasKey("musicVolume") || !PlayerPrefs.HasKey("sfxVolume") ||
-               !PlayerPrefs.HasKey("frameStyle") || !PlayerPrefs.HasKey("battleScene") || !PlayerPrefs.HasKey("battleStyle") ||
-               !PlayerPrefs.HasKey("screenSize") || !PlayerPrefs.HasKey("fullscreen"))
-            {   //if a playerpref isn't set
+            if (!PlayerPrefs.HasKey("textSpeed") || !PlayerPrefs.HasKey("musicVolume") ||
+                !PlayerPrefs.HasKey("sfxVolume") ||
+                !PlayerPrefs.HasKey("frameStyle") || !PlayerPrefs.HasKey("battleScene") ||
+                !PlayerPrefs.HasKey("battleStyle") ||
+                !PlayerPrefs.HasKey("screenSize") || !PlayerPrefs.HasKey("fullscreen"))
+            {
+                //if a playerpref isn't set
 
                 PlayerPrefs.SetInt("textSpeed", 2);
                 float mVol = (7f / 20f) * (7f / 20f);
@@ -81,12 +81,48 @@ public class GlobalVariables : MonoBehaviour
             GL.Clear(false, true, new Color(0.0f, 0.0f, 0.0f, 0.0f));
 
             SetDEBUGFileData();
-
-
         }
         else if (global != this)
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void onSceneLoaded(UnityEngine.SceneManagement.Scene pLoadedScene, LoadSceneMode pLoadSceneMode)
+    {
+        if (pLoadedScene.name == "startup")
+            return;
+
+        if (global == this)
+        {
+            Player = GameObject.Find("Player");
+            FollowerSettings = Player.GetComponentInChildren<FollowerMovement>();
+            if (global.fadeIn)
+            {
+                StartCoroutine(ScreenFade.main.Fade(true, ScreenFade.slowedSpeed));
+
+                //if fading in to the scene.
+                Player.transform.position = global.playerPosition;
+                PlayerMovement.player.direction = global.playerDirection;
+                if (!respawning)
+                {
+                    PlayerMovement.player.pauseInput(0.6f);
+                }
+                else
+                {
+                    PlayerMovement.player.pauseInput(0.4f);
+                }
+                if (playerForwardOnLoad)
+                {
+                    PlayerMovement.player.forceMoveForward();
+                    playerForwardOnLoad = false;
+                }
+            }
+            else
+            {
+                ScreenFade.main.SetToFadedIn();
+            }
+            FollowerSettings.changeFollower(followerIndex);
         }
     }
 
@@ -100,9 +136,11 @@ public class GlobalVariables : MonoBehaviour
         SaveData.currentSave.playerOutfit = "hgss";
 
         //PC test
-        SaveData.currentSave.PC.addPokemon(new Pokemon(006, null, Pokemon.Gender.CALCULATE, 3, true, "Poké Ball", "", "Gold",
-                                                       Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32),
-                                                       0, 0, 0, 0, 0, 0, "ADAMANT", 0, PokemonDatabase.getPokemon(6).GenerateMoveset(42), new int[4]));
+        SaveData.currentSave.PC.addPokemon(new Pokemon(006, null, Pokemon.Gender.CALCULATE, 3, true, "Poké Ball", "",
+            "Gold",
+            Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32),
+            Random.Range(0, 32),
+            0, 0, 0, 0, 0, 0, "ADAMANT", 0, PokemonDatabase.getPokemon(6).GenerateMoveset(42), new int[4]));
         SaveData.currentSave.PC.addPokemon(new Pokemon(197, Pokemon.Gender.CALCULATE, 34, "Great Ball", "", "Gold", 0));
         SaveData.currentSave.PC.addPokemon(new Pokemon(393, Pokemon.Gender.CALCULATE, 6, "Poké Ball", "", "Gold", 0));
         SaveData.currentSave.PC.addPokemon(new Pokemon(197, Pokemon.Gender.CALCULATE, 28, "Great Ball", "", "Gold", -1));
@@ -115,10 +153,10 @@ public class GlobalVariables : MonoBehaviour
         SaveData.currentSave.PC.addPokemon(new Pokemon(157, Pokemon.Gender.CALCULATE, 51, "Poké Ball", "", "Gold", 0));
         SaveData.currentSave.PC.addPokemon(new Pokemon(300, Pokemon.Gender.CALCULATE, 51, "Poké Ball", "", "Gold", 0));
 
-        SaveData.currentSave.PC.addPokemon(new Pokemon(393, "Surf Bloke", Pokemon.Gender.MALE, 15, false, "Ultra Ball", "", "Gold",
-                                                       31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, "ADAMANT", 0,
-                                                       new string[] { "Drill Peck", "Surf", "Growl", "Dragon Rage" }, new int[] { 0, 0, 0, 3 }));
-
+        SaveData.currentSave.PC.addPokemon(new Pokemon(393, "Surf Bloke", Pokemon.Gender.MALE, 15, false, "Ultra Ball",
+            "", "Gold",
+            31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, "ADAMANT", 0,
+            new string[] { "Drill Peck", "Surf", "Growl", "Dragon Rage" }, new int[] { 0, 0, 0, 3 }));
 
 
         SaveData.currentSave.PC.boxes[0][1].setNickname("Greg");
@@ -153,17 +191,16 @@ public class GlobalVariables : MonoBehaviour
         SaveData.currentSave.PC.boxes[0][4].setStatus(Pokemon.Status.ASLEEP);
 
 
-        SaveData.currentSave.PC.addPokemon(new Pokemon(012, null, Pokemon.Gender.CALCULATE, 35, false, "Great Ball", "", "Gold",
-                                                       31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, "ADAMANT", 0,
-                                                       new string[] { "Ominous Wind", "Sunny Day", "Gust", "Sleep Powder" }, new int[] { 0, 0, 0, 0 }));
+        SaveData.currentSave.PC.addPokemon(new Pokemon(012, null, Pokemon.Gender.CALCULATE, 35, false, "Great Ball", "",
+            "Gold",
+            31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, "ADAMANT", 0,
+            new string[] { "Ominous Wind", "Sunny Day", "Gust", "Sleep Powder" }, new int[] { 0, 0, 0, 0 }));
 
         //SaveData.currentSave.PC.swapPokemon(0,1,3,1);
         SaveData.currentSave.PC.swapPokemon(0, 2, 3, 2);
         SaveData.currentSave.PC.swapPokemon(0, 3, 3, 3);
         SaveData.currentSave.PC.swapPokemon(0, 4, 3, 4);
         SaveData.currentSave.PC.swapPokemon(0, 5, 3, 5);
-
-
 
 
         SaveData.currentSave.PC.packParty();
@@ -215,56 +252,22 @@ public class GlobalVariables : MonoBehaviour
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //debug code to test badge box
-        SaveData.currentSave.gymsEncountered = new bool[]{
-            true, true, false, true, true, true,
-            false, false, false, false, false, false};
-        SaveData.currentSave.gymsBeaten = new bool[]{
-            true, true, false, false, false, true,
-            false, false, false, false, false, false};
-        SaveData.currentSave.gymsBeatTime = new string[]{
-            "Apr. 27th, 2015", "Apr. 30th, 2015", null, null, null, "May. 1st, 2015",
-            null, null, null, null, null, null};
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    }
-
-    void OnLevelWasLoaded()
-    {
-        // Old: Application.loadedLevelName 
-        if (SceneManager.GetActiveScene().name != "startup")
+        SaveData.currentSave.gymsEncountered = new bool[]
         {
-            if (global == this)
-            {
-                Player = GameObject.Find("Player");
-                FollowerSettings = Player.GetComponentInChildren<FollowerMovement>();
-                if (global.fadeIn)
-                {
-                    StartCoroutine(ScreenFade.main.Fade(true, ScreenFade.slowedSpeed));
-
-                    //if fading in to the scene.
-                    Player.transform.position = global.playerPosition;
-                    PlayerMovementOld.Instance.CurrentDirection = global.PlayerDirection;
-                    if (!respawning)
-                    {
-                        PlayerMovementOld.Instance.pauseInput(0.6f);
-                    }
-                    else
-                    {
-                        PlayerMovementOld.Instance.pauseInput(0.4f);
-                    }
-                    if (playerForwardOnLoad)
-                    {
-                        PlayerMovementOld.Instance.forceMoveForward();
-                        playerForwardOnLoad = false;
-                    }
-                }
-                else
-                {
-                    ScreenFade.main.SetToFadedIn();
-                }
-                FollowerSettings.changeFollower(followerIndex);
-            }
-        }
+            true, true, false, true, true, true,
+            false, false, false, false, false, false
+        };
+        SaveData.currentSave.gymsBeaten = new bool[]
+        {
+            true, true, false, false, false, true,
+            false, false, false, false, false, false
+        };
+        SaveData.currentSave.gymsBeatTime = new string[]
+        {
+            "Apr. 27th, 2015", "Apr. 30th, 2015", null, null, null, "May. 1st, 2015",
+            null, null, null, null, null, null
+        };
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     /// Loads the new scene, placing the player in the correct position.
@@ -275,7 +278,7 @@ public class GlobalVariables : MonoBehaviour
         fadeIn = true;
         playerForwardOnLoad = false;
         playerPosition = SaveData.currentSave.respawnScenePosition;
-        PlayerDirection = SaveData.currentSave.RespawnSceneDirection;
+        playerDirection = SaveData.currentSave.respawnSceneDirection;
 
         if (string.IsNullOrEmpty(SaveData.currentSave.respawnSceneName))
         {
@@ -286,12 +289,7 @@ public class GlobalVariables : MonoBehaviour
         {
             SceneManager.LoadScene(SaveData.currentSave.respawnSceneName);
         }
-
     }
-
-
-
-
 
 
     public void debug(string message)

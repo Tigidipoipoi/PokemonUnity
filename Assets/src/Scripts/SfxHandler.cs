@@ -5,7 +5,6 @@ using System.Collections;
 
 public class SfxHandler : MonoBehaviour
 {
-
     public static SfxHandler sfxHandler;
 
     public AudioSource[] sources;
@@ -91,14 +90,19 @@ public class SfxHandler : MonoBehaviour
                 increment = 1f;
             }
 
-            if (!source.isPlaying) { increment = 1f; Debug.Log("early end"); }
+            if (!source.isPlaying)
+            {
+                increment = 1f;
+                Debug.Log("early end");
+            }
 
             source.volume = initialVolume * (1 - increment);
-            if (source.isPlaying) { yield return null; }
+            if (source.isPlaying)
+            {
+                yield return null;
+            }
         }
         source.volume = initialVolume;
         source.Stop();
     }
-
-
 }

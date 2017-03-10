@@ -5,7 +5,6 @@ using System.Collections;
 
 public class InteractBreak : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
 
     private Animator myAnimator;
@@ -24,10 +23,9 @@ public class InteractBreak : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
         Dialog = GameObject.Find("GUI").GetComponent<DialogBoxHandler>();
 
-        myAnimator = (Animator)this.GetComponentInChildren<Animator>();
+        myAnimator = (Animator) this.GetComponentInChildren<Animator>();
         objectSprite = this.GetComponentInChildren<SpriteRenderer>();
         hitBox = this.GetComponentInChildren<BoxCollider>();
 
@@ -58,9 +56,10 @@ public class InteractBreak : MonoBehaviour
         Pokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty(fieldEffect);
         if (targetPokemon != null)
         {
-            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
             {
-                Dialog.drawDialogBox();     //yield return StartCoroutine blocks the next code from running until coroutine is done.
+                Dialog.drawDialogBox();
+                    //yield return StartCoroutine blocks the next code from running until coroutine is done.
                 yield return Dialog.StartCoroutine("drawText", interactText);
                 /* 			//This inactive code is used to print a third line of text.
                     while(!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back")){	//these 3 lines stop the next bit from running until space is pressed.
@@ -75,10 +74,13 @@ public class InteractBreak : MonoBehaviour
                 yield return Dialog.StartCoroutine(Dialog.choiceNavigate()); //it then assigns a value to that int
                 Dialog.undrawChoiceBox();
                 if (Dialog.chosenIndex == 1)
-                { //check that int's value
+                {
+                    //check that int's value
 
                     Dialog.drawDialogBox();
-                    yield return Dialog.StartCoroutine("drawText", targetPokemon.getName() + " used " + targetPokemon.getFirstFEInstance(fieldEffect) + "!");
+                    yield return
+                        Dialog.StartCoroutine("drawText",
+                            targetPokemon.getName() + " used " + targetPokemon.getFirstFEInstance(fieldEffect) + "!");
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                     {
                         yield return null;
@@ -99,18 +101,18 @@ public class InteractBreak : MonoBehaviour
                     breaking = true;
 
                     yield return new WaitForSeconds(1f);
-
                 }
                 Dialog.undrawDialogBox();
                 yield return new WaitForSeconds(0.2f);
-                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
             }
         }
         else
         {
-            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
             {
-                Dialog.drawDialogBox();     //yield return StartCoroutine blocks the next code from running until coroutine is done.
+                Dialog.drawDialogBox();
+                    //yield return StartCoroutine blocks the next code from running until coroutine is done.
                 yield return Dialog.StartCoroutine("drawText", examineText);
                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                 {
@@ -118,7 +120,7 @@ public class InteractBreak : MonoBehaviour
                 }
                 Dialog.undrawDialogBox();
                 yield return new WaitForSeconds(0.2f);
-                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
             }
         }
     }

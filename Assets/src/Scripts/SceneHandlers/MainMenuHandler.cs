@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuHandler : MonoBehaviour
 {
-
     public int selectedButton = 0;
     public int selectedFile = 0;
 
@@ -22,9 +21,7 @@ public class MainMenuHandler : MonoBehaviour
     private GUIText[] buttonTextShadow = new GUIText[3];
 
     private GUIText fileNumbersText;
-    /* [UNHANDLED YET]
-    private GUIText fileNumbersTextShadow;
-    //*/
+    //private GUIText fileNumbersTextShadow;
     private GUIText fileSelected;
 
     private GUIText mapNameText;
@@ -35,7 +32,6 @@ public class MainMenuHandler : MonoBehaviour
 
     void Awake()
     {
-
         SaveLoad.Load();
 
         fileDataPanel = transform.FindChild("FileData").gameObject;
@@ -44,10 +40,12 @@ public class MainMenuHandler : MonoBehaviour
         Transform newGameButton = transform.FindChild("NewGame");
         Transform settingsButton = transform.FindChild("Settings");
 
-        Transform[] buttonTransforms = new Transform[]{
+        Transform[] buttonTransforms = new Transform[]
+        {
             continueButton.transform,
             newGameButton,
-            settingsButton};
+            settingsButton
+        };
         for (int i = 0; i < 3; i++)
         {
             button[i] = buttonTransforms[i].FindChild("ButtonTexture").GetComponent<GUITexture>();
@@ -57,9 +55,7 @@ public class MainMenuHandler : MonoBehaviour
         }
 
         fileNumbersText = continueButton.transform.FindChild("FileNumbers").GetComponent<GUIText>();
-        /* [UNHANDLED YET]
-        fileNumbersTextShadow = fileNumbersText.transform.FindChild("FileNumbersShadow").GetComponent<GUIText>();
-        //*/
+        //fileNumbersTextShadow = fileNumbersText.transform.FindChild("FileNumbersShadow").GetComponent<GUIText>();
         fileSelected = fileNumbersText.transform.FindChild("FileSelected").GetComponent<GUIText>();
 
         mapNameText = fileDataPanel.transform.FindChild("MapName").GetComponent<GUIText>();
@@ -75,9 +71,7 @@ public class MainMenuHandler : MonoBehaviour
 
     void Start()
     {
-
         StartCoroutine(control());
-
     }
 
     private void updateButton(int newButtonIndex)
@@ -97,10 +91,12 @@ public class MainMenuHandler : MonoBehaviour
     {
         selectedFile = newFileIndex;
 
-        Vector2[] highlightPositions = new Vector2[]{
-            new Vector2(132,143),
-            new Vector2(147,143),
-            new Vector2(162,143)};
+        Vector2[] highlightPositions = new Vector2[]
+        {
+            new Vector2(132, 143),
+            new Vector2(147, 143),
+            new Vector2(162, 143)
+        };
         fileSelected.pixelOffset = highlightPositions[selectedFile];
         fileSelected.text = "" + (selectedFile + 1);
 
@@ -124,9 +120,9 @@ public class MainMenuHandler : MonoBehaviour
             mapNameText.text = SaveLoad.savedGames[selectedFile].mapName;
             mapNameTextShadow.text = mapNameText.text;
             dataText.text = SaveLoad.savedGames[selectedFile].playerName
-                     + "\n" + badgeTotal
-                     + "\n" + "0" //Pokedex not yet implemented
-                     + "\n" + playerTime;
+                            + "\n" + badgeTotal
+                            + "\n" + "0" //Pokedex not yet implemented
+                            + "\n" + playerTime;
             dataTextShadow.text = dataText.text;
 
             for (int i = 0; i < 6; i++)
@@ -141,7 +137,6 @@ public class MainMenuHandler : MonoBehaviour
                 }
             }
         }
-
     }
 
     private IEnumerator animateIcons()
@@ -167,18 +162,20 @@ public class MainMenuHandler : MonoBehaviour
 
         if (fileCount == 0)
         {
-
             updateButton(1);
             continueButton.SetActive(false);
             fileDataPanel.SetActive(false);
             for (int i = 1; i < 3; i++)
             {
-                button[i].pixelInset = new Rect(button[i].pixelInset.x, button[i].pixelInset.y + 64f, button[i].pixelInset.width, button[i].pixelInset.height);
-                buttonHighlight[i].pixelInset = new Rect(buttonHighlight[i].pixelInset.x, buttonHighlight[i].pixelInset.y + 64f, buttonHighlight[i].pixelInset.width, buttonHighlight[i].pixelInset.height);
+                button[i].pixelInset = new Rect(button[i].pixelInset.x, button[i].pixelInset.y + 64f,
+                    button[i].pixelInset.width, button[i].pixelInset.height);
+                buttonHighlight[i].pixelInset = new Rect(buttonHighlight[i].pixelInset.x,
+                    buttonHighlight[i].pixelInset.y + 64f, buttonHighlight[i].pixelInset.width,
+                    buttonHighlight[i].pixelInset.height);
                 buttonText[i].pixelOffset = new Vector2(buttonText[i].pixelOffset.x, buttonText[i].pixelOffset.y + 64f);
-                buttonTextShadow[i].pixelOffset = new Vector2(buttonTextShadow[i].pixelOffset.x, buttonTextShadow[i].pixelOffset.y + 64f);
+                buttonTextShadow[i].pixelOffset = new Vector2(buttonTextShadow[i].pixelOffset.x,
+                    buttonTextShadow[i].pixelOffset.y + 64f);
             }
-
         }
         else
         {
@@ -207,8 +204,9 @@ public class MainMenuHandler : MonoBehaviour
             if (Input.GetButtonDown("Select"))
             {
                 if (selectedButton == 0)
-                {       //CONTINUE
-                        //yield return new WaitForSeconds(sceneTransition.FadeOut(0.4f));
+                {
+                    //CONTINUE
+                    //yield return new WaitForSeconds(sceneTransition.FadeOut(0.4f));
                     yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
 
                     SaveData.currentSave = SaveLoad.savedGames[selectedFile];
@@ -217,12 +215,13 @@ public class MainMenuHandler : MonoBehaviour
                     Debug.Log(SaveLoad.savedGames[1]);
                     Debug.Log(SaveLoad.savedGames[2]);
                     GlobalVariables.global.playerPosition = SaveData.currentSave.playerPosition.v3;
-                    GlobalVariables.global.PlayerDirection = SaveData.currentSave.PlayerDirection;
+                    GlobalVariables.global.playerDirection = SaveData.currentSave.playerDirection;
 
                     SceneManager.LoadScene(SaveData.currentSave.levelName);
                 }
                 else if (selectedButton == 1)
-                {   //NEW GAME
+                {
+                    //NEW GAME
                     //yield return new WaitForSeconds(sceneTransition.FadeOut(0.4f));
                     yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
 
@@ -231,18 +230,19 @@ public class MainMenuHandler : MonoBehaviour
                     GlobalVariables.global.SetDEBUGFileData();
 
                     GlobalVariables.global.playerPosition = new Vector3(78, 0, 29);
-                    GlobalVariables.global.PlayerDirection = Direction.DOWN;
+                    GlobalVariables.global.playerDirection = 2;
                     GlobalVariables.global.fadeIn = true;
                     SceneManager.LoadScene("indoorsNW");
                 }
                 else if (selectedButton == 2)
-                {   //SETTINGS
+                {
+                    //SETTINGS
                     //yield return new WaitForSeconds(sceneTransition.FadeOut(0.4f));
                     yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
 
-                    Scene.main.Settings.gameObject.SetActive(true);
-                    StartCoroutine(Scene.main.Settings.control());
-                    while (Scene.main.Settings.gameObject.activeSelf)
+                    PKUScene.main.Settings.gameObject.SetActive(true);
+                    StartCoroutine(PKUScene.main.Settings.control());
+                    while (PKUScene.main.Settings.gameObject.activeSelf)
                     {
                         yield return null;
                     }
@@ -252,7 +252,8 @@ public class MainMenuHandler : MonoBehaviour
                 }
             }
             else if (Input.GetKeyDown(KeyCode.Delete))
-            { //delete save file
+            {
+                //delete save file
                 float time = Time.time;
                 bool released = false;
                 Debug.Log("Save " + (selectedFile + 1) + " will be deleted! Release 'Delete' key to prevent this!");
@@ -326,6 +327,4 @@ public class MainMenuHandler : MonoBehaviour
             yield return null;
         }
     }
-
-
 }

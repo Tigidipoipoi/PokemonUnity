@@ -5,7 +5,6 @@ using System.Collections;
 
 public class SceneTransition : MonoBehaviour
 {
-
     public static SceneTransition gameScene;
 
     public float fadeSpeed = 1.2f;
@@ -21,7 +20,6 @@ public class SceneTransition : MonoBehaviour
 
     void Awake()
     {
-
         //set up the reference to this script.
         if (transform.name == "GUI")
         {
@@ -80,7 +78,7 @@ public class SceneTransition : MonoBehaviour
         {
             if (screenFaderOnGUI.texture == null)
             {
-                screenFaderOnGUI.texture = (Texture2D)defaultFadeTex;
+                screenFaderOnGUI.texture = (Texture2D) defaultFadeTex;
             }
         }
         if (speed == 0)
@@ -90,22 +88,26 @@ public class SceneTransition : MonoBehaviour
             {
                 if (!RotatableGUI)
                 {
-                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b, (0f + increment) / 2);
+                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b,
+                        (0f + increment) / 2);
                 }
                 else
                 {
-                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g, screenFaderOnGUI.color.b, increment);
+                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g,
+                        screenFaderOnGUI.color.b, increment);
                 }
             }
             else
             {
                 if (!RotatableGUI)
                 {
-                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b, (1f - increment) / 2);
+                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b,
+                        (1f - increment) / 2);
                 }
                 else
                 {
-                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g, screenFaderOnGUI.color.b, 1f - increment);
+                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g,
+                        screenFaderOnGUI.color.b, 1f - increment);
                 }
             }
         }
@@ -116,22 +118,26 @@ public class SceneTransition : MonoBehaviour
             {
                 if (!RotatableGUI)
                 {
-                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b, (0f + increment) / 2);
+                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b,
+                        (0f + increment) / 2);
                 }
                 else
                 {
-                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g, screenFaderOnGUI.color.b, increment);
+                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g,
+                        screenFaderOnGUI.color.b, increment);
                 }
             }
             else
             {
                 if (!RotatableGUI)
                 {
-                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b, (1f - increment) / 2);
+                    screenFader.color = new Color(screenFader.color.r, screenFader.color.g, screenFader.color.b,
+                        (1f - increment) / 2);
                 }
                 else
                 {
-                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g, screenFaderOnGUI.color.b, 1f - increment);
+                    screenFaderOnGUI.color = new Color(screenFaderOnGUI.color.r, screenFaderOnGUI.color.g,
+                        screenFaderOnGUI.color.b, 1f - increment);
                 }
             }
             yield return null;
@@ -155,6 +161,7 @@ public class SceneTransition : MonoBehaviour
     {
         return FadeIn(fadeSpeed);
     }
+
     public float FadeIn(float speed)
     {
         if (!RotatableGUI)
@@ -165,7 +172,7 @@ public class SceneTransition : MonoBehaviour
         else
         {
             screenFaderOnGUI.enabled = true;
-            screenFaderOnGUI.texture = (Texture2D)GlobalVariables.global.fadeTex;
+            screenFaderOnGUI.texture = (Texture2D) GlobalVariables.global.fadeTex;
         }
         increment = 0;
         fadingOut = false;
@@ -185,7 +192,7 @@ public class SceneTransition : MonoBehaviour
         else
         {
             screenFaderOnGUI.enabled = true;
-            screenFaderOnGUI.texture = (Texture2D)GlobalVariables.global.fadeTex;
+            screenFaderOnGUI.texture = (Texture2D) GlobalVariables.global.fadeTex;
         }
         increment = 0;
         fadingOut = true;
@@ -205,7 +212,7 @@ public class SceneTransition : MonoBehaviour
         else
         {
             screenFaderOnGUI.enabled = true;
-            screenFaderOnGUI.texture = (Texture2D)GlobalVariables.global.fadeTex;
+            screenFaderOnGUI.texture = (Texture2D) GlobalVariables.global.fadeTex;
         }
         increment = 0;
         fadingOut = true;

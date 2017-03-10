@@ -7,18 +7,15 @@ using System.Collections.Generic;
 [System.Serializable]
 public class SaveData
 {
-
     public static SaveData currentSave;
 
     private int fileIndex;
-    private int buildID;
-
 
 
     //file loading data
     public string levelName;
     public SeriV3 playerPosition;
-    public Direction PlayerDirection;
+    public int playerDirection;
 
 
     //Important player data
@@ -49,20 +46,15 @@ public class SaveData
     public string[] gymsBeatTime = new string[12];
 
 
-
     //Important gameplay data
     public string respawnSceneName;
     public SeriV3 respawnScenePosition;
-    public Direction RespawnSceneDirection;
+    public int respawnSceneDirection;
     public string respawnText;
-
-
 
 
     private List<CVariable> cVariables = new List<CVariable>();
     public List<NonResettingList> nonResettingLists = new List<NonResettingList>();
-
-
 
 
     public SaveData(int fileIndex)
@@ -150,5 +142,4 @@ public class SaveData
             cVariables[index].value = newValue;
         }
     }
-
 }

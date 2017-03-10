@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class DialogBoxHandlerNew : MonoBehaviour
 {
-
     public string debugBoxString;
 
     private Image dialogBox;
@@ -32,7 +31,6 @@ public class DialogBoxHandlerNew : MonoBehaviour
     public int defaultChoiceWidth = 86;
     public int defaultChoiceY = 0;
     public int defaultDialogLines = 2;
-
 
 
     void Awake()
@@ -66,11 +64,11 @@ public class DialogBoxHandlerNew : MonoBehaviour
     }
 
 
-
     public IEnumerator DrawText(string text)
     {
         yield return StartCoroutine(DrawText(text, 1f / charPerSec, false));
     }
+
     public IEnumerator DrawText(string text, float secPerChar)
     {
         yield return StartCoroutine(DrawText(text, secPerChar, false));
@@ -80,6 +78,7 @@ public class DialogBoxHandlerNew : MonoBehaviour
     {
         yield return StartCoroutine(DrawText(text, 1f / charPerSec, true));
     }
+
     public IEnumerator DrawTextInstant(string text)
     {
         yield return StartCoroutine(DrawText(text, 0, false));
@@ -87,13 +86,22 @@ public class DialogBoxHandlerNew : MonoBehaviour
 
     public IEnumerator DrawText(string text, float secPerChar, bool silent)
     {
-        string[] words = text.Split(new char[] { ' ' });
+        string[] words = text.Split(new char[] {' '});
 
-        if (!silent) { SfxHandler.Play(selectClip); }
+        if (!silent)
+        {
+            SfxHandler.Play(selectClip);
+        }
         for (int i = 0; i < words.Length; i++)
         {
-            if (secPerChar > 0) { yield return StartCoroutine(DrawWord(words[i], secPerChar)); }
-            else { StartCoroutine(DrawWord(words[i], secPerChar)); }
+            if (secPerChar > 0)
+            {
+                yield return StartCoroutine(DrawWord(words[i], secPerChar));
+            }
+            else
+            {
+                StartCoroutine(DrawWord(words[i], secPerChar));
+            }
         }
     }
 
@@ -101,20 +109,31 @@ public class DialogBoxHandlerNew : MonoBehaviour
     {
         yield return StartCoroutine(DrawWord(word, false, false, false, secPerChar));
     }
+
     private IEnumerator DrawWord(string word, bool large, bool bold, bool italic, float secPerChar)
     {
         char[] chars = word.ToCharArray();
         float startTime = Time.time;
         if (chars.Length > 0)
-        { //ensure no blank words get processed
+        {
+            //ensure no blank words get processed
 
             if (chars[0] == '\\')
-            {   //Apply Operator
+            {
+                //Apply Operator
                 switch (chars[1])
                 {
                     case ('p'): //Player
-                        if (secPerChar > 0) { yield return StartCoroutine(DrawWord(SaveData.currentSave.playerName, large, bold, italic, secPerChar)); }
-                        else { StartCoroutine(DrawWord(SaveData.currentSave.playerName, large, bold, italic, secPerChar)); }
+                        if (secPerChar > 0)
+                        {
+                            yield return
+                                StartCoroutine(DrawWord(SaveData.currentSave.playerName, large, bold, italic, secPerChar))
+                                ;
+                        }
+                        else
+                        {
+                            StartCoroutine(DrawWord(SaveData.currentSave.playerName, large, bold, italic, secPerChar));
+                        }
                         break;
                     case ('l'): //Large
                         large = true;
@@ -141,7 +160,8 @@ public class DialogBoxHandlerNew : MonoBehaviour
                 }
             }
             else
-            {           //Draw Word
+            {
+                //Draw Word
                 string currentText = dialogBoxText.text;
 
                 for (int i = 0; i <= chars.Length; i++)
@@ -175,29 +195,34 @@ public class DialogBoxHandlerNew : MonoBehaviour
                     dialogBoxText.text = currentText + added;
                     dialogBoxTextShadow.text = dialogBoxText.text;
 
-                    while (Time.time < startTime + (secPerChar * (i + 1))) { yield return null; }
+                    while (Time.time < startTime + (secPerChar * (i + 1)))
+                    {
+                        yield return null;
+                    }
                 }
 
                 //add a space after every word
                 dialogBoxText.text += " ";
                 dialogBoxTextShadow.text = dialogBoxText.text;
-                while (Time.time < startTime + (secPerChar)) { yield return null; }
+                while (Time.time < startTime + (secPerChar))
+                {
+                    yield return null;
+                }
             }
         }
     }
-
-
-
 
 
     public void DrawDialogBox()
     {
         StartCoroutine(DrawDialogBox(defaultDialogLines, new Color(1, 1, 1, 1), false));
     }
+
     public void DrawDialogBox(int lines)
     {
         StartCoroutine(DrawDialogBox(lines, new Color(1, 1, 1, 1), false));
     }
+
     public void DrawSignBox(Color tint)
     {
         StartCoroutine(DrawDialogBox(defaultDialogLines, tint, true));
@@ -206,17 +231,23 @@ public class DialogBoxHandlerNew : MonoBehaviour
     private IEnumerator DrawDialogBox(int lines, Color tint, bool sign)
     {
         dialogBox.gameObject.SetActive(true);
-        dialogBoxBorder.sprite = (sign) ? null : Resources.Load<Sprite>("Frame/dialog" + PlayerPrefs.GetInt("frameStyle"));
+        dialogBoxBorder.sprite = (sign)
+            ? null
+            : Resources.Load<Sprite>("Frame/dialog" + PlayerPrefs.GetInt("frameStyle"));
         dialogBox.sprite = (sign) ? Resources.Load<Sprite>("Frame/signBG") : Resources.Load<Sprite>("Frame/dialogBG");
         dialogBox.color = tint;
         dialogBoxText.text = "";
         dialogBoxText.color = (sign) ? new Color(1f, 1f, 1f, 1f) : new Color(0.0625f, 0.0625f, 0.0625f, 1f);
         dialogBoxTextShadow.text = dialogBoxText.text;
 
-        dialogBox.rectTransform.sizeDelta = new Vector2(dialogBox.rectTransform.sizeDelta.x, Mathf.Round((float)lines * 14f) + 16f);
-        dialogBoxBorder.rectTransform.sizeDelta = new Vector2(dialogBox.rectTransform.sizeDelta.x, dialogBox.rectTransform.sizeDelta.y);
-        dialogBoxText.rectTransform.localPosition = new Vector3(dialogBoxText.rectTransform.localPosition.x, -37f + Mathf.Round((float)lines * 14f), 0);
-        dialogBoxTextShadow.rectTransform.localPosition = new Vector3(dialogBoxTextShadow.rectTransform.localPosition.x, dialogBoxText.rectTransform.localPosition.y - 1f, 0);
+        dialogBox.rectTransform.sizeDelta = new Vector2(dialogBox.rectTransform.sizeDelta.x,
+            Mathf.Round((float) lines * 14f) + 16f);
+        dialogBoxBorder.rectTransform.sizeDelta = new Vector2(dialogBox.rectTransform.sizeDelta.x,
+            dialogBox.rectTransform.sizeDelta.y);
+        dialogBoxText.rectTransform.localPosition = new Vector3(dialogBoxText.rectTransform.localPosition.x,
+            -37f + Mathf.Round((float) lines * 14f), 0);
+        dialogBoxTextShadow.rectTransform.localPosition = new Vector3(
+            dialogBoxTextShadow.rectTransform.localPosition.x, dialogBoxText.rectTransform.localPosition.y - 1f, 0);
 
         if (sign)
         {
@@ -224,9 +255,13 @@ public class DialogBoxHandlerNew : MonoBehaviour
             while (increment < 1)
             {
                 increment += (1f / 0.2f) * Time.deltaTime;
-                if (increment > 1) { increment = 1; }
+                if (increment > 1)
+                {
+                    increment = 1;
+                }
 
-                dialogBox.rectTransform.localPosition = new Vector2(dialogBox.rectTransform.localPosition.x, -dialogBox.rectTransform.sizeDelta.y + (dialogBox.rectTransform.sizeDelta.y * increment));
+                dialogBox.rectTransform.localPosition = new Vector2(dialogBox.rectTransform.localPosition.x,
+                    -dialogBox.rectTransform.sizeDelta.y + (dialogBox.rectTransform.sizeDelta.y * increment));
                 yield return null;
             }
         }
@@ -234,40 +269,57 @@ public class DialogBoxHandlerNew : MonoBehaviour
 
     public IEnumerator DrawChoiceBox()
     {
-        yield return StartCoroutine(DrawChoiceBox(new string[] { "Yes", "No" }, null, -1, defaultChoiceY, defaultChoiceWidth));
+        yield return
+            StartCoroutine(DrawChoiceBox(new string[] {"Yes", "No"}, null, -1, defaultChoiceY, defaultChoiceWidth));
     }
+
     public IEnumerator DrawChoiceBox(string[] choices)
     {
         yield return StartCoroutine(DrawChoiceBox(choices, null, -1, defaultChoiceY, defaultChoiceWidth));
     }
+
     public IEnumerator DrawChoiceBox(int startIndex)
     {
-        yield return StartCoroutine(DrawChoiceBox(new string[] { "Yes", "No" }, null, startIndex, defaultChoiceY, defaultChoiceWidth));
+        yield return
+            StartCoroutine(DrawChoiceBox(new string[] {"Yes", "No"}, null, startIndex, defaultChoiceY,
+                defaultChoiceWidth));
     }
+
     public IEnumerator DrawChoiceBox(string[] choices, int startIndex)
     {
         yield return StartCoroutine(DrawChoiceBox(choices, null, startIndex, defaultChoiceY, defaultChoiceWidth));
     }
+
     public IEnumerator DrawChoiceBox(string[] choices, string[] flavourText)
     {
         yield return StartCoroutine(DrawChoiceBox(choices, flavourText, -1, defaultChoiceY, defaultChoiceWidth));
     }
+
     public IEnumerator DrawChoiceBox(string[] choices, string[] flavourText, int startIndex)
     {
-        yield return StartCoroutine(DrawChoiceBox(choices, flavourText, startIndex, defaultChoiceY, defaultChoiceWidth));
+        yield return StartCoroutine(DrawChoiceBox(choices, flavourText, startIndex, defaultChoiceY, defaultChoiceWidth))
+            ;
     }
+
     public IEnumerator DrawChoiceBox(string[] choices, int yPosition, int width)
     {
-        yield return StartCoroutine(DrawChoiceBox(new string[] { "Yes", "No" }, null, -1, defaultChoiceY, defaultChoiceWidth));
+        yield return
+            StartCoroutine(DrawChoiceBox(new string[] {"Yes", "No"}, null, -1, defaultChoiceY, defaultChoiceWidth));
     }
+
     public IEnumerator DrawChoiceBox(string[] choices, int startIndex, int yPosition, int width)
     {
-        yield return StartCoroutine(DrawChoiceBox(new string[] { "Yes", "No" }, null, startIndex, defaultChoiceY, defaultChoiceWidth));
+        yield return
+            StartCoroutine(DrawChoiceBox(new string[] {"Yes", "No"}, null, startIndex, defaultChoiceY,
+                defaultChoiceWidth));
     }
 
     public IEnumerator DrawChoiceBox(string[] choices, string[] flavourText, int startIndex, int yPosition, int width)
     {
-        if (startIndex < 0) { startIndex = choices.Length - 1; }
+        if (startIndex < 0)
+        {
+            startIndex = choices.Length - 1;
+        }
 
         choiceBox.gameObject.SetActive(true);
         choiceBox.sprite = Resources.Load<Sprite>("Frame/choice" + PlayerPrefs.GetInt("frameStyle"));
@@ -275,7 +327,8 @@ public class DialogBoxHandlerNew : MonoBehaviour
         choiceBox.rectTransform.sizeDelta = new Vector2(width, 16f + (14f * choices.Length));
         choiceBoxSelect.rectTransform.localPosition = new Vector3(8, 9f + (14f * startIndex), 0);
         choiceBoxText.rectTransform.sizeDelta = new Vector2(width - 30, choiceBox.rectTransform.sizeDelta.y);
-        choiceBoxTextShadow.rectTransform.sizeDelta = new Vector2(choiceBoxText.rectTransform.sizeDelta.x, choiceBoxText.rectTransform.sizeDelta.y);
+        choiceBoxTextShadow.rectTransform.sizeDelta = new Vector2(choiceBoxText.rectTransform.sizeDelta.x,
+            choiceBoxText.rectTransform.sizeDelta.y);
 
         choiceBoxText.text = "";
         for (int i = 0; i < choices.Length; i++)
@@ -298,7 +351,8 @@ public class DialogBoxHandlerNew : MonoBehaviour
             }
             else if (Input.GetButtonDown("Back"))
             {
-                chosenIndex = 1; //a little hack to bypass the newIndex != chosenIndex in the below method, ensuring a true return
+                chosenIndex = 1;
+                    //a little hack to bypass the newIndex != chosenIndex in the below method, ensuring a true return
                 if (UpdateChosenIndex(0, choices.Length, flavourText))
                 {
                     yield return new WaitForSeconds(0.2f);
@@ -322,10 +376,14 @@ public class DialogBoxHandlerNew : MonoBehaviour
             yield return null;
         }
     }
+
     private bool UpdateChosenIndex(int newIndex, int choicesLength, string[] flavourText)
     {
         //Check for an invalid new index
-        if (newIndex < 0 || newIndex >= choicesLength) { return false; }
+        if (newIndex < 0 || newIndex >= choicesLength)
+        {
+            return false;
+        }
         //Even if new index is the same as old, set the graphics in case of needing to override modified graphics.
         choiceBoxSelect.rectTransform.localPosition = new Vector3(8, 9f + (14f * newIndex), 0);
         if (flavourText != null)
@@ -334,13 +392,14 @@ public class DialogBoxHandlerNew : MonoBehaviour
             StartCoroutine(DrawText(flavourText[flavourText.Length - 1 - newIndex], 0));
         }
         //If chosen index is the same as before, do not play a sound effect, then return false
-        if (chosenIndex == newIndex) { return false; }
+        if (chosenIndex == newIndex)
+        {
+            return false;
+        }
         chosenIndex = newIndex;
         SfxHandler.Play(selectClip);
         return true;
     }
-
-
 
 
     public void UndrawDialogBox()
@@ -354,9 +413,13 @@ public class DialogBoxHandlerNew : MonoBehaviour
         while (increment < 1)
         {
             increment += (1f / 0.2f) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
 
-            dialogBox.rectTransform.localPosition = new Vector2(dialogBox.rectTransform.localPosition.x, -dialogBox.rectTransform.sizeDelta.y * increment);
+            dialogBox.rectTransform.localPosition = new Vector2(dialogBox.rectTransform.localPosition.x,
+                -dialogBox.rectTransform.sizeDelta.y * increment);
             yield return null;
         }
         dialogBox.gameObject.SetActive(false);
@@ -366,5 +429,4 @@ public class DialogBoxHandlerNew : MonoBehaviour
     {
         choiceBox.gameObject.SetActive(false);
     }
-
 }

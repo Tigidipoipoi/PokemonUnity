@@ -6,7 +6,6 @@ using System.Collections;
 [ExecuteInEditMode()]
 public class ReflectiveWaterHandler : MonoBehaviour
 {
-
     public bool autoSize = true;
 
     public Vector2 size;
@@ -48,7 +47,13 @@ public class ReflectiveWaterHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Application.isEditor) { if (autoSize) { UpdateSettings(); } }
+        if (Application.isEditor)
+        {
+            if (autoSize)
+            {
+                UpdateSettings();
+            }
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -66,5 +71,4 @@ public class ReflectiveWaterHandler : MonoBehaviour
             other.transform.parent.gameObject.SendMessage("reflect", false, SendMessageOptions.DontRequireReceiver);
         }
     }
-
 }

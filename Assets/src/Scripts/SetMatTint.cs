@@ -5,7 +5,6 @@ using System.Collections;
 
 public class SetMatTint : MonoBehaviour
 {
-
     public Color[] matIDColors = new Color[1];
 
     private MeshRenderer mesh;
@@ -17,16 +16,11 @@ public class SetMatTint : MonoBehaviour
 
     void Start()
     {
-
         Material[] mats = mesh.materials;
 
         for (int i = 0; i < mats.Length && i < matIDColors.Length; i++)
         {
-
             mats[i].color = matIDColors[i];
-
         }
-
     }
-
 }

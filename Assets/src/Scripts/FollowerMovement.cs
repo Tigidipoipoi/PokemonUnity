@@ -5,9 +5,8 @@ using System.Collections;
 
 public class FollowerMovement : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
-    private PlayerMovementOld Player;
+    private PlayerMovement Player;
 
     private Vector3 startPosition;
     private Vector3 destinationPosition;
@@ -18,7 +17,7 @@ public class FollowerMovement : MonoBehaviour
 
     public bool moving = false;
     public float speed;
-    public Direction Direction = Direction.DOWN;
+    public int direction = 2;
 
     public int pokemonID = 6;
     private int followerIndex = 0;
@@ -46,9 +45,8 @@ public class FollowerMovement : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-
         Dialog = GameObject.Find("GUI").GetComponent<DialogBoxHandler>();
-        Player = PlayerMovementOld.Instance;
+        Player = PlayerMovement.player;
 
         pawn = transform.FindChild("Pawn");
         pawnLight = transform.FindChild("PawnLight");
@@ -65,12 +63,11 @@ public class FollowerMovement : MonoBehaviour
         pawnShadow = transform.FindChild("PawnShadow").GetComponent<SpriteRenderer>();
 
         followerLight = GetComponentInChildren<Light>();
-
     }
 
     void Start()
     {
-        Player = PlayerMovementOld.Instance;
+        Player = PlayerMovement.player;
         startPosition = transform.position;
 
         followerLight.color = lightColor;
@@ -84,8 +81,23 @@ public class FollowerMovement : MonoBehaviour
         }
 
         transform.position = Player.transform.position;
-        Direction = Player.CurrentDirection;
-        transform.Translate(-PlayerMovementOld.Instance.GetForwardVectorRaw(Direction));
+        direction = Player.direction;
+        if (direction == 0)
+        {
+            transform.Translate(Vector3.back);
+        }
+        else if (direction == 1)
+        {
+            transform.Translate(Vector3.left);
+        }
+        else if (direction == 2)
+        {
+            transform.Translate(Vector3.forward);
+        }
+        else if (direction == 3)
+        {
+            transform.Translate(Vector3.right);
+        }
 
         changeFollower(followerIndex);
         StartCoroutine("animateSprite");
@@ -99,28 +111,28 @@ public class FollowerMovement : MonoBehaviour
             followerLight.enabled = true;
             pawnShadow.enabled = true;
             speed = sentSpeed;
-            startPosition = transform.position;     //add follower's position offset
+            startPosition = transform.position; //add follower's position offset
             destinationPosition = destination;
             Vector3 movement = destinationPosition - startPosition;
             if (Mathf.Round(movement.x) > 0)
             {
-                Direction = Direction.RIGHT;
+                direction = 1;
             }
             else if (Mathf.Round(movement.x) < 0)
             {
-                Direction = Direction.LEFT;
+                direction = 3;
             }
             else if (Mathf.Round(movement.z) > 0)
             {
-                Direction = Direction.UP;
+                direction = 0;
             }
             else if (Mathf.Round(movement.z) < 0)
             {
-                Direction = Direction.DOWN;
+                direction = 2;
             }
-
             while (Player.increment < 1)
-            { //because fak trying to use this thing's own increment. shit doesn't work for some reason.
+            {
+                //because fak trying to use this thing's own increment. shit doesn't work for some reason.
                 transform.position = startPosition + (destinationPosition - startPosition) * Player.increment;
                 hitBox.position = destinationPosition;
                 yield return null;
@@ -188,7 +200,6 @@ public class FollowerMovement : MonoBehaviour
     }
 
 
-
     public void changeFollower(int index)
     {
         if (followerLight == null)
@@ -224,8 +235,8 @@ public class FollowerMovement : MonoBehaviour
             {
                 if (!hide)
                 {
-                    sRenderer.sprite = spriteSheet[(int)Direction * 2 + frame];
-                    sLRenderer.sprite = lightSheet[(int)Direction * 2 + frame];
+                    sRenderer.sprite = spriteSheet[direction * 2 + frame];
+                    sLRenderer.sprite = lightSheet[direction * 2 + frame];
                     pawnShadow.enabled = true;
                 }
                 else
@@ -258,29 +269,32 @@ public class FollowerMovement : MonoBehaviour
         {
             if (Player.setCheckBusyWith(this.gameObject))
             {
-
                 //calculate Player's position relative to target object's and set direction accordingly. (Face the player)
                 float xDistance = this.transform.position.x - Player.gameObject.transform.position.x;
                 float zDistance = this.transform.position.z - Player.gameObject.transform.position.z;
                 if (xDistance >= Mathf.Abs(zDistance))
-                { //Mathf.Abs() converts zDistance to a positive always.
-                    Direction = Direction.LEFT;          //this allows for better accuracy when checking orientation.
+                {
+                    //Mathf.Abs() converts zDistance to a positive always.
+                    direction = 3; //this allows for better accuracy when checking orientation.
                 }
                 else if (xDistance <= Mathf.Abs(zDistance) * -1)
                 {
-                    Direction = Direction.RIGHT;
+                    direction = 1;
                 }
                 else if (zDistance >= Mathf.Abs(xDistance))
                 {
-                    Direction = Direction.DOWN;
+                    direction = 2;
                 }
                 else
                 {
-                    Direction = Direction.UP;
+                    direction = 0;
                 }
 
                 Dialog.drawDialogBox();
-                yield return Dialog.StartCoroutine("drawText", SaveData.currentSave.PC.boxes[0][followerIndex].getName() + " is enjoying walking around \\out of their ball.");
+                yield return
+                    Dialog.StartCoroutine("drawText",
+                        SaveData.currentSave.PC.boxes[0][followerIndex].getName() +
+                        " is enjoying walking around \\out of their ball.");
                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                 {
                     yield return null;
@@ -291,6 +305,4 @@ public class FollowerMovement : MonoBehaviour
             }
         }
     }
-
 }
-

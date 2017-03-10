@@ -1,18 +1,15 @@
 ﻿//Original Scripts by IIColour (IIColour_Spectrum)
 
 using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Non resetters are things like trainers and items. 
-/// These are remembered by the save file so that they don't reappear.
-/// </summary>
 public class NonResettingHandler : MonoBehaviour
 {
+    //Non resetters are things like trainers and items. These are remembered by the save file so that they don't reappear.
+
     private static NonResettingHandler currentActive;
 
-    private NonResettingList listOfNonResetters;
+    //private NonResettingList listOfNonResetters;
 
     private InteractTrainer[] trainers;
     private InteractItem[] items;
@@ -20,7 +17,6 @@ public class NonResettingHandler : MonoBehaviour
 
     void Awake()
     {
-
         if (currentActive == null)
         {
             currentActive = this;
@@ -50,12 +46,10 @@ public class NonResettingHandler : MonoBehaviour
         {
             events[i] = eventsList.GetChild(i).gameObject;
         }
-
     }
 
     void Start()
     {
-
         int sceneNonResettingListIndex = SaveData.currentSave.getNonResettingListIndex(SceneManager.GetActiveScene().name);
 
         //if entry is already in global, update everything to match
@@ -100,7 +94,6 @@ public class NonResettingHandler : MonoBehaviour
                 }
             }
         }
-
     }
 
     private NonResettingList compileListOfNonResetters()
@@ -122,9 +115,9 @@ public class NonResettingHandler : MonoBehaviour
             sceneEvents[i] = events[i].activeSelf;
         }
 
-        //return null when there actually isn't anything in any of the arrays
         if (sceneTrainers.Length == 0 && sceneItems.Length == 0 && sceneEvents.Length == 0)
         {
+            // return null when there actually isn't anything in any of the arrays
             return null;
         }
 
@@ -156,13 +149,11 @@ public class NonResettingHandler : MonoBehaviour
             }
         }
     }
-
 }
 
 [System.Serializable]
 public class NonResettingList
 {
-
     public string sceneName;
 
     public bool[] sceneTrainers;
@@ -176,5 +167,4 @@ public class NonResettingList
         this.sceneItems = sceneItems;
         this.sceneEvents = sceneEvents;
     }
-
 }

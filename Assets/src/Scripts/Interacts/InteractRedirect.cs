@@ -5,7 +5,6 @@ using System.Collections;
 
 public class InteractRedirect : MonoBehaviour
 {
-
     public GameObject target;
 
     private IEnumerator interact()

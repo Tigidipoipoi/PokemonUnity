@@ -6,24 +6,53 @@ using System.Collections;
 using System.Runtime.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
+
 #endif
 
 [System.Serializable]
 public class SeriV3 : ISerializable
 {
-
     //Serializable Vector 3
 
-    public static implicit operator Vector3(SeriV3 v) { return v.v3; }
-    public static explicit operator SeriV3(Vector3 v) { return new SeriV3(v); }
-    public SeriV3(Vector3 v) { v3 = v; }
-    public static Vector3 operator *(SeriV3 v, float f) { return v.v3 * f; }
+    public static implicit operator Vector3(SeriV3 v)
+    {
+        return v.v3;
+    }
+
+    public static explicit operator SeriV3(Vector3 v)
+    {
+        return new SeriV3(v);
+    }
+
+    public SeriV3(Vector3 v)
+    {
+        v3 = v;
+    }
+
+    public static Vector3 operator *(SeriV3 v, float f)
+    {
+        return v.v3 * f;
+    }
 
     public Vector3 v3;
 
-    public float x { get { return v3.x; } set { v3 = v3.WithX(value); } }
-    public float y { get { return v3.y; } set { v3 = v3.WithY(value); } }
-    public float z { get { return v3.z; } set { v3 = v3.WithZ(value); } }
+    public float x
+    {
+        get { return v3.x; }
+        set { v3 = v3.WithX(value); }
+    }
+
+    public float y
+    {
+        get { return v3.y; }
+        set { v3 = v3.WithY(value); }
+    }
+
+    public float z
+    {
+        get { return v3.z; }
+        set { v3 = v3.WithZ(value); }
+    }
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
@@ -38,10 +67,10 @@ public class SeriV3 : ISerializable
     {
         // Reset the property value using the GetValue method.
         v3 = new Vector3(
-            (float)info.GetValue("x", typeof(float)),
-            (float)info.GetValue("y", typeof(float)),
-            (float)info.GetValue("z", typeof(float))
-            );
+            (float) info.GetValue("x", typeof(float)),
+            (float) info.GetValue("y", typeof(float)),
+            (float) info.GetValue("z", typeof(float))
+        );
     }
 
     public override string ToString()
@@ -57,13 +86,14 @@ public static class Utex
     {
         return new Vector3(x, v.y, v.z);
     }
+
     public static Vector3 WithY(this Vector3 v, float y)
     {
         return new Vector3(v.x, y, v.z);
     }
+
     public static Vector3 WithZ(this Vector3 v, float z)
     {
         return new Vector3(v.x, v.y, z);
     }
-
 }

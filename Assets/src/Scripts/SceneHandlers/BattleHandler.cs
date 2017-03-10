@@ -6,36 +6,12 @@ using UnityEngine.UI;
 
 public class BattleHandler : MonoBehaviour
 {
-    //turn task data
-    public enum CommandType
-    {
-        None,
-        Move,
-        Item,
-        Switch,
-        Flee
-    }
-
-    //Field effects
-    private enum WeatherEffect
-    {
-        NONE, RAIN, SUN, SAND, HAIL, HEAVYRAIN, HEAVYSUN, STRONGWINDS
-    }
-    private enum TerrainEffect
-    {
-        NONE, ELECTRIC, GRASSY, MISTY
-    }
-
-    #region Members
     public int victor = -1; //0 = player, 1 = opponent, 2 = tie
     private bool trainerBattle;
 
     private DialogBoxHandlerNew Dialog;
 
-    /* [UNHANDLED YET]
-    private AudioSource BattleAudio;
-    private GameObject[] itemListButton = new GameObject[8];
-    //*/
+    //private AudioSource BattleAudio;
     public AudioClip defaultTrainerBGM;
     public int defaultTrainerBGMLoopStart = 577000;
 
@@ -69,7 +45,6 @@ public class BattleHandler : MonoBehaviour
         partyBallTex,
         partyStatusTex,
         partyFaintTex,
-
         buttonFightTex,
         buttonFightSelTex,
         buttonBagTex,
@@ -78,7 +53,6 @@ public class BattleHandler : MonoBehaviour
         buttonRunSelTex,
         buttonPokeTex,
         buttonPokeSelTex,
-
         buttonMoveBackgroundTex,
         buttonMoveBackgroundSelTex,
         buttonMegaTex,
@@ -86,17 +60,14 @@ public class BattleHandler : MonoBehaviour
         buttonMegaActiveSelTex,
         buttonReturnTex,
         buttonReturnSelTex,
-
         buttonBlueTex,
         buttonBlueSelTex,
-
         buttonBackBagTex,
         buttonBackBagSelTex,
         buttonBagItemCategoryTex,
         buttonBagItemCategorySelTex,
         buttonBagItemListTex,
         buttonBagItemListSelTex,
-
         buttonBackPokeTex,
         buttonBackPokeSelTex,
         buttonPokemonTex,
@@ -122,8 +93,9 @@ public class BattleHandler : MonoBehaviour
         buttonPoke;
 
     private Image[]
-    buttonMoveCover = new Image[4],
-    buttonMove = new Image[4];
+        buttonMoveCover = new Image[4],
+        buttonMove = new Image[4];
+
     private Image
         buttonMegaEvolution,
         buttonMoveReturn;
@@ -133,14 +105,17 @@ public class BattleHandler : MonoBehaviour
         buttonBackPoke;
 
     private Image buttonItemLastUsed;
+
     private Image[]
-    buttonItemCategory = new Image[4],
-    buttonItemList = new Image[8];
+        buttonItemCategory = new Image[4],
+        buttonItemList = new Image[8];
 
     private Image[] buttonPokemonSlot = new Image[6];
+
     private Image
         buttonSwitch,
         buttonCheck;
+
     private Text
         buttonCheckText,
         buttonCheckTextShadow;
@@ -148,29 +123,36 @@ public class BattleHandler : MonoBehaviour
 
     //MOVE BUTTON DETAILS
     private Image[] buttonMoveType = new Image[4];
+
     private Text[]
-    buttonMoveName = new Text[4],
-    buttonMoveNameShadow = new Text[4],
-    buttonMovePP = new Text[4],
-    buttonMovePPShadow = new Text[4];
+        buttonMoveName = new Text[4],
+        buttonMoveNameShadow = new Text[4],
+        buttonMovePP = new Text[4],
+        buttonMovePPShadow = new Text[4];
 
     private GameObject bagObject;
     //ITEM LIST DETAILS
     private GameObject itemList;
+
     private Text
         itemListCategoryText,
         itemListCategoryTextShadow,
         itemListPageNumber,
         itemListPageNumberShadow;
+
     private GameObject
         itemListArrowPrev,
         itemListArrowNext;
+
+    //private GameObject[] itemListButton = new GameObject[8];
     private Image[] itemListIcon = new Image[8];
+
     private Text[]
-    itemListName = new Text[8],
-    itemListNameShadow = new Text[8],
-    itemListQuantity = new Text[8],
-    itemListQuantityShadow = new Text[8];
+        itemListName = new Text[8],
+        itemListNameShadow = new Text[8],
+        itemListQuantity = new Text[8],
+        itemListQuantityShadow = new Text[8];
+
     private Text
         itemListDescription,
         itemListDescriptionShadow;
@@ -178,37 +160,43 @@ public class BattleHandler : MonoBehaviour
     //POKEMON LIST DETAILS
     private GameObject pokemonPartyObject;
     private Image[] pokemonSlotIcon = new Image[6];
-    private Text[]
-    pokemonSlotName = new Text[6],
-    pokemonSlotNameShadow = new Text[6],
-    pokemonSlotGender = new Text[6],
-    pokemonSlotGenderShadow = new Text[6],
-    pokemonSlotLevel = new Text[6],
-    pokemonSlotLevelShadow = new Text[6],
-    pokemonSlotCurrentHP = new Text[6],
-    pokemonSlotCurrentHPShadow = new Text[6],
-    pokemonSlotMaxHP = new Text[6],
-    pokemonSlotMaxHPShadow = new Text[6];
-    private Image[]
-    pokemonSlotHPBar = new Image[6],
-    pokemonSlotStatus = new Image[6],
-    pokemonSlotItem = new Image[6];
 
-    private Sprite[][] pokemonIconAnim = new Sprite[][]{
+    private Text[]
+        pokemonSlotName = new Text[6],
+        pokemonSlotNameShadow = new Text[6],
+        pokemonSlotGender = new Text[6],
+        pokemonSlotGenderShadow = new Text[6],
+        pokemonSlotLevel = new Text[6],
+        pokemonSlotLevelShadow = new Text[6],
+        pokemonSlotCurrentHP = new Text[6],
+        pokemonSlotCurrentHPShadow = new Text[6],
+        pokemonSlotMaxHP = new Text[6],
+        pokemonSlotMaxHPShadow = new Text[6];
+
+    private Image[]
+        pokemonSlotHPBar = new Image[6],
+        pokemonSlotStatus = new Image[6],
+        pokemonSlotItem = new Image[6];
+
+    private Sprite[][] pokemonIconAnim = new Sprite[][]
+    {
         new Sprite[2],
         new Sprite[2],
         new Sprite[2],
         new Sprite[2],
         new Sprite[2],
-        new Sprite[2]};
+        new Sprite[2]
+    };
 
     //POKE SELECTED DETAILS
     private GameObject pokemonSelectedPokemon;
+
     private Image
         pokemonSelectedIcon,
         pokemonSelectedStatus,
         pokemonSelectedType1,
         pokemonSelectedType2;
+
     private Text
         pokemonSelectedName,
         pokemonSelectedNameShadow,
@@ -220,6 +208,7 @@ public class BattleHandler : MonoBehaviour
     private GameObject pokeObject;
     //POKE SUMMARY DETAILS
     private GameObject pokemonSummary;
+
     private Text
         pokemonSummaryHP,
         pokemonSummaryHPShadow,
@@ -234,6 +223,7 @@ public class BattleHandler : MonoBehaviour
         pokemonSummaryAbilityNameShadow,
         pokemonSummaryAbilityDescription,
         pokemonSummaryAbilityDescriptionShadow;
+
     private Image
         pokemonSummaryHPBar,
         pokemonSummaryEXPBar,
@@ -241,14 +231,17 @@ public class BattleHandler : MonoBehaviour
 
     //POKE MOVES DETAILS
     private GameObject pokemonMoves;
+
     private Text[]
-    pokemonMovesName = new Text[4],
-    pokemonMovesNameShadow = new Text[4],
-    pokemonMovesPPText = new Text[4],
-    pokemonMovesPPTextShadow = new Text[4],
-    pokemonMovesPP = new Text[4],
-    pokemonMovesPPShadow = new Text[4];
+        pokemonMovesName = new Text[4],
+        pokemonMovesNameShadow = new Text[4],
+        pokemonMovesPPText = new Text[4],
+        pokemonMovesPPTextShadow = new Text[4],
+        pokemonMovesPP = new Text[4],
+        pokemonMovesPPShadow = new Text[4];
+
     private Image[] pokemonMovesType = new Image[4];
+
     private Text
         pokemonMovesSelectedPower,
         pokemonMovesSelectedPowerShadow,
@@ -256,6 +249,7 @@ public class BattleHandler : MonoBehaviour
         pokemonMovesSelectedAccuracyShadow,
         pokemonMovesSelectedDescription,
         pokemonMovesSelectedDescriptionShadow;
+
     private Image
         pokemonMovesSelectedCategory,
         pokemonMovesSelector,
@@ -266,9 +260,10 @@ public class BattleHandler : MonoBehaviour
     private Image
         playerPartyBar,
         opponentPartyBar;
+
     private Image[]
-    playerPartyBarSpace = new Image[6],
-    opponentPartyBarSpace = new Image[6];
+        playerPartyBarSpace = new Image[6],
+        opponentPartyBarSpace = new Image[6];
 
     //POKEMON STAT DISPLAYS
     private Text
@@ -276,19 +271,21 @@ public class BattleHandler : MonoBehaviour
         pokemon0CurrentHPShadow,
         pokemon0MaxHP,
         pokemon0MaxHPShadow;
+
     private Image pokemon0ExpBar;
 
     private Image[]
-    pokemonStatsDisplay = new Image[6],
-    statsHPBar = new Image[6],
-    statsStatus = new Image[6];
+        pokemonStatsDisplay = new Image[6],
+        statsHPBar = new Image[6],
+        statsStatus = new Image[6];
+
     private Text[]
-    statsName = new Text[6],
-    statsNameShadow = new Text[6],
-    statsGender = new Text[6],
-    statsGenderShadow = new Text[6],
-    statsLevel = new Text[6],
-    statsLevelShadow = new Text[6];
+        statsName = new Text[6],
+        statsNameShadow = new Text[6],
+        statsGender = new Text[6],
+        statsGenderShadow = new Text[6],
+        statsLevel = new Text[6],
+        statsLevelShadow = new Text[6];
 
     //BACKGROUNDS
     private Image
@@ -319,17 +316,22 @@ public class BattleHandler : MonoBehaviour
 
     //POSITIONS
     private int
-        currentTask = 0, // 0 = task choice, 1 = move choice, 2 = bag choice, 3 = pokemon choice
-                         //								4 = item list,			  5 = summary, 6 = moves
-        taskPosition = 1, // 0/3 = bag, 1 = fight, 2/5 = pokemon, 4 = run
-        movePosition = 1, // 0 = Mega Evolution, 1/2/4/5 = move, 3 = back
-        bagCategoryPosition = 0, // 0 = HPPP, 1 = Pokeballs, 2 = Status, 3 = Battle, 4 = Back
-        pokePartyPosition = 0, // 0-5 = pokemon, 6 = Back
-
-        itemListPagePosition = 0, //which item list page is currently open (displays +1 of variable)
+        currentTask = 0,
+        // 0 = task choice, 1 = move choice, 2 = bag choice, 3 = pokemon choice
+        //								4 = item list,			  5 = summary, 6 = moves
+        taskPosition = 1,
+        // 0/3 = bag, 1 = fight, 2/5 = pokemon, 4 = run
+        movePosition = 1,
+        // 0 = Mega Evolution, 1/2/4/5 = move, 3 = back
+        bagCategoryPosition = 0,
+        // 0 = HPPP, 1 = Pokeballs, 2 = Status, 3 = Battle, 4 = Back
+        pokePartyPosition = 0,
+        // 0-5 = pokemon, 6 = Back
+        itemListPagePosition = 0,
+        //which item list page is currently open (displays +1 of variable)
         itemListPageCount = 0;
-    private string[] itemListString;
 
+    private string[] itemListString;
 
 
     private int pokemonPerSide = 1;
@@ -337,45 +339,68 @@ public class BattleHandler : MonoBehaviour
     //pokemon
     private Pokemon[] pokemon = new Pokemon[6];
     //[pokemonPosition][movePosition]
-    private string[][] pokemonMoveset = new string[][]{
+    private string[][] pokemonMoveset = new string[][]
+    {
         new string[4],
         new string[4],
         new string[4],
         new string[4],
         new string[4],
-        new string[4]};
+        new string[4]
+    };
 
     //Stats can be changed in battle. These changes never persist after swapping out.
-    private int[][] pokemonStats = new int[][]{
+    private int[][] pokemonStats = new int[][]
+    {
         new int[6], //ATK
-		new int[6], //DEF
-		new int[6], //SPA
-		new int[6], //SPD
-		new int[6], //SPE
-	};
+        new int[6], //DEF
+        new int[6], //SPA
+        new int[6], //SPD
+        new int[6], //SPE
+    };
+
     //Ability can be changed in battle. These changes never persist after swapping out.
     private string[] pokemonAbility = new string[6];
     //Types can be changed in battle. These changes never persist after swapping out.
-    private PokemonData.Type[] pokemonType1 = new PokemonData.Type[]{
+    private PokemonData.Type[] pokemonType1 = new PokemonData.Type[]
+    {
         PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE,
-        PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE};
-    private PokemonData.Type[] pokemonType2 = new PokemonData.Type[]{
+        PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE
+    };
+
+    private PokemonData.Type[] pokemonType2 = new PokemonData.Type[]
+    {
         PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE,
-        PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE};
-    private PokemonData.Type[] pokemonType3 = new PokemonData.Type[]{
+        PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE
+    };
+
+    private PokemonData.Type[] pokemonType3 = new PokemonData.Type[]
+    {
         PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE,
-        PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE};
+        PokemonData.Type.NONE, PokemonData.Type.NONE, PokemonData.Type.NONE
+    };
 
     //pokemon stat boost data
-    private int[][] pokemonStatsMod = new int[][]{
+    private int[][] pokemonStatsMod = new int[][]
+    {
         new int[6], //ATK
-		new int[6], //DEF
-		new int[6], //SPA
-		new int[6], //SPD
-		new int[6], //SPE
-		new int[6], //ACC
-		new int[6], //EVA
-	};
+        new int[6], //DEF
+        new int[6], //SPA
+        new int[6], //SPD
+        new int[6], //SPE
+        new int[6], //ACC
+        new int[6], //EVA
+    };
+
+    //turn task data
+    public enum CommandType
+    {
+        None,
+        Move,
+        Item,
+        Switch,
+        Flee
+    }
 
     private CommandType[] command = new CommandType[6];
     private int[] commandTarget = new int[6];
@@ -383,21 +408,40 @@ public class BattleHandler : MonoBehaviour
     private ItemData[] commandItem = new ItemData[6];
     private Pokemon[] commandPokemon = new Pokemon[6];
 
-    /* [UNHANDLED YET]
-    private WeatherEffect weather = WeatherEffect.NONE;
-    private int weatherTurns = 0;
-    private TerrainEffect terrain = TerrainEffect.NONE;
-    private int terrainTurns = 0;
-    private int gravityTurns = 0;
-    private int[] tailwindTurns = new int[2];
-    private bool[] stealthRocks = new bool[2];
-    private bool[] stickyWeb = new bool[2];
-    private int[] spikesLayers = new int[2];
-    private int[] toxicSpikesLayers = new int[2];
-    private string[] previousMove = new string[6];
-    //*/
+
+    //Field effects
+    private enum WeatherEffect
+    {
+        NONE,
+        RAIN,
+        SUN,
+        SAND,
+        HAIL,
+        HEAVYRAIN,
+        HEAVYSUN,
+        STRONGWINDS
+    }
+
+    private enum TerrainEffect
+    {
+        NONE,
+        ELECTRIC,
+        GRASSY,
+        MISTY
+    }
+
+    //private WeatherEffect weather = WeatherEffect.NONE;
+    //private int weatherTurns = 0;
+    //private TerrainEffect terrain = TerrainEffect.NONE;
+    //private int terrainTurns = 0;
+    //private int gravityTurns = 0;
     private int[] reflectTurns = new int[2];
     private int[] lightScreenTurns = new int[2];
+    //private int[] tailwindTurns = new int[2];
+    //private bool[] stealthRocks = new bool[2];
+    //private bool[] stickyWeb = new bool[2];
+    //private int[] spikesLayers = new int[2];
+    //private int[] toxicSpikesLayers = new int[2];
 
     //Pokemon Effects
     private bool[] confused = new bool[6];
@@ -419,15 +463,11 @@ public class BattleHandler : MonoBehaviour
 
     //Turn Feedback Data
     private bool[] pokemonHasMoved = new bool[6];
-    #endregion
+    //private string[] previousMove = new string[6];
 
     void Awake()
     {
         Dialog = transform.GetComponent<DialogBoxHandlerNew>();
-
-        /* [UNHANDLED YET]
-        BattleAudio = transform.GetComponent<AudioSource>();
-        //*/
 
         playerBase = transform.FindChild("player0").GetComponent<Image>();
         opponentBase = transform.FindChild("opponent0").GetComponent<Image>();
@@ -437,7 +477,8 @@ public class BattleHandler : MonoBehaviour
         playerTrainerSprite1 = playerBase.transform.FindChild("Trainer").GetComponent<Image>();
 
         player1 = playerBase.transform.FindChild("Pokemon").FindChild("Mask").FindChild("Sprite").GetComponent<Image>();
-        opponent1 = opponentBase.transform.FindChild("Pokemon").FindChild("Mask").FindChild("Sprite").GetComponent<Image>();
+        opponent1 =
+            opponentBase.transform.FindChild("Pokemon").FindChild("Mask").FindChild("Sprite").GetComponent<Image>();
         player1Overlay = player1.transform.FindChild("Overlay").GetComponent<RawImage>();
         opponent1Overlay = opponent1.transform.FindChild("Overlay").GetComponent<RawImage>();
 
@@ -585,8 +626,10 @@ public class BattleHandler : MonoBehaviour
         pokemonSummaryItemName = pokemonSummaryItemNameShadow.transform.FindChild("Text").GetComponent<Text>();
         pokemonSummaryAbilityNameShadow = pokemonSummary.transform.FindChild("Ability").GetComponent<Text>();
         pokemonSummaryAbilityName = pokemonSummaryAbilityNameShadow.transform.FindChild("Text").GetComponent<Text>();
-        pokemonSummaryAbilityDescriptionShadow = pokemonSummary.transform.FindChild("AbilityDescription").GetComponent<Text>();
-        pokemonSummaryAbilityDescription = pokemonSummaryAbilityDescriptionShadow.transform.FindChild("Text").GetComponent<Text>();
+        pokemonSummaryAbilityDescriptionShadow =
+            pokemonSummary.transform.FindChild("AbilityDescription").GetComponent<Text>();
+        pokemonSummaryAbilityDescription =
+            pokemonSummaryAbilityDescriptionShadow.transform.FindChild("Text").GetComponent<Text>();
 
         //POKE MOVES DETAILS
         pokemonMoves = pokeObject.transform.FindChild("Moves").gameObject;
@@ -597,7 +640,8 @@ public class BattleHandler : MonoBehaviour
             pokemonMovesType[i] = pokemonMoves.transform.FindChild("Move" + (i + 1) + "Type").GetComponent<Image>();
             pokemonMovesPPShadow[i] = pokemonMoves.transform.FindChild("Move" + (i + 1) + "PP").GetComponent<Text>();
             pokemonMovesPP[i] = pokemonMovesPPShadow[i].transform.FindChild("Text").GetComponent<Text>();
-            pokemonMovesPPTextShadow[i] = pokemonMoves.transform.FindChild("Move" + (i + 1) + "PPText").GetComponent<Text>();
+            pokemonMovesPPTextShadow[i] =
+                pokemonMoves.transform.FindChild("Move" + (i + 1) + "PPText").GetComponent<Text>();
             pokemonMovesPPText[i] = pokemonMovesPPTextShadow[i].transform.FindChild("Text").GetComponent<Text>();
         }
 
@@ -605,9 +649,12 @@ public class BattleHandler : MonoBehaviour
         pokemonMovesSelectedPowerShadow = pokemonMoves.transform.FindChild("SelectedPower").GetComponent<Text>();
         pokemonMovesSelectedPower = pokemonMovesSelectedPowerShadow.transform.FindChild("Text").GetComponent<Text>();
         pokemonMovesSelectedAccuracyShadow = pokemonMoves.transform.FindChild("SelectedAccuracy").GetComponent<Text>();
-        pokemonMovesSelectedAccuracy = pokemonMovesSelectedAccuracyShadow.transform.FindChild("Text").GetComponent<Text>();
-        pokemonMovesSelectedDescriptionShadow = pokemonMoves.transform.FindChild("SelectedDescription").GetComponent<Text>();
-        pokemonMovesSelectedDescription = pokemonMovesSelectedDescriptionShadow.transform.FindChild("Text").GetComponent<Text>();
+        pokemonMovesSelectedAccuracy =
+            pokemonMovesSelectedAccuracyShadow.transform.FindChild("Text").GetComponent<Text>();
+        pokemonMovesSelectedDescriptionShadow =
+            pokemonMoves.transform.FindChild("SelectedDescription").GetComponent<Text>();
+        pokemonMovesSelectedDescription =
+            pokemonMovesSelectedDescriptionShadow.transform.FindChild("Text").GetComponent<Text>();
         pokemonMovesSelector = pokemonMoves.transform.FindChild("MoveSelector").GetComponent<Image>();
         pokemonMovesSelectedMove = pokemonMoves.transform.FindChild("SelectedMove").GetComponent<Image>();
     }
@@ -617,7 +664,10 @@ public class BattleHandler : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    #region Animations
+
+    //////////////////////////////////
+    /// ANIMATIONS
+    //
     private IEnumerator animatePokemon(Image pokemon, Sprite[] animation)
     {
         int frame = 0;
@@ -639,7 +689,8 @@ public class BattleHandler : MonoBehaviour
         }
     }
 
-    private IEnumerator animateOverlayer(RawImage overlay, Texture overlayTex, float verMovement, float hozMovement, float time, float fadeTime)
+    private IEnumerator animateOverlayer(RawImage overlay, Texture overlayTex, float verMovement, float hozMovement,
+        float time, float fadeTime)
     {
         overlay.gameObject.SetActive(true);
         overlay.texture = overlayTex;
@@ -650,13 +701,17 @@ public class BattleHandler : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / time) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
 
             overlay.uvRect = new Rect(hozMovement * increment, verMovement * increment, 1, 1);
             if (increment > fadeStartIncrement)
             {
                 float increment2 = (increment - fadeStartIncrement) / (1 - fadeStartIncrement);
-                overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, initialAlpha * (1 - increment2));
+                overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b,
+                    initialAlpha * (1 - increment2));
             }
             yield return null;
         }
@@ -665,11 +720,14 @@ public class BattleHandler : MonoBehaviour
     }
 
     /// Slides the Pokemon's Platform across the screen. Takes 1.9f seconds.
-    private IEnumerator slidePokemon(Image platform, Image pokemon, bool showPokemon, bool fromRight, Vector3 destinationPosition)
+    private IEnumerator slidePokemon(Image platform, Image pokemon, bool showPokemon, bool fromRight,
+        Vector3 destinationPosition)
     {
-        Vector3 startPosition = (fromRight) ?
-            new Vector3(171 + (platform.rectTransform.sizeDelta.x * platform.rectTransform.localScale.x / 2f), destinationPosition.y, 0) :
-                new Vector3(-171 - (platform.rectTransform.sizeDelta.x * platform.rectTransform.localScale.x / 2f), destinationPosition.y, 0);
+        Vector3 startPosition = (fromRight)
+            ? new Vector3(171 + (platform.rectTransform.sizeDelta.x * platform.rectTransform.localScale.x / 2f),
+                destinationPosition.y, 0)
+            : new Vector3(-171 - (platform.rectTransform.sizeDelta.x * platform.rectTransform.localScale.x / 2f),
+                destinationPosition.y, 0);
         Vector3 distance = destinationPosition - startPosition;
 
         pokemon.color = new Color(0.25f, 0.25f, 0.25f, 1);
@@ -698,7 +756,8 @@ public class BattleHandler : MonoBehaviour
             {
                 increment = 1f;
             }
-            pokemon.color = new Color(0.25f + (0.25f * increment), 0.25f + (0.25f * increment), 0.25f + (0.25f * increment), 1);
+            pokemon.color = new Color(0.25f + (0.25f * increment), 0.25f + (0.25f * increment),
+                0.25f + (0.25f * increment), 1);
             yield return null;
         }
     }
@@ -711,7 +770,8 @@ public class BattleHandler : MonoBehaviour
         //if it actually was slide out, use the formula to find the hidden position
         if (slideOut)
         {
-            destinationPositionX = (171 - Mathf.Abs(platform.rectTransform.localPosition.x)) / platform.rectTransform.localScale.x + trainer.rectTransform.sizeDelta.x / 2f;
+            destinationPositionX = (171 - Mathf.Abs(platform.rectTransform.localPosition.x)) /
+                                   platform.rectTransform.localScale.x + trainer.rectTransform.sizeDelta.x / 2f;
         }
         //flip direction if is player
         if (!isOpponent)
@@ -771,7 +831,8 @@ public class BattleHandler : MonoBehaviour
                 increment = 1f;
             }
             pokemon.rectTransform.sizeDelta = normalSize * increment;
-            pokemon.color = new Color(0.812f - (0.312f * increment), 0.312f + (0.188f * increment), 0.312f + (0.188f * increment), 1);
+            pokemon.color = new Color(0.812f - (0.312f * increment), 0.312f + (0.188f * increment),
+                0.312f + (0.188f * increment), 1);
             yield return null;
         }
 
@@ -795,7 +856,8 @@ public class BattleHandler : MonoBehaviour
                 increment = 1f;
             }
             pokemon.rectTransform.sizeDelta = normalSize * (1 - increment);
-            pokemon.color = new Color(0.5f + (0.312f * increment), 0.5f - (0.188f * increment), 0.5f - (0.188f * increment), 1);
+            pokemon.color = new Color(0.5f + (0.312f * increment), 0.5f - (0.188f * increment),
+                0.5f - (0.188f * increment), 1);
             yield return null;
         }
         pokemon.transform.parent.parent.gameObject.SetActive(false);
@@ -863,7 +925,8 @@ public class BattleHandler : MonoBehaviour
                 increment = 1f;
             }
 
-            pokemonStatsDisplay[position].rectTransform.localPosition = new Vector3(startX - (distanceX * increment), pokemonStatsDisplay[position].rectTransform.localPosition.y, 0);
+            pokemonStatsDisplay[position].rectTransform.localPosition = new Vector3(startX - (distanceX * increment),
+                pokemonStatsDisplay[position].rectTransform.localPosition.y, 0);
 
             yield return null;
         }
@@ -879,7 +942,8 @@ public class BattleHandler : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             space[i].color = new Color(space[i].color.r, space[i].color.g, space[i].color.b, 0);
-            space[i].rectTransform.localPosition = new Vector3(-96 + (16 * i) + 128, space[i].rectTransform.localPosition.y);
+            space[i].rectTransform.localPosition = new Vector3(-96 + (16 * i) + 128,
+                space[i].rectTransform.localPosition.y);
         }
     }
 
@@ -892,7 +956,7 @@ public class BattleHandler : MonoBehaviour
         Image[] space = (isOpponent) ? opponentPartyBarSpace : playerPartyBarSpace;
 
         hidePartyBar(isOpponent); //this line reset the position to hidden, but also sets alpha to 0
-                                  //set alpha to 1
+        //set alpha to 1
         bar.color = new Color(bar.color.r, bar.color.g, bar.color.b, 1);
         for (int i = 0; i < 6; i++)
         {
@@ -936,7 +1000,6 @@ public class BattleHandler : MonoBehaviour
         }
         //Wait for last space to stop moving
         yield return new WaitForSeconds(0.1f);
-
     }
 
     private IEnumerator dismissPartyBar(bool isOpponent)
@@ -972,7 +1035,10 @@ public class BattleHandler : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / time) * Time.deltaTime;
-            if (increment > 1) { increment = 1f; }
+            if (increment > 1)
+            {
+                increment = 1f;
+            }
 
             for (int i = 0; i < images.Length; i++)
             {
@@ -992,9 +1058,13 @@ public class BattleHandler : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / speed) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
 
-            ball.rectTransform.localPosition = new Vector3(startX + (distanceX * increment), ball.rectTransform.localPosition.y, 0);
+            ball.rectTransform.localPosition = new Vector3(startX + (distanceX * increment),
+                ball.rectTransform.localPosition.y, 0);
             yield return null;
         }
     }
@@ -1033,14 +1103,20 @@ public class BattleHandler : MonoBehaviour
     {
         yield return StartCoroutine(stretchBar(bar, targetSize, 32f, false, null, null, 0));
     }
+
     private IEnumerator stretchBar(Image bar, float targetSize, float pixelsPerSec)
     {
         yield return StartCoroutine(stretchBar(bar, targetSize, pixelsPerSec, false, null, null, 0));
     }
-    private IEnumerator stretchBar(Image bar, float targetSize, float pixelsPerSec, bool isHP, Text hpText, Text hpTextShadow, int endValue)
+
+    private IEnumerator stretchBar(Image bar, float targetSize, float pixelsPerSec, bool isHP, Text hpText,
+        Text hpTextShadow, int endValue)
     {
         float increment = 0f;
-        if (pixelsPerSec <= 0) { pixelsPerSec = 32; }
+        if (pixelsPerSec <= 0)
+        {
+            pixelsPerSec = 32;
+        }
         float startSize = bar.rectTransform.sizeDelta.x;
         float distance = targetSize - startSize;
         float time = Mathf.Abs(distance) / pixelsPerSec;
@@ -1065,15 +1141,21 @@ public class BattleHandler : MonoBehaviour
             if (hpText != null)
             {
                 hpText.text = "" + (startValue + Mathf.FloorToInt(valueDistance * increment));
-                if (hpTextShadow != null) { hpTextShadow.text = hpText.text; }
+                if (hpTextShadow != null)
+                {
+                    hpTextShadow.text = hpText.text;
+                }
             }
             yield return null;
         }
     }
-    #endregion
+
+    //////////////////////////////////
 
 
-    #region GUI Display Updaters
+    //////////////////////////////////
+    /// GUI Display Updaters
+    // 
     /// updates the displayed task.
     /// 0 = task choice, 1 = move choice, 2 = bag choice, 3 = pokemon choice, 4 = item list, 5 = summary, 6 = moves
     private void updateCurrentTask(int newState)
@@ -1095,7 +1177,8 @@ public class BattleHandler : MonoBehaviour
             buttonMoveReturn.gameObject.SetActive(false);
         }
         else if (currentTask == 2)
-        { //Bag
+        {
+            //Bag
             bagObject.SetActive(false);
             buttonItemCategory[0].gameObject.SetActive(false);
             buttonItemCategory[1].gameObject.SetActive(false);
@@ -1104,19 +1187,22 @@ public class BattleHandler : MonoBehaviour
             buttonItemLastUsed.gameObject.SetActive(false);
         }
         else if (currentTask == 3)
-        { //Poke
+        {
+            //Poke
             pokeObject.SetActive(false);
             pokemonPartyObject.SetActive(false);
             StopCoroutine(animatingPartyIcons);
         }
         else if (currentTask == 4)
-        { //ItemList
+        {
+            //ItemList
             bagObject.SetActive(false);
             itemList.SetActive(false);
             updateItemListDisplay();
         }
         else if (currentTask == 5)
-        { //Summary
+        {
+            //Summary
             pokeObject.SetActive(false);
             buttonSwitch.gameObject.SetActive(false);
             buttonCheck.gameObject.SetActive(false);
@@ -1124,7 +1210,8 @@ public class BattleHandler : MonoBehaviour
             pokemonSummary.SetActive(false);
         }
         else if (currentTask == 6)
-        { //Moves
+        {
+            //Moves
             pokeObject.SetActive(false);
             buttonSwitch.gameObject.SetActive(false);
             buttonCheck.gameObject.SetActive(false);
@@ -1151,7 +1238,8 @@ public class BattleHandler : MonoBehaviour
             buttonMoveReturn.gameObject.SetActive(true);
         }
         else if (currentTask == 2)
-        { //Bag
+        {
+            //Bag
             bagObject.SetActive(true);
             buttonItemCategory[0].gameObject.SetActive(true);
             buttonItemCategory[1].gameObject.SetActive(true);
@@ -1161,7 +1249,8 @@ public class BattleHandler : MonoBehaviour
             updateSelectedBagCategory(bagCategoryPosition);
         }
         else if (currentTask == 3)
-        { //Poke
+        {
+            //Poke
             pokeObject.SetActive(true);
             pokemonPartyObject.SetActive(true);
             updatePokemonSlotsDisplay();
@@ -1169,7 +1258,8 @@ public class BattleHandler : MonoBehaviour
             animatingPartyIcons = StartCoroutine(animatePartyIcons());
         }
         else if (currentTask == 4)
-        { //ItemList
+        {
+            //ItemList
             bagObject.SetActive(true);
             itemList.SetActive(true);
             if (bagCategoryPosition == 0)
@@ -1197,10 +1287,10 @@ public class BattleHandler : MonoBehaviour
 
             itemListPageCount = Mathf.CeilToInt((float)itemListString.Length / 8f);
             updateItemListDisplay();
-
         }
         else if (currentTask == 5)
-        { //Summary
+        {
+            //Summary
             pokeObject.SetActive(true);
             buttonSwitch.gameObject.SetActive(true);
             buttonCheck.gameObject.SetActive(true);
@@ -1211,7 +1301,8 @@ public class BattleHandler : MonoBehaviour
             updatePokemonSummaryDisplay(SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
         }
         else if (currentTask == 6)
-        { //Moves
+        {
+            //Moves
             pokeObject.SetActive(true);
             buttonSwitch.gameObject.SetActive(true);
             buttonCheck.gameObject.SetActive(true);
@@ -1221,7 +1312,6 @@ public class BattleHandler : MonoBehaviour
             pokemonMoves.SetActive(true);
             updateMovesPosition(5);
         }
-
     }
 
     private void updatePokemonStatsDisplay(int position)
@@ -1247,14 +1337,16 @@ public class BattleHandler : MonoBehaviour
             statsGenderShadow[position].text = statsGender[position].text;
             statsLevel[position].text = "" + pokemon[position].getLevel();
             statsLevelShadow[position].text = statsLevel[position].text;
-            statsHPBar[position].rectTransform.sizeDelta = new Vector2(Mathf.CeilToInt(pokemon[position].getPercentHP() * 48f), 4f);
+            statsHPBar[position].rectTransform.sizeDelta =
+                new Vector2(Mathf.CeilToInt(pokemon[position].getPercentHP() * 48f), 4f);
 
             setHPBarColor(statsHPBar[position], 48f);
 
 
             if (pokemon[position].getStatus() != Pokemon.Status.NONE)
             {
-                statsStatus[position].sprite = Resources.Load<Sprite>("PCSprites/status" + pokemon[position].getStatus().ToString());
+                statsStatus[position].sprite =
+                    Resources.Load<Sprite>("PCSprites/status" + pokemon[position].getStatus().ToString());
             }
             else
             {
@@ -1266,8 +1358,12 @@ public class BattleHandler : MonoBehaviour
                 pokemon0CurrentHPShadow.text = pokemon0CurrentHP.text;
                 pokemon0MaxHP.text = "" + pokemon[0].getHP();
                 pokemon0MaxHPShadow.text = pokemon0MaxHP.text;
-                float expCurrentLevel = PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(pokemon[0].getID()).getLevelingRate(), pokemon[0].getLevel());
-                float expNextlevel = PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(pokemon[0].getID()).getLevelingRate(), pokemon[0].getLevel() + 1);
+                float expCurrentLevel =
+                    PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(pokemon[0].getID()).getLevelingRate(),
+                        pokemon[0].getLevel());
+                float expNextlevel =
+                    PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(pokemon[0].getID()).getLevelingRate(),
+                        pokemon[0].getLevel() + 1);
                 float expAlong = pokemon[0].getExp() - expCurrentLevel;
                 float expDistance = expAlong / (expNextlevel - expCurrentLevel);
                 pokemon0ExpBar.rectTransform.sizeDelta = new Vector2(Mathf.Floor(expDistance * 80f), 2f);
@@ -1275,7 +1371,6 @@ public class BattleHandler : MonoBehaviour
         }
         else
         {
-
         }
     }
 
@@ -1398,7 +1493,6 @@ public class BattleHandler : MonoBehaviour
     /// Updates the Item List to show the correct 8 items from the page
     private void updateItemListDisplay()
     {
-
         if (itemListPageCount < 1)
         {
             itemListPageCount = 1;
@@ -1449,7 +1543,6 @@ public class BattleHandler : MonoBehaviour
                 buttonItemList[i].gameObject.SetActive(false);
             }
         }
-
     }
 
     /// updates the pokemon slots to show the correct pokemon in the player's party
@@ -1534,7 +1627,10 @@ public class BattleHandler : MonoBehaviour
                     pokemonSlotGender[i].text = null;
                 }
                 pokemonSlotGenderShadow[i].text = pokemonSlotGender[i].text;
-                pokemonSlotHPBar[i].rectTransform.sizeDelta = new Vector2(Mathf.FloorToInt(48f * ((float)selectedPokemon.getCurrentHP() / (float)selectedPokemon.getHP())), 4);
+                pokemonSlotHPBar[i].rectTransform.sizeDelta =
+                    new Vector2(
+                        Mathf.FloorToInt(48f *
+                                         ((float)selectedPokemon.getCurrentHP() / (float)selectedPokemon.getHP())), 4);
 
                 setHPBarColor(pokemonSlotHPBar[i], 48f);
 
@@ -1546,7 +1642,8 @@ public class BattleHandler : MonoBehaviour
                 pokemonSlotMaxHPShadow[i].text = pokemonSlotMaxHP[i].text;
                 if (selectedPokemon.getStatus() != Pokemon.Status.NONE)
                 {
-                    pokemonSlotStatus[i].sprite = Resources.Load<Sprite>("PCSprites/status" + selectedPokemon.getStatus().ToString());
+                    pokemonSlotStatus[i].sprite =
+                        Resources.Load<Sprite>("PCSprites/status" + selectedPokemon.getStatus().ToString());
                 }
                 else
                 {
@@ -1581,7 +1678,8 @@ public class BattleHandler : MonoBehaviour
         pokemonSelectedLevelShadow.text = pokemonSelectedLevel.text;
         if (selectedPokemon.getStatus() != Pokemon.Status.NONE)
         {
-            pokemonSelectedStatus.sprite = Resources.Load<Sprite>("PCSprites/status" + selectedPokemon.getStatus().ToString());
+            pokemonSelectedStatus.sprite =
+                Resources.Load<Sprite>("PCSprites/status" + selectedPokemon.getStatus().ToString());
         }
         else
         {
@@ -1601,8 +1699,12 @@ public class BattleHandler : MonoBehaviour
         }
 
         //Summary
-        float expCurrentLevel = PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(), selectedPokemon.getLevel());
-        float expNextlevel = PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(), selectedPokemon.getLevel() + 1);
+        float expCurrentLevel =
+            PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(),
+                selectedPokemon.getLevel());
+        float expNextlevel =
+            PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(),
+                selectedPokemon.getLevel() + 1);
         float expAlong = selectedPokemon.getExp() - expCurrentLevel;
         float expDistance = expAlong / (expNextlevel - expCurrentLevel);
         pokemonSummaryNextLevelEXP.text = "" + (expNextlevel - selectedPokemon.getExp());
@@ -1622,34 +1724,47 @@ public class BattleHandler : MonoBehaviour
         float maxHP = selectedPokemon.getHP();
         pokemonSummaryHP.text = currentHP + "/" + maxHP;
         pokemonSummaryHPShadow.text = pokemonSummaryHP.text;
-        pokemonSummaryHPBar.rectTransform.sizeDelta = new Vector2(Mathf.Floor((1 - (maxHP - currentHP) / maxHP) * 48f), 4f);
+        pokemonSummaryHPBar.rectTransform.sizeDelta = new Vector2(Mathf.Floor((1 - (maxHP - currentHP) / maxHP) * 48f),
+            4f);
 
         setHPBarColor(pokemonSummaryHPBar, 48f);
 
-        float[] natureMod = new float[]{
+        float[] natureMod = new float[]
+        {
             NatureDatabase.getNature(selectedPokemon.getNature()).getATK(),
             NatureDatabase.getNature(selectedPokemon.getNature()).getDEF(),
             NatureDatabase.getNature(selectedPokemon.getNature()).getSPA(),
             NatureDatabase.getNature(selectedPokemon.getNature()).getSPD(),
-            NatureDatabase.getNature(selectedPokemon.getNature()).getSPE()};
+            NatureDatabase.getNature(selectedPokemon.getNature()).getSPE()
+        };
         pokemonSummaryStats.text =
             selectedPokemon.getATK() + "\n" +
-                selectedPokemon.getDEF() + "\n" +
-                selectedPokemon.getSPA() + "\n" +
-                selectedPokemon.getSPD() + "\n" +
-                selectedPokemon.getSPE();
+            selectedPokemon.getDEF() + "\n" +
+            selectedPokemon.getSPA() + "\n" +
+            selectedPokemon.getSPD() + "\n" +
+            selectedPokemon.getSPE();
         pokemonSummaryStatsShadow.text = pokemonSummaryStats.text;
 
         string[] statsLines = new string[] { "Attack", "Defence", "Sp. Atk", "Sp. Def", "Speed" };
         pokemonSummaryStatsTextShadow.text = "";
         for (int i = 0; i < 5; i++)
         {
-            if (natureMod[i] > 1) { pokemonSummaryStatsTextShadow.text += "<color=#A01010FF>" + statsLines[i] + "</color>\n"; }
-            else if (natureMod[i] < 1) { pokemonSummaryStatsTextShadow.text += "<color=#0030A2FF>" + statsLines[i] + "</color>\n"; }
-            else { pokemonSummaryStatsTextShadow.text += statsLines[i] + "\n"; }
+            if (natureMod[i] > 1)
+            {
+                pokemonSummaryStatsTextShadow.text += "<color=#A01010FF>" + statsLines[i] + "</color>\n";
+            }
+            else if (natureMod[i] < 1)
+            {
+                pokemonSummaryStatsTextShadow.text += "<color=#0030A2FF>" + statsLines[i] + "</color>\n";
+            }
+            else
+            {
+                pokemonSummaryStatsTextShadow.text += statsLines[i] + "\n";
+            }
         }
 
-        pokemonSummaryAbilityName.text = PokemonDatabase.getPokemon(selectedPokemon.getID()).getAbility(selectedPokemon.getAbility());
+        pokemonSummaryAbilityName.text =
+            PokemonDatabase.getPokemon(selectedPokemon.getID()).getAbility(selectedPokemon.getAbility());
         pokemonSummaryAbilityNameShadow.text = pokemonSummaryAbilityName.text;
         //abilities not yet implemented
         pokemonSummaryAbilityDescription.text = "";
@@ -1665,7 +1780,8 @@ public class BattleHandler : MonoBehaviour
             {
                 pokemonMovesName[i].text = moveset[i];
                 pokemonMovesNameShadow[i].text = pokemonMovesName[i].text;
-                pokemonMovesType[i].sprite = Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[i]).getType().ToString());
+                pokemonMovesType[i].sprite =
+                    Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[i]).getType().ToString());
                 pokemonMovesPPText[i].text = "PP";
                 pokemonMovesPPTextShadow[i].text = pokemonMovesPPText[i].text;
                 pokemonMovesPP[i].text = PP[i] + "/" + maxPP[i];
@@ -1721,7 +1837,8 @@ public class BattleHandler : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             if (i != bagCategoryPosition)
-            { //deselect
+            {
+                //deselect
                 if (i == 4)
                 {
                     buttonBackBag.sprite = buttonBackBagTex;
@@ -1736,7 +1853,8 @@ public class BattleHandler : MonoBehaviour
                 }
             }
             else
-            { //select
+            {
+                //select
                 if (i == 4)
                 {
                     buttonBackBag.sprite = buttonBackBagSelTex;
@@ -1790,6 +1908,10 @@ public class BattleHandler : MonoBehaviour
                         newPosition = checkPosition; //adjust the position
                         spaceFound = true;
                     }
+                    if (modifier == 0)
+                    {
+                        modifier = 1; //prevent infinite loops in case the modifier is set to never increment
+                    }
                 }
             }
         }
@@ -1821,7 +1943,8 @@ public class BattleHandler : MonoBehaviour
 
         if (newPosition + (itemListPagePosition * 8) < itemListString.Length)
         {
-            itemListDescription.text = ItemDatabase.getItem(itemListString[newPosition + (itemListPagePosition * 8)]).getDescription();
+            itemListDescription.text =
+                ItemDatabase.getItem(itemListString[newPosition + (itemListPagePosition * 8)]).getDescription();
         }
         else
         {
@@ -1851,7 +1974,8 @@ public class BattleHandler : MonoBehaviour
                 int checkPosition = pokePartyPosition;
                 bool spaceFound = false;
                 if (newPosition < pokePartyPosition)
-                { //keep going back 1 until avaiable position found
+                {
+                    //keep going back 1 until avaiable position found
                     while (!spaceFound)
                     {
                         checkPosition -= 1;
@@ -1868,7 +1992,8 @@ public class BattleHandler : MonoBehaviour
                     }
                 }
                 else
-                { //keep going forward 1
+                {
+                    //keep going forward 1
                     while (!spaceFound)
                     {
                         checkPosition += 1;
@@ -1907,7 +2032,8 @@ public class BattleHandler : MonoBehaviour
                     int checkPosition = pokePartyPosition;
                     bool spaceFound = false;
                     if (newPosition < pokePartyPosition)
-                    { //keep going back 1 until avaiable position found
+                    {
+                        //keep going back 1 until avaiable position found
                         while (!spaceFound)
                         {
                             checkPosition -= 1;
@@ -1932,19 +2058,26 @@ public class BattleHandler : MonoBehaviour
         for (int i = 0; i < 7; i++)
         {
             if (i != pokePartyPosition)
-            { //unhighlight
+            {
+                //unhighlight
                 if (i == 0)
                 {
                     if (SaveData.currentSave.PC.boxes[0][i] != null)
                     {
-                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() != Pokemon.Status.FAINTED) ? buttonPokemonRoundTex : buttonPokemonRoundFntTex;
+                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() !=
+                                                       Pokemon.Status.FAINTED)
+                            ? buttonPokemonRoundTex
+                            : buttonPokemonRoundFntTex;
                     }
                 }
                 else if (i < 6)
                 {
                     if (SaveData.currentSave.PC.boxes[0][i] != null)
                     {
-                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() != Pokemon.Status.FAINTED) ? buttonPokemonTex : buttonPokemonFntTex;
+                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() !=
+                                                       Pokemon.Status.FAINTED)
+                            ? buttonPokemonTex
+                            : buttonPokemonFntTex;
                     }
                 }
                 else
@@ -1953,19 +2086,26 @@ public class BattleHandler : MonoBehaviour
                 }
             }
             else
-            { //highlight
+            {
+                //highlight
                 if (i == 0)
                 {
                     if (SaveData.currentSave.PC.boxes[0][i] != null)
                     {
-                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() != Pokemon.Status.FAINTED) ? buttonPokemonRoundSelTex : buttonPokemonRoundFntSelTex;
+                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() !=
+                                                       Pokemon.Status.FAINTED)
+                            ? buttonPokemonRoundSelTex
+                            : buttonPokemonRoundFntSelTex;
                     }
                 }
                 else if (i < 6)
                 {
                     if (SaveData.currentSave.PC.boxes[0][i] != null)
                     {
-                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() != Pokemon.Status.FAINTED) ? buttonPokemonSelTex : buttonPokemonFntSelTex;
+                        buttonPokemonSlot[i].sprite = (SaveData.currentSave.PC.boxes[0][i].getStatus() !=
+                                                       Pokemon.Status.FAINTED)
+                            ? buttonPokemonSelTex
+                            : buttonPokemonFntSelTex;
                     }
                 }
                 else
@@ -1986,9 +2126,11 @@ public class BattleHandler : MonoBehaviour
 
     private int updateMovesPosition(int newPosition)
     {
-        Vector3[] positions = new Vector3[]{
-            new Vector3(-36, 51, 0), new Vector3( 51, 51, 0),
-            new Vector3(-36, 19, 0), new Vector3( 51, 19, 0)};
+        Vector3[] positions = new Vector3[]
+        {
+            new Vector3(-36, 51, 0), new Vector3(51, 51, 0),
+            new Vector3(-36, 19, 0), new Vector3(51, 19, 0)
+        };
 
         buttonSwitch.sprite = buttonBlueTex;
         buttonCheck.sprite = buttonBlueTex;
@@ -2010,7 +2152,8 @@ public class BattleHandler : MonoBehaviour
             else
             {
                 MoveData selectedMove = MoveDatabase.getMove(moveset[newPosition]);
-                pokemonMovesSelectedCategory.sprite = Resources.Load<Sprite>("PCSprites/category" + selectedMove.getCategory().ToString());
+                pokemonMovesSelectedCategory.sprite =
+                    Resources.Load<Sprite>("PCSprites/category" + selectedMove.getCategory().ToString());
                 pokemonMovesSelectedPower.text = "" + selectedMove.getPower();
                 if (pokemonMovesSelectedPower.text == "0")
                 {
@@ -2037,7 +2180,6 @@ public class BattleHandler : MonoBehaviour
                     pokemonMovesSelector.enabled = true;
                     pokemonMovesSelector.rectTransform.localPosition = positions[newPosition];
                 }
-
             }
         }
         else
@@ -2067,6 +2209,7 @@ public class BattleHandler : MonoBehaviour
         }
         return newPosition;
     }
+
     private IEnumerator moveMoveSelector(Vector3 destinationPosition)
     {
         Vector3 startPosition = pokemonMovesSelector.rectTransform.localPosition;
@@ -2087,6 +2230,7 @@ public class BattleHandler : MonoBehaviour
         }
     }
 
+
     private void setHPBarColor(Image bar, float maxSize)
     {
         if (bar.rectTransform.sizeDelta.x < maxSize / 4f)
@@ -2102,20 +2246,28 @@ public class BattleHandler : MonoBehaviour
             bar.color = new Color(0.125f, 0.625f, 0, 1);
         }
     }
-    #endregion
 
-    #region BATTLE DATA MANAGEMENT
+    //////////////////////////////////
+
+
+    //////////////////////////////////
+    /// BATTLE DATA MANAGEMENT
+    //
     /// Calculates the base damage of an attack (before modifiers are applied).
     private float calculateDamage(int attackerPosition, int targetPosition, MoveData move)
     {
         float baseDamage = 0;
         if (move.getCategory() == MoveData.Category.PHYSICAL)
         {
-            baseDamage = ((2f * (float)pokemon[attackerPosition].getLevel() + 10f) / 250f) * ((float)pokemonStats[0][attackerPosition] / (float)pokemonStats[1][targetPosition]) * (float)move.getPower() + 2f;
+            baseDamage = ((2f * (float)pokemon[attackerPosition].getLevel() + 10f) / 250f) *
+                         ((float)pokemonStats[0][attackerPosition] / (float)pokemonStats[1][targetPosition]) *
+                         (float)move.getPower() + 2f;
         }
         else if (move.getCategory() == MoveData.Category.SPECIAL)
         {
-            baseDamage = ((2f * (float)pokemon[attackerPosition].getLevel() + 10f) / 250f) * ((float)pokemonStats[2][attackerPosition] / (float)pokemonStats[3][targetPosition]) * (float)move.getPower() + 2f;
+            baseDamage = ((2f * (float)pokemon[attackerPosition].getLevel() + 10f) / 250f) *
+                         ((float)pokemonStats[2][attackerPosition] / (float)pokemonStats[3][targetPosition]) *
+                         (float)move.getPower() + 2f;
         }
 
         baseDamage *= Random.Range(0.85f, 1f);
@@ -2171,14 +2323,15 @@ public class BattleHandler : MonoBehaviour
 
 
     /// TEMPORARILY USED FOR EVERYTHING NOT COVERED BY AN EXISTING METHOD
-    private float calculateModifiedDamage(int attackerPosition, int targetPosition, MoveData move, float baseDamage, bool applyCritical)
+    private float calculateModifiedDamage(int attackerPosition, int targetPosition, MoveData move, float baseDamage,
+        bool applyCritical)
     {
         float modifiedDamage = baseDamage;
 
         //apply STAB
         if (pokemonType1[attackerPosition] == move.getType() ||
-           pokemonType2[attackerPosition] == move.getType() ||
-           pokemonType3[attackerPosition] == move.getType())
+            pokemonType2[attackerPosition] == move.getType() ||
+            pokemonType3[attackerPosition] == move.getType())
         {
             modifiedDamage *= 1.5f;
         }
@@ -2188,7 +2341,8 @@ public class BattleHandler : MonoBehaviour
         {
             modifiedDamage *= calculateStatModifier(pokemonStatsMod[0][attackerPosition]);
             if (!applyCritical)
-            { //exclude defensive buffs in a critical hit
+            {
+                //exclude defensive buffs in a critical hit
                 modifiedDamage /= calculateStatModifier(pokemonStatsMod[1][targetPosition]);
             }
         }
@@ -2196,7 +2350,8 @@ public class BattleHandler : MonoBehaviour
         {
             modifiedDamage *= calculateStatModifier(pokemonStatsMod[2][attackerPosition]);
             if (!applyCritical)
-            { //exclude defensive buffs in a critical hit
+            {
+                //exclude defensive buffs in a critical hit
                 modifiedDamage /= calculateStatModifier(pokemonStatsMod[3][targetPosition]);
             }
         }
@@ -2262,14 +2417,14 @@ public class BattleHandler : MonoBehaviour
         if (attackingType == PokemonData.Type.BUG)
         {
             if (targetType == PokemonData.Type.DARK || targetType == PokemonData.Type.GRASS ||
-               targetType == PokemonData.Type.PSYCHIC)
+                targetType == PokemonData.Type.PSYCHIC)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.FAIRY || targetType == PokemonData.Type.FIGHTING ||
-                    targetType == PokemonData.Type.FIRE || targetType == PokemonData.Type.FLYING ||
-                    targetType == PokemonData.Type.GHOST || targetType == PokemonData.Type.POISON ||
-                    targetType == PokemonData.Type.STEEL)
+                     targetType == PokemonData.Type.FIRE || targetType == PokemonData.Type.FLYING ||
+                     targetType == PokemonData.Type.GHOST || targetType == PokemonData.Type.POISON ||
+                     targetType == PokemonData.Type.STEEL)
             {
                 return 0.5f;
             }
@@ -2281,7 +2436,7 @@ public class BattleHandler : MonoBehaviour
                 return 2f;
             }
             else if (targetType == PokemonData.Type.DARK || targetType == PokemonData.Type.FAIRY ||
-                    targetType == PokemonData.Type.FIGHTING)
+                     targetType == PokemonData.Type.FIGHTING)
             {
                 return 0.5f;
             }
@@ -2308,7 +2463,7 @@ public class BattleHandler : MonoBehaviour
                 return 2f;
             }
             else if (targetType == PokemonData.Type.DRAGON || targetType == PokemonData.Type.ELECTRIC ||
-                    targetType == PokemonData.Type.GRASS)
+                     targetType == PokemonData.Type.GRASS)
             {
                 return 0.5f;
             }
@@ -2320,12 +2475,12 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.FAIRY)
         {
             if (targetType == PokemonData.Type.DARK || targetType == PokemonData.Type.DRAGON ||
-               targetType == PokemonData.Type.FIGHTING)
+                targetType == PokemonData.Type.FIGHTING)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.FIRE || targetType == PokemonData.Type.POISON ||
-                    targetType == PokemonData.Type.STEEL)
+                     targetType == PokemonData.Type.STEEL)
             {
                 return 0.5f;
             }
@@ -2333,14 +2488,14 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.FIGHTING)
         {
             if (targetType == PokemonData.Type.DARK || targetType == PokemonData.Type.ICE ||
-               targetType == PokemonData.Type.NORMAL || targetType == PokemonData.Type.ROCK ||
-               targetType == PokemonData.Type.STEEL)
+                targetType == PokemonData.Type.NORMAL || targetType == PokemonData.Type.ROCK ||
+                targetType == PokemonData.Type.STEEL)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.BUG || targetType == PokemonData.Type.FAIRY ||
-                    targetType == PokemonData.Type.FLYING || targetType == PokemonData.Type.POISON ||
-                    targetType == PokemonData.Type.PSYCHIC)
+                     targetType == PokemonData.Type.FLYING || targetType == PokemonData.Type.POISON ||
+                     targetType == PokemonData.Type.PSYCHIC)
             {
                 return 0.5f;
             }
@@ -2352,12 +2507,12 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.FIRE)
         {
             if (targetType == PokemonData.Type.BUG || targetType == PokemonData.Type.GRASS ||
-               targetType == PokemonData.Type.ICE || targetType == PokemonData.Type.STEEL)
+                targetType == PokemonData.Type.ICE || targetType == PokemonData.Type.STEEL)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.DRAGON || targetType == PokemonData.Type.FIRE ||
-                    targetType == PokemonData.Type.ROCK || targetType == PokemonData.Type.WATER)
+                     targetType == PokemonData.Type.ROCK || targetType == PokemonData.Type.WATER)
             {
                 return 0.5f;
             }
@@ -2365,12 +2520,12 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.FLYING)
         {
             if (targetType == PokemonData.Type.BUG || targetType == PokemonData.Type.FIGHTING ||
-               targetType == PokemonData.Type.GRASS)
+                targetType == PokemonData.Type.GRASS)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.ELECTRIC || targetType == PokemonData.Type.ROCK ||
-                    targetType == PokemonData.Type.STEEL)
+                     targetType == PokemonData.Type.STEEL)
             {
                 return 0.5f;
             }
@@ -2393,14 +2548,14 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.GRASS)
         {
             if (targetType == PokemonData.Type.GROUND || targetType == PokemonData.Type.ROCK ||
-               targetType == PokemonData.Type.WATER)
+                targetType == PokemonData.Type.WATER)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.BUG || targetType == PokemonData.Type.DRAGON ||
-                    targetType == PokemonData.Type.FIRE || targetType == PokemonData.Type.FLYING ||
-                    targetType == PokemonData.Type.GRASS || targetType == PokemonData.Type.POISON ||
-                    targetType == PokemonData.Type.STEEL)
+                     targetType == PokemonData.Type.FIRE || targetType == PokemonData.Type.FLYING ||
+                     targetType == PokemonData.Type.GRASS || targetType == PokemonData.Type.POISON ||
+                     targetType == PokemonData.Type.STEEL)
             {
                 return 0.5f;
             }
@@ -2408,8 +2563,8 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.GROUND)
         {
             if (targetType == PokemonData.Type.ELECTRIC || targetType == PokemonData.Type.FIRE ||
-               targetType == PokemonData.Type.POISON || targetType == PokemonData.Type.ROCK ||
-               targetType == PokemonData.Type.STEEL)
+                targetType == PokemonData.Type.POISON || targetType == PokemonData.Type.ROCK ||
+                targetType == PokemonData.Type.STEEL)
             {
                 return 2f;
             }
@@ -2425,12 +2580,12 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.ICE)
         {
             if (targetType == PokemonData.Type.DRAGON || targetType == PokemonData.Type.FLYING ||
-               targetType == PokemonData.Type.GRASS || targetType == PokemonData.Type.GROUND)
+                targetType == PokemonData.Type.GRASS || targetType == PokemonData.Type.GROUND)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.FIRE || targetType == PokemonData.Type.ICE ||
-                    targetType == PokemonData.Type.STEEL || targetType == PokemonData.Type.WATER)
+                     targetType == PokemonData.Type.STEEL || targetType == PokemonData.Type.WATER)
             {
                 return 0.5f;
             }
@@ -2453,7 +2608,7 @@ public class BattleHandler : MonoBehaviour
                 return 2f;
             }
             else if (targetType == PokemonData.Type.POISON || targetType == PokemonData.Type.GROUND ||
-                    targetType == PokemonData.Type.ROCK || targetType == PokemonData.Type.GHOST)
+                     targetType == PokemonData.Type.ROCK || targetType == PokemonData.Type.GHOST)
             {
                 return 0.5f;
             }
@@ -2480,12 +2635,12 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.ROCK)
         {
             if (targetType == PokemonData.Type.BUG || targetType == PokemonData.Type.FIRE ||
-               targetType == PokemonData.Type.FLYING || targetType == PokemonData.Type.ICE)
+                targetType == PokemonData.Type.FLYING || targetType == PokemonData.Type.ICE)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.FIGHTING || targetType == PokemonData.Type.GROUND ||
-                    targetType == PokemonData.Type.STEEL)
+                     targetType == PokemonData.Type.STEEL)
             {
                 return 0.5f;
             }
@@ -2493,12 +2648,12 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.STEEL)
         {
             if (targetType == PokemonData.Type.FAIRY || targetType == PokemonData.Type.ICE ||
-               targetType == PokemonData.Type.ROCK)
+                targetType == PokemonData.Type.ROCK)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.ELECTRIC || targetType == PokemonData.Type.FIRE ||
-                    targetType == PokemonData.Type.STEEL || targetType == PokemonData.Type.WATER)
+                     targetType == PokemonData.Type.STEEL || targetType == PokemonData.Type.WATER)
             {
                 return 0.5f;
             }
@@ -2506,12 +2661,12 @@ public class BattleHandler : MonoBehaviour
         else if (attackingType == PokemonData.Type.WATER)
         {
             if (targetType == PokemonData.Type.FIRE || targetType == PokemonData.Type.GROUND ||
-               targetType == PokemonData.Type.ROCK)
+                targetType == PokemonData.Type.ROCK)
             {
                 return 2f;
             }
             else if (targetType == PokemonData.Type.DRAGON || targetType == PokemonData.Type.GRASS ||
-                    targetType == PokemonData.Type.WATER)
+                     targetType == PokemonData.Type.WATER)
             {
                 return 0.5f;
             }
@@ -2558,12 +2713,14 @@ public class BattleHandler : MonoBehaviour
                     calculatedPokemonPriority = commandMove[i].getPriority();
                 }
                 else if (command[i] == CommandType.Switch)
-                { //6 priority for regular swapping out.
+                {
+                    //6 priority for regular swapping out.
                     calculatedPokemonPriority = 6;
                 }
 
                 //if the top speed is greater than the old, AND the priority is no lower than       OR   the priority is greater than the old
-                if ((calculatedPokemonSpeed >= topSpeed && calculatedPokemonPriority >= topPriority) || calculatedPokemonPriority > topPriority)
+                if ((calculatedPokemonSpeed >= topSpeed && calculatedPokemonPriority >= topPriority) ||
+                    calculatedPokemonPriority > topPriority)
                 {
                     if (calculatedPokemonSpeed == topSpeed && calculatedPokemonPriority == topPriority)
                     {
@@ -2592,11 +2749,13 @@ public class BattleHandler : MonoBehaviour
     {
         return switchPokemon(switchPosition, newPokemon, false, false);
     }
+
     /// Switch Pokemon
     private bool switchPokemon(int switchPosition, Pokemon newPokemon, bool batonPass)
     {
         return switchPokemon(switchPosition, newPokemon, batonPass, false);
     }
+
     /// Switch Pokemon
     private bool switchPokemon(int switchPosition, Pokemon newPokemon, bool batonPass, bool forceSwitch)
     {
@@ -2616,10 +2775,6 @@ public class BattleHandler : MonoBehaviour
             {
                 if (pokemon[switchPosition].getStatus() != Pokemon.Status.FAINTED)
                 {
-
-
-
-
                 }
             }
         }
@@ -2630,7 +2785,8 @@ public class BattleHandler : MonoBehaviour
 
         //set PokemonData
         updatePokemonStats(switchPosition);
-        pokemonAbility[switchPosition] = PokemonDatabase.getPokemon(newPokemon.getID()).getAbility(newPokemon.getAbility());
+        pokemonAbility[switchPosition] =
+            PokemonDatabase.getPokemon(newPokemon.getID()).getAbility(newPokemon.getAbility());
         pokemonType1[switchPosition] = PokemonDatabase.getPokemon(newPokemon.getID()).getType1();
         pokemonType2[switchPosition] = PokemonDatabase.getPokemon(newPokemon.getID()).getType2();
         pokemonType3[switchPosition] = PokemonData.Type.NONE;
@@ -2666,7 +2822,6 @@ public class BattleHandler : MonoBehaviour
         }
         else
         {
-
         }
 
 
@@ -2675,13 +2830,14 @@ public class BattleHandler : MonoBehaviour
 
     private IEnumerator addExp(int position, int exp)
     {
-        yield return StartCoroutine(drawTextAndWait(pokemon[position].getName() + " gained " + exp + " Exp. Points!", 1.8f, 1.8f));
+        yield return
+            StartCoroutine(drawTextAndWait(pokemon[position].getName() + " gained " + exp + " Exp. Points!", 1.8f, 1.8f))
+            ;
         Dialog.UndrawDialogBox();
 
         int expPool = exp;
         while (expPool > 0)
         {
-
             int expToNextLevel = pokemon[position].getExpNext() - pokemon[position].getExp();
 
             //if enough exp left to level up
@@ -2700,7 +2856,11 @@ public class BattleHandler : MonoBehaviour
                 updatePokemonStatsDisplay(position);
 
                 BgmHandler.main.PlayMFX(Resources.Load<AudioClip>("Audio/mfx/GetAverage"));
-                yield return StartCoroutine(drawTextAndWait(pokemon[position].getName() + " grew to Level " + pokemon[position].getLevel() + "!", 1.8f, 1.8f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            pokemon[position].getName() + " grew to Level " + pokemon[position].getLevel() + "!", 1.8f,
+                            1.8f));
 
                 string newMove = pokemon[position].MoveLearnedAtLevel(pokemon[position].getLevel());
                 if (!string.IsNullOrEmpty(newMove) && !pokemon[position].HasMove(newMove))
@@ -2715,21 +2875,23 @@ public class BattleHandler : MonoBehaviour
             {
                 pokemon[position].addExp(expPool);
                 expPool = 0;
-                float levelStartExp = PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(pokemon[position].getID()).getLevelingRate(), pokemon[position].getLevel());
+                float levelStartExp =
+                    PokemonDatabase.getLevelExp(
+                        PokemonDatabase.getPokemon(pokemon[position].getID()).getLevelingRate(),
+                        pokemon[position].getLevel());
                 float currentExpMinusStart = pokemon[position].getExp() - levelStartExp;
                 float nextLevelExpMinusStart = pokemon[position].getExpNext() - levelStartExp;
 
                 AudioSource fillSource = SfxHandler.Play(fillExpClip);
-                yield return StartCoroutine(stretchBar(pokemon0ExpBar, 80f * (currentExpMinusStart / nextLevelExpMinusStart)));
+                yield return
+                    StartCoroutine(stretchBar(pokemon0ExpBar, 80f * (currentExpMinusStart / nextLevelExpMinusStart)));
                 SfxHandler.FadeSource(fillSource, 0.2f);
                 yield return new WaitForSeconds(1f);
-
             }
 
 
             yield return null;
         }
-
     }
 
     private IEnumerator LearnMove(Pokemon selectedPokemon, string move)
@@ -2743,9 +2905,15 @@ public class BattleHandler : MonoBehaviour
                 //Moveset is full
                 if (selectedPokemon.getMoveCount() == 4)
                 {
-                    yield return StartCoroutine(drawTextAndWait(selectedPokemon.getName() + " wants to learn the \nmove " + move + "."));
-                    yield return StartCoroutine(drawTextAndWait("However, " + selectedPokemon.getName() + " already \nknows four moves."));
-                    yield return StartCoroutine(drawTextAndWait("Should a move be deleted and \nreplaced with " + move + "?", 0.1f));
+                    yield return
+                        StartCoroutine(
+                            drawTextAndWait(selectedPokemon.getName() + " wants to learn the \nmove " + move + "."));
+                    yield return
+                        StartCoroutine(
+                            drawTextAndWait("However, " + selectedPokemon.getName() + " already \nknows four moves."));
+                    yield return
+                        StartCoroutine(drawTextAndWait("Should a move be deleted and \nreplaced with " + move + "?",
+                            0.1f));
 
                     yield return StartCoroutine(Dialog.DrawChoiceBox());
                     chosenIndex = Dialog.chosenIndex;
@@ -2757,15 +2925,15 @@ public class BattleHandler : MonoBehaviour
                         yield return StartCoroutine(ScreenFade.main.Fade(false, ScreenFade.defaultSpeed));
 
                         //Set SceneSummary to be active so that it appears
-                        Scene.main.Summary.gameObject.SetActive(true);
-                        StartCoroutine(Scene.main.Summary.control(selectedPokemon, move));
+                        PKUScene.main.Summary.gameObject.SetActive(true);
+                        StartCoroutine(PKUScene.main.Summary.control(selectedPokemon, move));
                         //Start an empty loop that will only stop when SceneSummary is no longer active (is closed)
-                        while (Scene.main.Summary.gameObject.activeSelf)
+                        while (PKUScene.main.Summary.gameObject.activeSelf)
                         {
                             yield return null;
                         }
 
-                        string replacedMove = Scene.main.Summary.replacedMove;
+                        string replacedMove = PKUScene.main.Summary.replacedMove;
                         yield return StartCoroutine(ScreenFade.main.Fade(true, ScreenFade.defaultSpeed));
 
                         if (!string.IsNullOrEmpty(replacedMove))
@@ -2783,9 +2951,15 @@ public class BattleHandler : MonoBehaviour
                             yield return new WaitForSeconds(0.4f);
                             SfxHandler.Play(pokeballBounceClip);
                             yield return StartCoroutine(Dialog.DrawTextSilent("Poof!"));
-                            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back")) { yield return null; }
+                            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+                            {
+                                yield return null;
+                            }
 
-                            yield return StartCoroutine(drawTextAndWait(selectedPokemon.getName() + " forgot how to \nuse " + replacedMove + "."));
+                            yield return
+                                StartCoroutine(
+                                    drawTextAndWait(selectedPokemon.getName() + " forgot how to \nuse " + replacedMove +
+                                                    "."));
                             yield return StartCoroutine(drawTextAndWait("And..."));
 
                             Dialog.DrawDialogBox();
@@ -2793,18 +2967,24 @@ public class BattleHandler : MonoBehaviour
                             BgmHandler.main.PlayMFX(mfx);
                             StartCoroutine(Dialog.DrawTextSilent(selectedPokemon.getName() + " learned \n" + move + "!"));
                             yield return new WaitForSeconds(mfx.length);
-                            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back")) { yield return null; }
+                            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+                            {
+                                yield return null;
+                            }
                             Dialog.UndrawDialogBox();
                             learning = false;
                         }
                         else
-                        { //give up?
+                        {
+                            //give up?
                             chosenIndex = 0;
                         }
                     }
                     if (chosenIndex == 0)
-                    { //NOT ELSE because this may need to run after (chosenIndex == 1) runs
-                        yield return StartCoroutine(drawTextAndWait("Give up on learning the move \n" + move + "?", 0.1f));
+                    {
+                        //NOT ELSE because this may need to run after (chosenIndex == 1) runs
+                        yield return
+                            StartCoroutine(drawTextAndWait("Give up on learning the move \n" + move + "?", 0.1f));
 
                         yield return StartCoroutine(Dialog.DrawChoiceBox());
                         chosenIndex = Dialog.chosenIndex;
@@ -2826,15 +3006,19 @@ public class BattleHandler : MonoBehaviour
                     BgmHandler.main.PlayMFX(mfx);
                     StartCoroutine(Dialog.DrawTextSilent(selectedPokemon.getName() + " learned \n" + move + "!"));
                     yield return new WaitForSeconds(mfx.length);
-                    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back")) { yield return null; }
+                    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+                    {
+                        yield return null;
+                    }
                     Dialog.UndrawDialogBox();
                     learning = false;
                 }
             }
         }
         if (chosenIndex == 0)
-        { //NOT ELSE because this may need to run after (chosenIndex == 1) runs
-          //cancel learning loop
+        {
+            //NOT ELSE because this may need to run after (chosenIndex == 1) runs
+            //cancel learning loop
             yield return StartCoroutine(drawTextAndWait(selectedPokemon.getName() + " did not learn \n" + move + "."));
         }
     }
@@ -2842,17 +3026,13 @@ public class BattleHandler : MonoBehaviour
 
     private void updatePokemonStats(int position)
     {
-
         //set PokemonData
         pokemonStats[0][position] = pokemon[position].getATK();
         pokemonStats[1][position] = pokemon[position].getDEF();
         pokemonStats[2][position] = pokemon[position].getSPA();
         pokemonStats[3][position] = pokemon[position].getSPD();
         pokemonStats[4][position] = pokemon[position].getSPE();
-
-
     }
-
 
 
     /// Apply the Move Effect to the target pokemon if possible (with animation)
@@ -2860,15 +3040,16 @@ public class BattleHandler : MonoBehaviour
     {
         yield return StartCoroutine(applyEffect(attackerPosition, targetPosition, effect, parameter, true));
     }
+
     /// Apply the Move Effect to the target pokemon if possible
-    private IEnumerator applyEffect(int attackerPosition, int targetPosition, MoveData.Effect effect, float parameter, bool animate)
+    private IEnumerator applyEffect(int attackerPosition, int targetPosition, MoveData.Effect effect, float parameter,
+        bool animate)
     {
         //most effects won't happen if a target has fainted.
         if (pokemon[targetPosition] != null)
         {
             if (pokemon[targetPosition].getStatus() != Pokemon.Status.FAINTED)
             {
-
                 if (effect == MoveData.Effect.ATK)
                 {
                     yield return StartCoroutine(ModifyStat(targetPosition, 0, parameter, animate));
@@ -2903,7 +3084,11 @@ public class BattleHandler : MonoBehaviour
                     {
                         if (pokemon[targetPosition].setStatus(Pokemon.Status.BURNED))
                         {
-                            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + " was burned!", 2.4f));
+                            yield return
+                                StartCoroutine(
+                                    drawTextAndWait(
+                                        generatePreString(targetPosition) + pokemon[targetPosition].getName() +
+                                        " was burned!", 2.4f));
                         }
                     }
                 }
@@ -2913,7 +3098,11 @@ public class BattleHandler : MonoBehaviour
                     {
                         if (pokemon[targetPosition].setStatus(Pokemon.Status.FROZEN))
                         {
-                            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + " was frozen solid!", 2.4f));
+                            yield return
+                                StartCoroutine(
+                                    drawTextAndWait(
+                                        generatePreString(targetPosition) + pokemon[targetPosition].getName() +
+                                        " was frozen solid!", 2.4f));
                         }
                     }
                 }
@@ -2923,7 +3112,11 @@ public class BattleHandler : MonoBehaviour
                     {
                         if (pokemon[targetPosition].setStatus(Pokemon.Status.PARALYZED))
                         {
-                            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + " was paralyzed! \\nIt may be unable to move!", 2.4f));
+                            yield return
+                                StartCoroutine(
+                                    drawTextAndWait(
+                                        generatePreString(targetPosition) + pokemon[targetPosition].getName() +
+                                        " was paralyzed! \\nIt may be unable to move!", 2.4f));
                         }
                     }
                 }
@@ -2933,7 +3126,11 @@ public class BattleHandler : MonoBehaviour
                     {
                         if (pokemon[targetPosition].setStatus(Pokemon.Status.POISONED))
                         {
-                            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + " was poisoned!", 2.4f));
+                            yield return
+                                StartCoroutine(
+                                    drawTextAndWait(
+                                        generatePreString(targetPosition) + pokemon[targetPosition].getName() +
+                                        " was poisoned!", 2.4f));
                         }
                     }
                 }
@@ -2943,7 +3140,11 @@ public class BattleHandler : MonoBehaviour
                     {
                         if (pokemon[targetPosition].setStatus(Pokemon.Status.POISONED))
                         {
-                            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + " was badly posioned!", 2.4f));
+                            yield return
+                                StartCoroutine(
+                                    drawTextAndWait(
+                                        generatePreString(targetPosition) + pokemon[targetPosition].getName() +
+                                        " was badly posioned!", 2.4f));
                         }
                     }
                 }
@@ -2953,7 +3154,11 @@ public class BattleHandler : MonoBehaviour
                     {
                         if (pokemon[targetPosition].setStatus(Pokemon.Status.ASLEEP))
                         {
-                            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + " fell asleep!", 2.4f));
+                            yield return
+                                StartCoroutine(
+                                    drawTextAndWait(
+                                        generatePreString(targetPosition) + pokemon[targetPosition].getName() +
+                                        " fell asleep!", 2.4f));
                         }
                     }
                 }
@@ -2988,25 +3193,36 @@ public class BattleHandler : MonoBehaviour
         {
             yield return StartCoroutine(ModifyStat(attackerPosition, 6, parameter, animate));
         }
-
     }
 
     private IEnumerator ModifyStat(int targetPosition, int statIndex, float param, bool animate)
     {
         int parameter = Mathf.FloorToInt(param);
 
-        string[] statName = new string[]{
-            "Attack", "Defense", "Special Attack", "Special Defense", "Speed", "Accuracy", "Evasion"};
+        string[] statName = new string[]
+        {
+            "Attack", "Defense", "Special Attack", "Special Defense", "Speed", "Accuracy", "Evasion"
+        };
 
         bool canModify = true;
         if (pokemonStatsMod[statIndex][targetPosition] >= 6 && parameter > 0)
-        { //can't go higher
-            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " \\nwon't go any higher!", 2.4f));
+        {
+            //can't go higher
+            yield return
+                StartCoroutine(
+                    drawTextAndWait(
+                        generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                        statName[statIndex] + " \\nwon't go any higher!", 2.4f));
             canModify = false;
         }
         else if (pokemonStatsMod[statIndex][targetPosition] <= -6 && parameter < 0)
-        { //can't go lower
-            yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " won't go any lower!", 2.4f));
+        {
+            //can't go lower
+            yield return
+                StartCoroutine(
+                    drawTextAndWait(
+                        generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                        statName[statIndex] + " won't go any lower!", 2.4f));
             canModify = false;
         }
 
@@ -3042,46 +3258,78 @@ public class BattleHandler : MonoBehaviour
 
             if (parameter == 1)
             {
-                yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " \\nrose!", 2.4f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                            statName[statIndex] + " \\nrose!", 2.4f));
             }
             else if (parameter == -1)
             {
-                yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " \\nfell!", 2.4f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                            statName[statIndex] + " \\nfell!", 2.4f));
             }
             else if (parameter == 2)
             {
-                yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " \\nrose sharply!", 2.4f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                            statName[statIndex] + " \\nrose sharply!", 2.4f));
             }
             else if (parameter == -2)
             {
-                yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " \\nharshly fell!", 2.4f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                            statName[statIndex] + " \\nharshly fell!", 2.4f));
             }
             else if (parameter >= 3)
             {
-                yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " nrose drastically!", 2.4f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                            statName[statIndex] + " nrose drastically!", 2.4f));
             }
             else if (parameter <= -3)
             {
-                yield return StartCoroutine(drawTextAndWait(generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " + statName[statIndex] + " \\nseverely fell!", 2.4f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            generatePreString(targetPosition) + pokemon[targetPosition].getName() + "'s " +
+                            statName[statIndex] + " \\nseverely fell!", 2.4f));
             }
         }
     }
-    #endregion
 
-    #region REPEATED SEQUENCES
+
+    //////////////////////////////////
+
+    //////////////////////////////////
+    /// REPEATED SEQUENCES
+    //
     ///This sequence heals a pokemon on the field. Do not use to heal a pokemon in the party.  
     private IEnumerator Heal(int index, float healAmount)
     {
         yield return StartCoroutine(Heal(index, healAmount, false));
     }
+
     private IEnumerator Heal(int index, bool curingStatus)
     {
         yield return StartCoroutine(Heal(index, -1, curingStatus));
     }
+
     private IEnumerator Heal(int index, float healAmount, bool curingStatus)
     {
         //If healing, and HP is already full    OR   if curing status, and status is already none or fainted (fainted pokemon can only be cured off-field).
-        if ((!curingStatus && pokemon[index].getCurrentHP() == pokemon[index].getHP()) || (curingStatus && (pokemon[index].getStatus() == Pokemon.Status.NONE || pokemon[index].getStatus() == Pokemon.Status.FAINTED)))
+        if ((!curingStatus && pokemon[index].getCurrentHP() == pokemon[index].getHP()) ||
+            (curingStatus &&
+             (pokemon[index].getStatus() == Pokemon.Status.NONE || pokemon[index].getStatus() == Pokemon.Status.FAINTED)))
         {
             //no effect
             yield return StartCoroutine(drawTextAndWait("It had no effect...", 2.4f));
@@ -3102,23 +3350,39 @@ public class BattleHandler : MonoBehaviour
                 yield return new WaitForSeconds(0.3f);
                 if (status == Pokemon.Status.ASLEEP)
                 {
-                    yield return StartCoroutine(drawTextAndWait(generatePreString(index) + pokemon[index].getName() + " woke up!", 2.4f));
+                    yield return
+                        StartCoroutine(drawTextAndWait(
+                            generatePreString(index) + pokemon[index].getName() + " woke up!", 2.4f));
                 }
                 else if (status == Pokemon.Status.BURNED)
                 {
-                    yield return StartCoroutine(drawTextAndWait(generatePreString(index) + pokemon[index].getName() + "'s burn was healed!", 2.4f));
+                    yield return
+                        StartCoroutine(
+                            drawTextAndWait(
+                                generatePreString(index) + pokemon[index].getName() + "'s burn was healed!", 2.4f));
                 }
                 else if (status == Pokemon.Status.FROZEN)
                 {
-                    yield return StartCoroutine(drawTextAndWait(generatePreString(index) + pokemon[index].getName() + " thawed out!", 2.4f));
+                    yield return
+                        StartCoroutine(
+                            drawTextAndWait(generatePreString(index) + pokemon[index].getName() + " thawed out!", 2.4f))
+                        ;
                 }
                 else if (status == Pokemon.Status.PARALYZED)
                 {
-                    yield return StartCoroutine(drawTextAndWait(generatePreString(index) + pokemon[index].getName() + " was cured of its paralysis!", 2.4f));
+                    yield return
+                        StartCoroutine(
+                            drawTextAndWait(
+                                generatePreString(index) + pokemon[index].getName() + " was cured of its paralysis!",
+                                2.4f));
                 }
                 else if (status == Pokemon.Status.POISONED)
                 {
-                    yield return StartCoroutine(drawTextAndWait(generatePreString(index) + pokemon[index].getName() + " was cured of its poison!", 2.4f));
+                    yield return
+                        StartCoroutine(
+                            drawTextAndWait(
+                                generatePreString(index) + pokemon[index].getName() + " was cured of its poison!", 2.4f))
+                        ;
                 }
             }
             else
@@ -3136,13 +3400,21 @@ public class BattleHandler : MonoBehaviour
 
                 if (index == 0)
                 {
-                    yield return StartCoroutine(stretchBar(statsHPBar[index], pokemon[index].getPercentHP() * 48f, 32, true, pokemon0CurrentHP, pokemon0CurrentHPShadow, pokemon[index].getCurrentHP()));
+                    yield return
+                        StartCoroutine(stretchBar(statsHPBar[index], pokemon[index].getPercentHP() * 48f, 32, true,
+                            pokemon0CurrentHP, pokemon0CurrentHPShadow, pokemon[index].getCurrentHP()));
                 }
                 else
                 {
-                    yield return StartCoroutine(stretchBar(statsHPBar[index], pokemon[index].getPercentHP() * 48f, 32, true, null, null, 0));
+                    yield return
+                        StartCoroutine(stretchBar(statsHPBar[index], pokemon[index].getPercentHP() * 48f, 32, true, null,
+                            null, 0));
                 }
-                yield return StartCoroutine(drawTextAndWait(generatePreString(index) + pokemon[index].getName() + "'s HP was restored by " + healedHP + " point(s).", 2.4f));
+                yield return
+                    StartCoroutine(
+                        drawTextAndWait(
+                            generatePreString(index) + pokemon[index].getName() + "'s HP was restored by " + healedHP +
+                            " point(s).", 2.4f));
             }
         }
     }
@@ -3153,11 +3425,13 @@ public class BattleHandler : MonoBehaviour
     {
         yield return StartCoroutine(drawTextAndWait(message, 0, 0, true));
     }
+
     /// Display the a textbox with a message, and wait a set amount of time or until Select or Start/Back is pressed.
     private IEnumerator drawTextAndWait(string message, float time)
     {
         yield return StartCoroutine(drawTextAndWait(message, time, 0, true));
     }
+
     /// Display the a textbox with a message, and wait a set amount of time before until Select or Start/Back is pressed.
     private IEnumerator drawTextAndWait(string message, float time, float lockedTime)
     {
@@ -3173,21 +3447,36 @@ public class BattleHandler : MonoBehaviour
     {
         Dialog.DrawDialogBox();
         float startTime = Time.time;
-        if (silent) { yield return StartCoroutine(Dialog.DrawTextSilent(message)); }
-        else { yield return StartCoroutine(Dialog.DrawText(message)); }
+        if (silent)
+        {
+            yield return StartCoroutine(Dialog.DrawTextSilent(message));
+        }
+        else
+        {
+            yield return StartCoroutine(Dialog.DrawText(message));
+        }
 
         if (lockedTime > 0)
         {
-            while (Time.time < startTime + lockedTime) { yield return null; }
+            while (Time.time < startTime + lockedTime)
+            {
+                yield return null;
+            }
         }
 
         if (time > 0)
         {
-            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back") && Time.time < startTime + time) { yield return null; }
+            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back") && Time.time < startTime + time)
+            {
+                yield return null;
+            }
         }
         else
         {
-            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back")) { yield return null; }
+            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+            {
+                yield return null;
+            }
         }
     }
 
@@ -3207,11 +3496,11 @@ public class BattleHandler : MonoBehaviour
         SfxHandler.Play(pokemon.GetCry(), pokemon.GetCryPitch());
         return pokemon.GetCry().length / pokemon.GetCryPitch();
     }
+
     private IEnumerator PlayCryAndWait(Pokemon pokemon)
     {
         yield return new WaitForSeconds(PlayCry(pokemon));
     }
-    #endregion
 
 
     /// Basic Wild Battle
@@ -3243,11 +3532,11 @@ public class BattleHandler : MonoBehaviour
         string opponentName = trainer.GetName();
 
         //GET BATTLE BACKGROUNDS
-        int currentTileTag = PlayerMovementOld.Instance.currentMap.getTileTag(PlayerMovementOld.Instance.transform.position);
+        int currentTileTag = PlayerMovement.player.currentMap.getTileTag(PlayerMovement.player.transform.position);
         Debug.Log(currentTileTag);
-        background.sprite = PlayerMovementOld.Instance.accessedMapSettings.getBattleBackground(currentTileTag);
+        background.sprite = PlayerMovement.player.accessedMapSettings.getBattleBackground(currentTileTag);
 
-        playerBase.sprite = PlayerMovementOld.Instance.accessedMapSettings.getBattleBase(currentTileTag);
+        playerBase.sprite = PlayerMovement.player.accessedMapSettings.getBattleBase(currentTileTag);
         opponentBase.sprite = playerBase.sprite;
 
 
@@ -3257,7 +3546,8 @@ public class BattleHandler : MonoBehaviour
         {
             trainer1Animation = trainer.GetSprites();
         }
-        playerTrainer1Animation = Resources.LoadAll<Sprite>("PlayerSprites/" + SaveData.currentSave.getPlayerSpritePrefix() + "back");
+        playerTrainer1Animation =
+            Resources.LoadAll<Sprite>("PlayerSprites/" + SaveData.currentSave.getPlayerSpritePrefix() + "back");
         playerTrainerSprite1.sprite = playerTrainer1Animation[0];
         //Note: the player animation should NEVER have no sprites 
         if (trainer1Animation.Length > 0)
@@ -3269,12 +3559,12 @@ public class BattleHandler : MonoBehaviour
             trainerSprite1.sprite = Resources.Load<Sprite>("null");
         }
         //Set trainer sprites to the center of the platform initially
-        playerTrainerSprite1.rectTransform.localPosition = new Vector3(0, playerTrainerSprite1.rectTransform.localPosition.y, 0);
+        playerTrainerSprite1.rectTransform.localPosition = new Vector3(0,
+            playerTrainerSprite1.rectTransform.localPosition.y, 0);
         trainerSprite1.rectTransform.localPosition = new Vector3(0, trainerSprite1.rectTransform.localPosition.y, 0);
 
 
-
-        victor = -1;    //0 = player, 1 = opponent, 2 = tie
+        victor = -1; //0 = player, 1 = opponent, 2 = tie
 
         //Reset position variables
         currentTask = 0;
@@ -3325,7 +3615,6 @@ public class BattleHandler : MonoBehaviour
         opponent1Overlay.gameObject.SetActive(false);
 
 
-
         animateOpponent1 = StartCoroutine(animatePokemon(opponent1, opponent1Animation));
         animatePlayer1 = StartCoroutine(animatePokemon(player1, player1Animation));
 
@@ -3337,8 +3626,6 @@ public class BattleHandler : MonoBehaviour
 
         //		Debug.Log(pokemon[0].getName()+": HP: "+pokemon[0].getHP()+"ATK: "+pokemon[0].getATK()+"DEF: "+pokemon[0].getDEF()+"SPA: "+pokemon[0].getSPA()+"SPD: "+pokemon[0].getSPD()+"SPE:"+pokemon[0].getSPE());
         //		Debug.Log(pokemon[3].getName()+": HP: "+pokemon[3].getHP()+"ATK: "+pokemon[3].getATK()+"DEF: "+pokemon[3].getDEF()+"SPA: "+pokemon[3].getSPA()+"SPD: "+pokemon[3].getSPD()+"SPE:"+pokemon[3].getSPE());
-
-
 
 
         if (trainerBattle)
@@ -3405,7 +3692,6 @@ public class BattleHandler : MonoBehaviour
             Dialog.UndrawDialogBox();
         }
         //
-
 
 
         updateCurrentTask(0);
@@ -3482,7 +3768,8 @@ public class BattleHandler : MonoBehaviour
                     if (taskPosition > 2)
                     {
                         if (taskPosition == 4)
-                        { //if run selected
+                        {
+                            //if run selected
                             updateSelectedTask(taskPosition - 3);
                             SfxHandler.Play(scrollClip);
                             yield return new WaitForSeconds(0.2f);
@@ -3498,7 +3785,8 @@ public class BattleHandler : MonoBehaviour
                     if (taskPosition < 3)
                     {
                         if (taskPosition == 1)
-                        { //if fight selected
+                        {
+                            //if fight selected
                             updateSelectedTask(taskPosition + 3);
                             SfxHandler.Play(scrollClip);
                             yield return new WaitForSeconds(0.2f);
@@ -3511,7 +3799,6 @@ public class BattleHandler : MonoBehaviour
                 }
                 else if (Input.GetButtonDown("Select"))
                 {
-
                     //// NAVIGATE MOVESET OPTIONS ////
 
                     int currentPokemon = 0;
@@ -3547,7 +3834,8 @@ public class BattleHandler : MonoBehaviour
                                     if (movePosition == 5)
                                     {
                                         if (pokemonMoveset[currentPokemon][2] != null)
-                                        { //check destination has a move there
+                                        {
+                                            //check destination has a move there
                                             updateSelectedMove(movePosition - 1);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
@@ -3568,7 +3856,8 @@ public class BattleHandler : MonoBehaviour
                                     if (movePosition == 1)
                                     {
                                         if (pokemonMoveset[currentPokemon][1] != null)
-                                        { //check destination has a move there
+                                        {
+                                            //check destination has a move there
                                             updateSelectedMove(movePosition + 1);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
@@ -3577,7 +3866,8 @@ public class BattleHandler : MonoBehaviour
                                     else if (movePosition == 3)
                                     {
                                         if (pokemonMoveset[currentPokemon][2] != null)
-                                        { //check destination has a move there
+                                        {
+                                            //check destination has a move there
                                             updateSelectedMove(movePosition + 1);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
@@ -3592,13 +3882,15 @@ public class BattleHandler : MonoBehaviour
                                     else if (movePosition == 4)
                                     {
                                         if (pokemonMoveset[currentPokemon][3] != null)
-                                        { //check destination has a move there
+                                        {
+                                            //check destination has a move there
                                             updateSelectedMove(movePosition + 1);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
                                         }
                                         else if (pokemonMoveset[currentPokemon][1] != null)
-                                        { //check there is a move 2
+                                        {
+                                            //check there is a move 2
                                             updateSelectedMove(2);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
@@ -3623,7 +3915,8 @@ public class BattleHandler : MonoBehaviour
                                         yield return new WaitForSeconds(0.2f);
                                     }
                                     else
-                                    { //otherwise, go down to return
+                                    {
+                                        //otherwise, go down to return
                                         updateSelectedMove(1);
                                         SfxHandler.Play(scrollClip);
                                         yield return new WaitForSeconds(0.2f);
@@ -3634,7 +3927,8 @@ public class BattleHandler : MonoBehaviour
                                     if (movePosition == 5)
                                     {
                                         if (pokemonMoveset[currentPokemon][1] != null)
-                                        { //check destination has a move there
+                                        {
+                                            //check destination has a move there
                                             updateSelectedMove(movePosition - 3);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
@@ -3655,13 +3949,15 @@ public class BattleHandler : MonoBehaviour
                                     if (movePosition == 1)
                                     {
                                         if (pokemonMoveset[currentPokemon][2] != null)
-                                        { //check destination has a move there
+                                        {
+                                            //check destination has a move there
                                             updateSelectedMove(movePosition + 3);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
                                         }
                                         else
-                                        { //otherwise, go down to return
+                                        {
+                                            //otherwise, go down to return
                                             updateSelectedMove(3);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
@@ -3670,19 +3966,22 @@ public class BattleHandler : MonoBehaviour
                                     else if (movePosition == 2)
                                     {
                                         if (pokemonMoveset[currentPokemon][3] != null)
-                                        { //check destination has a move there
+                                        {
+                                            //check destination has a move there
                                             updateSelectedMove(movePosition + 3);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
                                         }
                                         else if (pokemonMoveset[currentPokemon][2] != null)
-                                        { //check if there is a move 3
+                                        {
+                                            //check if there is a move 3
                                             updateSelectedMove(4);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
                                         }
                                         else
-                                        { //otherwise, go down to return
+                                        {
+                                            //otherwise, go down to return
                                             updateSelectedMove(3);
                                             SfxHandler.Play(scrollClip);
                                             yield return new WaitForSeconds(0.2f);
@@ -3699,18 +3998,21 @@ public class BattleHandler : MonoBehaviour
                             else if (Input.GetButtonDown("Select"))
                             {
                                 if (movePosition == 0)
-                                { //if mega evolution selected (mega evolution not yet implemented)
+                                {
+                                    //if mega evolution selected (mega evolution not yet implemented)
                                 }
                                 else if (movePosition == 3)
-                                { //if back selected
+                                {
+                                    //if back selected
                                     SfxHandler.Play(selectClip);
                                     updateCurrentTask(0);
                                 }
                                 else
-                                { //if a move is selected
-                                  //check if struggle is to be used (no PP left in any move)
+                                {
+                                    //if a move is selected
+                                    //check if struggle is to be used (no PP left in any move)
                                     if (pokemon[currentPokemon].getPP(0) == 0 && pokemon[currentPokemon].getPP(1) == 0 &&
-                                       pokemon[currentPokemon].getPP(2) == 0 && pokemon[currentPokemon].getPP(3) == 0)
+                                        pokemon[currentPokemon].getPP(2) == 0 && pokemon[currentPokemon].getPP(3) == 0)
                                     {
                                         commandMove[currentPokemon] = MoveDatabase.getMove("Struggle");
                                         runState = false;
@@ -3721,7 +4023,8 @@ public class BattleHandler : MonoBehaviour
                                         int[] move = new int[] { 0, 0, 1, 0, 2, 3 };
                                         if (pokemon[currentPokemon].getPP(move[movePosition]) > 0)
                                         {
-                                            commandMove[currentPokemon] = MoveDatabase.getMove(pokemonMoveset[currentPokemon][move[movePosition]]);
+                                            commandMove[currentPokemon] =
+                                                MoveDatabase.getMove(pokemonMoveset[currentPokemon][move[movePosition]]);
                                             runState = false;
                                         }
                                         else
@@ -3732,7 +4035,8 @@ public class BattleHandler : MonoBehaviour
                                     }
                                 }
                                 if (!runState)
-                                { //if a move was chosen.
+                                {
+                                    //if a move was chosen.
                                     SfxHandler.Play(selectClip);
                                     command[currentPokemon] = CommandType.Move;
                                     updateCurrentTask(-1);
@@ -3746,7 +4050,6 @@ public class BattleHandler : MonoBehaviour
 
                             yield return null;
                         }
-
                     }
 
                     //// ATTEMPT TO FLEE ////
@@ -3756,7 +4059,8 @@ public class BattleHandler : MonoBehaviour
                         SfxHandler.Play(selectClip);
                         if (trainerBattle)
                         {
-                            yield return StartCoroutine(drawTextAndWait("No! There's no running from \\na Trainer Battle!"));
+                            yield return
+                                StartCoroutine(drawTextAndWait("No! There's no running from \\na Trainer Battle!"));
                             Dialog.UndrawDialogBox();
                         }
                         else
@@ -3779,7 +4083,6 @@ public class BattleHandler : MonoBehaviour
                         //while still in Bag menu
                         while (currentTask == 2)
                         {
-
                             if (Input.GetAxisRaw("Vertical") < 0)
                             {
                                 if (bagCategoryPosition < 4)
@@ -3819,7 +4122,8 @@ public class BattleHandler : MonoBehaviour
                             else if (Input.GetButtonDown("Select"))
                             {
                                 if (bagCategoryPosition < 4)
-                                { //Item Category
+                                {
+                                    //Item Category
                                     updateCurrentTask(4);
                                     SfxHandler.Play(selectClip);
 
@@ -3927,8 +4231,11 @@ public class BattleHandler : MonoBehaviour
                                                 yield return new WaitForSeconds(0.2f);
                                             }
                                             else
-                                            { //use item
-                                                ItemData selectedItem = ItemDatabase.getItem(itemListString[itemListPosition + (8 * itemListPagePosition)]);
+                                            {
+                                                //use item
+                                                ItemData selectedItem =
+                                                    ItemDatabase.getItem(
+                                                        itemListString[itemListPosition + (8 * itemListPagePosition)]);
                                                 //Check item can be used
                                                 if (selectedItem.getItemEffect() == ItemData.ItemEffect.HP)
                                                 {
@@ -3943,17 +4250,21 @@ public class BattleHandler : MonoBehaviour
                                                     }
                                                     else
                                                     {
-                                                        yield return StartCoroutine(drawTextAndWait("It won't have any effect!"));
+                                                        yield return
+                                                            StartCoroutine(drawTextAndWait("It won't have any effect!"))
+                                                            ;
                                                         Dialog.UndrawDialogBox();
                                                     }
                                                 }
                                                 else if (selectedItem.getItemEffect() == ItemData.ItemEffect.STATUS)
                                                 {
                                                     int target = 0; //target selection not yet implemented
-                                                                    //Check target pokemon has the status the item cures
+                                                    //Check target pokemon has the status the item cures
                                                     string statusCurer = selectedItem.getStringParameter().ToUpper();
                                                     //if an ALL is used, set it to cure anything but FAINTED or NONE.
-                                                    if (statusCurer == "ALL" && pokemon[target].getStatus().ToString() != "FAINTED" && pokemon[target].getStatus().ToString() != "NONE")
+                                                    if (statusCurer == "ALL" &&
+                                                        pokemon[target].getStatus().ToString() != "FAINTED" &&
+                                                        pokemon[target].getStatus().ToString() != "NONE")
                                                     {
                                                         statusCurer = pokemon[target].getStatus().ToString();
                                                     }
@@ -3962,23 +4273,29 @@ public class BattleHandler : MonoBehaviour
                                                     {
                                                         commandItem[currentPokemon] = selectedItem;
                                                         commandTarget[currentPokemon] = target;
-                                                        SaveData.currentSave.Bag.removeItem(itemListString[itemListPosition], 1);
+                                                        SaveData.currentSave.Bag.removeItem(
+                                                            itemListString[itemListPosition], 1);
                                                         runState = false;
                                                     }
                                                     else
                                                     {
-                                                        yield return StartCoroutine(drawTextAndWait("It won't have any effect!"));
+                                                        yield return
+                                                            StartCoroutine(drawTextAndWait("It won't have any effect!"))
+                                                            ;
                                                         Dialog.UndrawDialogBox();
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    commandItem[currentPokemon] = ItemDatabase.getItem(itemListString[itemListPosition]);
-                                                    SaveData.currentSave.Bag.removeItem(itemListString[itemListPosition], 1);
+                                                    commandItem[currentPokemon] =
+                                                        ItemDatabase.getItem(itemListString[itemListPosition]);
+                                                    SaveData.currentSave.Bag.removeItem(
+                                                        itemListString[itemListPosition], 1);
                                                     runState = false;
                                                 }
                                                 if (!runState)
-                                                { //if an item was chosen.
+                                                {
+                                                    //if an item was chosen.
                                                     SfxHandler.Play(selectClip);
                                                     command[currentPokemon] = CommandType.Item;
                                                     updateCurrentTask(-1);
@@ -3997,13 +4314,15 @@ public class BattleHandler : MonoBehaviour
                                     }
                                 }
                                 else if (bagCategoryPosition == 4)
-                                { //Back
+                                {
+                                    //Back
                                     updateCurrentTask(0);
                                     SfxHandler.Play(selectClip);
                                     yield return new WaitForSeconds(0.2f);
                                 }
                                 else if (bagCategoryPosition == 5)
-                                { //Item used last
+                                {
+                                    //Item used last
                                     SfxHandler.Play(selectClip);
                                     yield return new WaitForSeconds(0.2f);
                                 }
@@ -4030,7 +4349,6 @@ public class BattleHandler : MonoBehaviour
                         //while still in Poke menu
                         while (currentTask == 3)
                         {
-
                             if (Input.GetAxisRaw("Vertical") < 0)
                             {
                                 if (pokePartyPosition < 6)
@@ -4084,7 +4402,8 @@ public class BattleHandler : MonoBehaviour
                             else if (Input.GetButtonDown("Select"))
                             {
                                 if (pokePartyPosition == 6)
-                                { //Back
+                                {
+                                    //Back
                                     SfxHandler.Play(selectClip);
                                     updateCurrentTask(0);
                                     yield return new WaitForSeconds(0.2f);
@@ -4098,7 +4417,6 @@ public class BattleHandler : MonoBehaviour
                                     yield return new WaitForSeconds(0.2f);
                                     while (currentTask == 5)
                                     {
-
                                         if (Input.GetAxisRaw("Vertical") < 0)
                                         {
                                             if (pokePartyPosition < 5)
@@ -4109,7 +4427,8 @@ public class BattleHandler : MonoBehaviour
                                                 {
                                                     SfxHandler.Play(scrollClip);
                                                 }
-                                                updatePokemonSummaryDisplay(SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
+                                                updatePokemonSummaryDisplay(
+                                                    SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
                                                 yield return new WaitForSeconds(0.2f);
                                             }
                                         }
@@ -4141,7 +4460,8 @@ public class BattleHandler : MonoBehaviour
                                                 {
                                                     SfxHandler.Play(scrollClip);
                                                 }
-                                                updatePokemonSummaryDisplay(SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
+                                                updatePokemonSummaryDisplay(
+                                                    SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
                                                 yield return new WaitForSeconds(0.2f);
                                             }
                                         }
@@ -4149,13 +4469,15 @@ public class BattleHandler : MonoBehaviour
                                         {
                                             if (summaryPosition == 0)
                                             {
-                                                if (SaveData.currentSave.PC.boxes[0][pokePartyPosition].getStatus() != Pokemon.Status.FAINTED)
+                                                if (SaveData.currentSave.PC.boxes[0][pokePartyPosition].getStatus() !=
+                                                    Pokemon.Status.FAINTED)
                                                 {
                                                     //check that pokemon is not on the field
                                                     bool notOnField = true;
                                                     for (int i = 0; i < pokemonPerSide; i++)
                                                     {
-                                                        if (SaveData.currentSave.PC.boxes[0][pokePartyPosition] == pokemon[i])
+                                                        if (SaveData.currentSave.PC.boxes[0][pokePartyPosition] ==
+                                                            pokemon[i])
                                                         {
                                                             notOnField = false;
                                                             i = pokemonPerSide;
@@ -4165,7 +4487,8 @@ public class BattleHandler : MonoBehaviour
                                                     {
                                                         //debug
                                                         command[currentPokemon] = CommandType.Switch;
-                                                        commandPokemon[currentPokemon] = SaveData.currentSave.PC.boxes[0][pokePartyPosition];
+                                                        commandPokemon[currentPokemon] =
+                                                            SaveData.currentSave.PC.boxes[0][pokePartyPosition];
                                                         runState = false;
                                                         updateCurrentTask(-1);
                                                         SfxHandler.Play(selectClip);
@@ -4173,18 +4496,27 @@ public class BattleHandler : MonoBehaviour
                                                     }
                                                     else
                                                     {
-                                                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is already fighting!"));
+                                                        yield return
+                                                            StartCoroutine(
+                                                                drawTextAndWait(
+                                                                    SaveData.currentSave.PC.boxes[0][pokePartyPosition]
+                                                                        .getName() + " is already fighting!"));
                                                         Dialog.UndrawDialogBox();
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is unable to fight!"));
+                                                    yield return
+                                                        StartCoroutine(
+                                                            drawTextAndWait(
+                                                                SaveData.currentSave.PC.boxes[0][pokePartyPosition]
+                                                                    .getName() + " is unable to fight!"));
                                                     Dialog.UndrawDialogBox();
                                                 }
                                             }
                                             else if (summaryPosition == 1)
-                                            {//check moves
+                                            {
+                                                //check moves
                                                 updateCurrentTask(6);
                                                 SfxHandler.Play(selectClip);
                                                 yield return new WaitForSeconds(0.2f);
@@ -4192,7 +4524,6 @@ public class BattleHandler : MonoBehaviour
                                                 int movesPosition = 5; //0-3 = Moves, 4 = Switch, 5 = Summary, 6 = Back
                                                 while (currentTask == 6)
                                                 {
-
                                                     if (Input.GetAxisRaw("Vertical") < 0)
                                                     {
                                                         if (movesPosition < 4)
@@ -4211,7 +4542,8 @@ public class BattleHandler : MonoBehaviour
                                                     }
                                                     else if (Input.GetAxisRaw("Horizontal") > 0)
                                                     {
-                                                        if (movesPosition != 1 || movesPosition != 3 || movesPosition != 6)
+                                                        if (movesPosition != 1 || movesPosition != 3 ||
+                                                            movesPosition != 6)
                                                         {
                                                             movesPosition = updateMovesPosition(movesPosition + 1);
                                                             SfxHandler.Play(scrollClip);
@@ -4220,7 +4552,8 @@ public class BattleHandler : MonoBehaviour
                                                     }
                                                     else if (Input.GetAxisRaw("Horizontal") < 0)
                                                     {
-                                                        if (movesPosition == 1 || movesPosition == 3 || movesPosition > 4)
+                                                        if (movesPosition == 1 || movesPosition == 3 ||
+                                                            movesPosition > 4)
                                                         {
                                                             movesPosition = updateMovesPosition(movesPosition - 1);
                                                             SfxHandler.Play(scrollClip);
@@ -4247,13 +4580,17 @@ public class BattleHandler : MonoBehaviour
                                                     {
                                                         if (movesPosition == 4)
                                                         {
-                                                            if (SaveData.currentSave.PC.boxes[0][pokePartyPosition].getStatus() != Pokemon.Status.FAINTED)
+                                                            if (
+                                                                SaveData.currentSave.PC.boxes[0][pokePartyPosition]
+                                                                    .getStatus() != Pokemon.Status.FAINTED)
                                                             {
                                                                 //check that pokemon is not on the field
                                                                 bool notOnField = true;
                                                                 for (int i = 0; i < pokemonPerSide; i++)
                                                                 {
-                                                                    if (SaveData.currentSave.PC.boxes[0][pokePartyPosition] == pokemon[i])
+                                                                    if (
+                                                                        SaveData.currentSave.PC.boxes[0][
+                                                                            pokePartyPosition] == pokemon[i])
                                                                     {
                                                                         notOnField = false;
                                                                         i = pokemonPerSide;
@@ -4263,7 +4600,9 @@ public class BattleHandler : MonoBehaviour
                                                                 {
                                                                     //debug
                                                                     command[currentPokemon] = CommandType.Switch;
-                                                                    commandPokemon[currentPokemon] = SaveData.currentSave.PC.boxes[0][pokePartyPosition];
+                                                                    commandPokemon[currentPokemon] =
+                                                                        SaveData.currentSave.PC.boxes[0][
+                                                                            pokePartyPosition];
                                                                     runState = false;
                                                                     updateCurrentTask(-1);
                                                                     SfxHandler.Play(selectClip);
@@ -4271,30 +4610,40 @@ public class BattleHandler : MonoBehaviour
                                                                 }
                                                                 else
                                                                 {
-                                                                    yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is already fighting!"));
+                                                                    yield return
+                                                                        StartCoroutine(
+                                                                            drawTextAndWait(
+                                                                                SaveData.currentSave.PC.boxes[0][
+                                                                                    pokePartyPosition].getName() +
+                                                                                " is already fighting!"));
                                                                     Dialog.UndrawDialogBox();
                                                                 }
                                                             }
                                                             else
                                                             {
-                                                                yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is unable to fight!"));
+                                                                yield return
+                                                                    StartCoroutine(
+                                                                        drawTextAndWait(
+                                                                            SaveData.currentSave.PC.boxes[0][
+                                                                                pokePartyPosition].getName() +
+                                                                            " is unable to fight!"));
                                                                 Dialog.UndrawDialogBox();
                                                             }
                                                         }
                                                         else if (movesPosition == 5)
-                                                        {//check summary
+                                                        {
+                                                            //check summary
                                                             updateCurrentTask(5);
                                                             SfxHandler.Play(selectClip);
                                                             yield return new WaitForSeconds(0.2f);
                                                         }
                                                         else if (movesPosition == 6)
-                                                        {//back
+                                                        {
+                                                            //back
                                                             updateCurrentTask(3);
                                                             SfxHandler.Play(selectClip);
                                                             yield return new WaitForSeconds(0.2f);
                                                         }
-
-
                                                     }
                                                     else if (Input.GetButtonDown("Back"))
                                                     {
@@ -4307,13 +4656,12 @@ public class BattleHandler : MonoBehaviour
                                                 }
                                             }
                                             else if (summaryPosition == 2)
-                                            {//back
+                                            {
+                                                //back
                                                 updateCurrentTask(3);
                                                 SfxHandler.Play(selectClip);
                                                 yield return new WaitForSeconds(0.2f);
                                             }
-
-
                                         }
                                         else if (Input.GetButtonDown("Back"))
                                         {
@@ -4324,7 +4672,6 @@ public class BattleHandler : MonoBehaviour
 
                                         yield return null;
                                     }
-
                                 }
                             }
                             else if (Input.GetButtonDown("Back"))
@@ -4339,41 +4686,10 @@ public class BattleHandler : MonoBehaviour
                 }
                 else if (Input.GetButtonDown("Back"))
                 {
-
                 }
 
                 yield return null;
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             ////////////////////////////////////////
@@ -4390,7 +4706,7 @@ public class BattleHandler : MonoBehaviour
                 {
                     //check if struggle is to be used (no PP left in any move)
                     if (pokemon[pi].getPP(0) == 0 && pokemon[pi].getPP(1) == 0 &&
-                       pokemon[pi].getPP(2) == 0 && pokemon[pi].getPP(3) == 0)
+                        pokemon[pi].getPP(2) == 0 && pokemon[pi].getPP(3) == 0)
                     {
                         commandMove[pi] = MoveDatabase.getMove("Struggle");
                     }
@@ -4398,7 +4714,8 @@ public class BattleHandler : MonoBehaviour
                     {
                         //Randomly choose a move from the moveset
                         int AImoveIndex = Random.Range(0, 4);
-                        while (pokemonMoveset[pi] != null && string.IsNullOrEmpty(pokemonMoveset[pi][AImoveIndex]) && pokemon[pi].getPP(AImoveIndex) == 0)
+                        while (pokemonMoveset[pi] != null && string.IsNullOrEmpty(pokemonMoveset[pi][AImoveIndex]) &&
+                               pokemon[pi].getPP(AImoveIndex) == 0)
                         {
                             AImoveIndex = Random.Range(0, 4);
                         }
@@ -4408,25 +4725,6 @@ public class BattleHandler : MonoBehaviour
                     }
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             yield return new WaitForSeconds(0.3f);
@@ -4440,18 +4738,21 @@ public class BattleHandler : MonoBehaviour
             for (int i = 0; i < 6; i++)
             {
                 if (running)
-                { //running may be set to false by a flee command
+                {
+                    //running may be set to false by a flee command
                     int movingPokemon = getHighestSpeedIndex();
                     if (pokemon[movingPokemon] != null)
                     {
-
                         if (command[movingPokemon] == CommandType.Flee)
-                        {                   //RUN
+                        {
+                            //RUN
                             if (movingPokemon < 3)
-                            {   //player attemps escape
+                            {
+                                //player attemps escape
                                 playerFleeAttempts += 1;
 
-                                int fleeChance = (pokemon[movingPokemon].getSPE() * 128) / pokemon[3].getSPE() + 30 * playerFleeAttempts;
+                                int fleeChance = (pokemon[movingPokemon].getSPE() * 128) / pokemon[3].getSPE() +
+                                                 30 * playerFleeAttempts;
                                 if (Random.Range(0, 256) < fleeChance)
                                 {
                                     running = false;
@@ -4464,7 +4765,6 @@ public class BattleHandler : MonoBehaviour
                                         yield return null;
                                     }
                                     Dialog.UndrawDialogBox();
-
                                 }
                                 else
                                 {
@@ -4475,7 +4775,8 @@ public class BattleHandler : MonoBehaviour
                             pokemonHasMoved[movingPokemon] = true;
                         }
                         else if (command[movingPokemon] == CommandType.Item)
-                        {   //ITEM
+                        {
+                            //ITEM
                             //item effects not yet implemented fully
 
                             if (i < 3)
@@ -4487,34 +4788,47 @@ public class BattleHandler : MonoBehaviour
                                     //
 
                                     //pokeball animation not yet implemented
-                                    yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " used one " + commandItem[movingPokemon].getName() + "!", 2.4f));
+                                    yield return
+                                        StartCoroutine(
+                                            drawTextAndWait(
+                                                SaveData.currentSave.playerName + " used one " +
+                                                commandItem[movingPokemon].getName() + "!", 2.4f));
                                     yield return new WaitForSeconds(1.2f);
                                     if (trainerBattle)
                                     {
-                                        yield return StartCoroutine(drawTextAndWait("The trainer blocked the ball!", 2.4f));
+                                        yield return
+                                            StartCoroutine(drawTextAndWait("The trainer blocked the ball!", 2.4f));
                                         yield return StartCoroutine(drawTextAndWait("Don't be a theif!", 2.4f));
                                     }
                                     //calculate catch chance
                                     else
                                     {
-
                                         float ballRate = (float)commandItem[movingPokemon].getFloatParameter();
-                                        float catchRate = (float)PokemonDatabase.getPokemon(pokemon[targetIndex].getID()).getCatchRate();
+                                        float catchRate =
+                                            (float)
+                                            PokemonDatabase.getPokemon(pokemon[targetIndex].getID()).getCatchRate();
                                         float statusRate = 1f;
                                         if ((pokemon[targetIndex].getStatus() != Pokemon.Status.NONE))
                                         {
-                                            statusRate = (pokemon[targetIndex].getStatus() == Pokemon.Status.ASLEEP || pokemon[targetIndex].getStatus() == Pokemon.Status.FROZEN) ? 2.5f : 1.5f;
+                                            statusRate = (pokemon[targetIndex].getStatus() == Pokemon.Status.ASLEEP ||
+                                                          pokemon[targetIndex].getStatus() == Pokemon.Status.FROZEN)
+                                                ? 2.5f
+                                                : 1.5f;
                                         }
 
-                                        int modifiedRate = Mathf.FloorToInt(((3 * (float)pokemon[targetIndex].getHP() - 2 * (float)pokemon[targetIndex].getCurrentHP())
-                                                           * catchRate * ballRate) / (3 * (float)pokemon[targetIndex].getHP()) * statusRate);
+                                        int modifiedRate =
+                                            Mathf.FloorToInt(((3 * (float)pokemon[targetIndex].getHP() -
+                                                               2 * (float)pokemon[targetIndex].getCurrentHP())
+                                                              * catchRate * ballRate) /
+                                                             (3 * (float)pokemon[targetIndex].getHP()) * statusRate);
 
                                         Debug.Log("modifiedRate: " + modifiedRate);
 
                                         //GEN VI
                                         //int shakeProbability = Mathf.FloorToInt(65536f / Mathf.Pow((255f/modifiedRate),0.1875f));
                                         //GEN V
-                                        int shakeProbability = Mathf.FloorToInt(65536f / Mathf.Sqrt(Mathf.Sqrt(255f / modifiedRate)));
+                                        int shakeProbability =
+                                            Mathf.FloorToInt(65536f / Mathf.Sqrt(Mathf.Sqrt(255f / modifiedRate)));
 
                                         int shakes = 0;
 
@@ -4545,10 +4859,18 @@ public class BattleHandler : MonoBehaviour
                                             yield return StartCoroutine(faintPokemonAnimation(opponent1));
                                             yield return new WaitForSeconds(1f);
 
-                                            yield return StartCoroutine(drawTextAndWait(generatePreString(targetIndex) + pokemon[targetIndex].getName() + " \\nwas caught!", 2.4f));
+                                            yield return
+                                                StartCoroutine(
+                                                    drawTextAndWait(
+                                                        generatePreString(targetIndex) + pokemon[targetIndex].getName() +
+                                                        " \\nwas caught!", 2.4f));
 
                                             Dialog.DrawDialogBox();
-                                            yield return StartCoroutine(Dialog.DrawTextSilent("Would you like to give a nickname \\nto your new " + pokemon[targetIndex].getName() + "?"));
+                                            yield return
+                                                StartCoroutine(
+                                                    Dialog.DrawTextSilent(
+                                                        "Would you like to give a nickname \\nto your new " +
+                                                        pokemon[targetIndex].getName() + "?"));
                                             yield return StartCoroutine(Dialog.DrawChoiceBox());
                                             int chosenIndex = Dialog.chosenIndex;
                                             Dialog.UndrawDialogBox();
@@ -4556,25 +4878,28 @@ public class BattleHandler : MonoBehaviour
 
                                             string nickname = null;
                                             if (chosenIndex == 1)
-                                            { //give nickname
+                                            {
+                                                //give nickname
                                                 SfxHandler.Play(selectClip);
                                                 yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
 
-                                                Scene.main.Typing.gameObject.SetActive(true);
-                                                StartCoroutine(Scene.main.Typing.control(10, "", pokemon[targetIndex].getGender(), pokemon[targetIndex].GetIcons_()));
-                                                while (Scene.main.Typing.gameObject.activeSelf)
+                                                PKUScene.main.Typing.gameObject.SetActive(true);
+                                                StartCoroutine(PKUScene.main.Typing.control(10, "",
+                                                    pokemon[targetIndex].getGender(), pokemon[targetIndex].GetIcons_()));
+                                                while (PKUScene.main.Typing.gameObject.activeSelf)
                                                 {
                                                     yield return null;
                                                 }
-                                                if (Scene.main.Typing.typedString.Length > 0)
+                                                if (PKUScene.main.Typing.typedString.Length > 0)
                                                 {
-                                                    nickname = Scene.main.Typing.typedString;
+                                                    nickname = PKUScene.main.Typing.typedString;
                                                 }
 
                                                 yield return StartCoroutine(ScreenFade.main.Fade(true, 0.4f));
                                             }
                                             Debug.Log("CurrentHP" + pokemon[targetIndex].getCurrentHP());
-                                            SaveData.currentSave.PC.addPokemon(new Pokemon(pokemon[targetIndex], nickname, commandItem[movingPokemon].getName()));
+                                            SaveData.currentSave.PC.addPokemon(new Pokemon(pokemon[targetIndex],
+                                                nickname, commandItem[movingPokemon].getName()));
                                         }
 
                                         Dialog.UndrawDialogBox();
@@ -4584,37 +4909,60 @@ public class BattleHandler : MonoBehaviour
                                 {
                                     //commandTarget refers to the field position, healing a party member takes place before the turn.
                                     if (commandTarget[movingPokemon] < 3)
-                                    { //if target is player
-                                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " used the " + commandItem[movingPokemon].getName() + "!", 2.4f));
-                                        yield return StartCoroutine(Heal(commandTarget[movingPokemon], commandItem[movingPokemon].getFloatParameter()));
+                                    {
+                                        //if target is player
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    SaveData.currentSave.playerName + " used the " +
+                                                    commandItem[movingPokemon].getName() + "!", 2.4f));
+                                        yield return
+                                            StartCoroutine(Heal(commandTarget[movingPokemon],
+                                                commandItem[movingPokemon].getFloatParameter()));
                                     }
                                 }
                                 else if (commandItem[movingPokemon].getItemEffect() == ItemData.ItemEffect.STATUS)
                                 {
                                     //commandTarget refers to the field position, curing a party member takes place before the turn.
                                     if (commandTarget[movingPokemon] < 3)
-                                    { //if target is player
-                                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " used the " + commandItem[movingPokemon].getName() + "!", 2.4f));
+                                    {
+                                        //if target is player
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    SaveData.currentSave.playerName + " used the " +
+                                                    commandItem[movingPokemon].getName() + "!", 2.4f));
                                         yield return StartCoroutine(Heal(commandTarget[movingPokemon], true));
                                     }
                                 }
                                 else
-                                { //undefined effect
-                                    yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " used " + commandItem[movingPokemon].getName() + "!", 2.4f));
+                                {
+                                    //undefined effect
+                                    yield return
+                                        StartCoroutine(
+                                            drawTextAndWait(
+                                                SaveData.currentSave.playerName + " used " +
+                                                commandItem[movingPokemon].getName() + "!", 2.4f));
                                 }
                             }
                             else
                             {
-                                yield return StartCoroutine(drawTextAndWait(opponentName + " used " + commandItem[movingPokemon].getName() + "!", 2.4f));
+                                yield return
+                                    StartCoroutine(
+                                        drawTextAndWait(
+                                            opponentName + " used " + commandItem[movingPokemon].getName() + "!", 2.4f))
+                                    ;
                             }
 
                             pokemonHasMoved[movingPokemon] = true;
                         }
                         else if (command[movingPokemon] == CommandType.Move)
-                        {   //MOVE
+                        {
+                            //MOVE
                             //debug autoselect targetIndex (target selection not yet implemented)
                             int targetIndex = 3;
-                            if (commandMove[movingPokemon].getTarget() == MoveData.Target.SELF || commandMove[movingPokemon].getTarget() == MoveData.Target.ADJACENTALLYSELF)
+                            if (commandMove[movingPokemon].getTarget() == MoveData.Target.SELF ||
+                                commandMove[movingPokemon].getTarget() == MoveData.Target.ADJACENTALLYSELF)
                             {
                                 targetIndex = movingPokemon;
                             }
@@ -4630,13 +4978,19 @@ public class BattleHandler : MonoBehaviour
                             if (pokemon[movingPokemon].getStatus() != Pokemon.Status.FAINTED)
                             {
                                 //calculate and test accuracy
-                                float accuracy = commandMove[movingPokemon].getAccuracy() * calculateAccuracyModifier(pokemonStatsMod[5][movingPokemon]) / calculateAccuracyModifier(pokemonStatsMod[6][targetIndex]);
+                                float accuracy = commandMove[movingPokemon].getAccuracy() *
+                                                 calculateAccuracyModifier(pokemonStatsMod[5][movingPokemon]) /
+                                                 calculateAccuracyModifier(pokemonStatsMod[6][targetIndex]);
                                 bool canMove = true;
                                 if (pokemon[movingPokemon].getStatus() == Pokemon.Status.PARALYZED)
                                 {
                                     if (Random.value > 0.75f)
                                     {
-                                        yield return StartCoroutine(drawTextAndWait(generatePreString(movingPokemon) + pokemon[movingPokemon].getName() + " is paralyzed! \\nIt can't move!", 2.4f));
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    generatePreString(movingPokemon) + pokemon[movingPokemon].getName() +
+                                                    " is paralyzed! \\nIt can't move!", 2.4f));
                                         canMove = false;
                                     }
                                 }
@@ -4644,14 +4998,22 @@ public class BattleHandler : MonoBehaviour
                                 {
                                     if (Random.value > 0.2f)
                                     {
-                                        yield return StartCoroutine(drawTextAndWait(generatePreString(movingPokemon) + pokemon[movingPokemon].getName() + " is \\nfrozen solid!", 2.4f));
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    generatePreString(movingPokemon) + pokemon[movingPokemon].getName() +
+                                                    " is \\nfrozen solid!", 2.4f));
                                         canMove = false;
                                     }
                                     else
                                     {
                                         pokemon[movingPokemon].setStatus(Pokemon.Status.NONE);
                                         updatePokemonStatsDisplay(movingPokemon);
-                                        yield return StartCoroutine(drawTextAndWait(generatePreString(movingPokemon) + pokemon[movingPokemon].getName() + " thawed out!", 2.4f));
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    generatePreString(movingPokemon) + pokemon[movingPokemon].getName() +
+                                                    " thawed out!", 2.4f));
                                     }
                                 }
                                 else if (pokemon[movingPokemon].getStatus() == Pokemon.Status.ASLEEP)
@@ -4659,31 +5021,50 @@ public class BattleHandler : MonoBehaviour
                                     pokemon[movingPokemon].removeSleepTurn();
                                     if (pokemon[movingPokemon].getStatus() == Pokemon.Status.ASLEEP)
                                     {
-                                        yield return StartCoroutine(drawTextAndWait(generatePreString(movingPokemon) + pokemon[movingPokemon].getName() + " is \\nfast asleep.", 2.4f));
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    generatePreString(movingPokemon) + pokemon[movingPokemon].getName() +
+                                                    " is \\nfast asleep.", 2.4f));
                                         canMove = false;
                                     }
                                     else
                                     {
                                         updatePokemonStatsDisplay(movingPokemon);
-                                        yield return StartCoroutine(drawTextAndWait(generatePreString(movingPokemon) + pokemon[movingPokemon].getName() + " woke up!", 2.4f));
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    generatePreString(movingPokemon) + pokemon[movingPokemon].getName() +
+                                                    " woke up!", 2.4f));
                                     }
                                 }
                                 if (canMove)
-                                { //use the move
-                                  //deduct PP from the move
+                                {
+                                    //use the move
+                                    //deduct PP from the move
                                     pokemon[movingPokemon].removePP(commandMove[movingPokemon].getName(), 1);
-                                    yield return StartCoroutine(drawTextAndWait(generatePreString(movingPokemon) + pokemon[movingPokemon].getName() + " used " + commandMove[movingPokemon].getName() + "!", 1.2f, 1.2f));
+                                    yield return
+                                        StartCoroutine(
+                                            drawTextAndWait(
+                                                generatePreString(movingPokemon) + pokemon[movingPokemon].getName() +
+                                                " used " + commandMove[movingPokemon].getName() + "!", 1.2f, 1.2f));
 
                                     //adjust for accuracy
                                     if (accuracy != 0 && Random.value > accuracy)
-                                    { //if missed, provide missed feedback
-                                        yield return StartCoroutine(drawTextAndWait(generatePreString(movingPokemon) + pokemon[movingPokemon].getName() + "'s attack missed!", 2.4f));
+                                    {
+                                        //if missed, provide missed feedback
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    generatePreString(movingPokemon) + pokemon[movingPokemon].getName() +
+                                                    "'s attack missed!", 2.4f));
                                         canMove = false;
                                     }
                                 }
                                 if (canMove)
-                                { //if didn't miss
-                                  //set up variables needed later
+                                {
+                                    //if didn't miss
+                                    //set up variables needed later
                                     float damageToDeal = 0;
                                     bool applyCritical = false;
                                     float superEffectiveModifier = -1;
@@ -4691,50 +5072,75 @@ public class BattleHandler : MonoBehaviour
                                     //check for move effects that change how damage is calculated (Heal / Set Damage / etc.) (not yet implemented fully)
                                     if (commandMove[movingPokemon].hasMoveEffect(MoveData.Effect.Heal))
                                     {
-                                        yield return StartCoroutine(Heal(targetIndex, commandMove[movingPokemon].getMoveParameter(MoveData.Effect.Heal)));
+                                        yield return
+                                            StartCoroutine(Heal(targetIndex,
+                                                commandMove[movingPokemon].getMoveParameter(MoveData.Effect.Heal)));
                                     }
                                     else if (commandMove[movingPokemon].hasMoveEffect(MoveData.Effect.SetDamage))
                                     {
-                                        damageToDeal = commandMove[movingPokemon].getMoveParameter(MoveData.Effect.SetDamage);
+                                        damageToDeal =
+                                            commandMove[movingPokemon].getMoveParameter(MoveData.Effect.SetDamage);
                                         //if parameter is 0, then use the pokemon's level
-                                        if (damageToDeal == 0) { damageToDeal = pokemon[movingPokemon].getLevel(); }
+                                        if (damageToDeal == 0)
+                                        {
+                                            damageToDeal = pokemon[movingPokemon].getLevel();
+                                        }
                                         //check for any ineffectivity
-                                        superEffectiveModifier = getSuperEffectiveModifier(commandMove[movingPokemon].getType(), pokemonType1[targetIndex]) *
-                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(), pokemonType2[targetIndex]) *
-                                                getSuperEffectiveModifier(commandMove[movingPokemon].getType(), pokemonType3[targetIndex]);
+                                        superEffectiveModifier =
+                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(),
+                                                pokemonType1[targetIndex]) *
+                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(),
+                                                pokemonType2[targetIndex]) *
+                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(),
+                                                pokemonType3[targetIndex]);
                                         //if able to hit, set to 1 to prevent super effective messages appearing
-                                        if (superEffectiveModifier > 0f) { superEffectiveModifier = 1f; }
+                                        if (superEffectiveModifier > 0f)
+                                        {
+                                            superEffectiveModifier = 1f;
+                                        }
                                     }
                                     else
                                     {
                                         //calculate damage
-                                        damageToDeal = calculateDamage(movingPokemon, targetIndex, commandMove[movingPokemon]);
-                                        applyCritical = calculateCritical(movingPokemon, targetIndex, commandMove[movingPokemon]);
+                                        damageToDeal = calculateDamage(movingPokemon, targetIndex,
+                                            commandMove[movingPokemon]);
+                                        applyCritical = calculateCritical(movingPokemon, targetIndex,
+                                            commandMove[movingPokemon]);
                                         if (applyCritical)
                                         {
                                             damageToDeal *= 1.5f;
                                         }
-                                        superEffectiveModifier = getSuperEffectiveModifier(commandMove[movingPokemon].getType(), pokemonType1[targetIndex]) *
-                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(), pokemonType2[targetIndex]) *
-                                                getSuperEffectiveModifier(commandMove[movingPokemon].getType(), pokemonType3[targetIndex]);
+                                        superEffectiveModifier =
+                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(),
+                                                pokemonType1[targetIndex]) *
+                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(),
+                                                pokemonType2[targetIndex]) *
+                                            getSuperEffectiveModifier(commandMove[movingPokemon].getType(),
+                                                pokemonType3[targetIndex]);
                                         damageToDeal *= superEffectiveModifier;
+
                                         //apply offense/defense boosts.
-                                        //float damageBeforeMods = damageToDeal;
                                         if (commandMove[movingPokemon].getCategory() == MoveData.Category.PHYSICAL)
                                         {
                                             if (applyCritical)
-                                            {       //if a critical lands
+                                            {
+                                                //if a critical lands
                                                 if (pokemonStatsMod[0][movingPokemon] > 0)
-                                                { //only apply ATKmod if positive
-                                                    damageToDeal *= calculateStatModifier(pokemonStatsMod[0][movingPokemon]);
+                                                {
+                                                    //only apply ATKmod if positive
+                                                    damageToDeal *=
+                                                        calculateStatModifier(pokemonStatsMod[0][movingPokemon]);
                                                 }
                                                 if (pokemonStatsMod[1][targetIndex] < 0)
-                                                { //only apply DEFmod if negative
-                                                    damageToDeal *= calculateStatModifier(pokemonStatsMod[1][targetIndex]);
+                                                {
+                                                    //only apply DEFmod if negative
+                                                    damageToDeal *=
+                                                        calculateStatModifier(pokemonStatsMod[1][targetIndex]);
                                                 }
                                             }
                                             else
-                                            {   //apply ATK and DEF mods normally (also half damage if burned)
+                                            {
+                                                //apply ATK and DEF mods normally (also half damage if burned)
                                                 damageToDeal *= calculateStatModifier(pokemonStatsMod[0][movingPokemon]);
                                                 damageToDeal /= calculateStatModifier(pokemonStatsMod[1][targetIndex]);
                                                 if (pokemon[movingPokemon].getStatus() == Pokemon.Status.BURNED)
@@ -4746,14 +5152,17 @@ public class BattleHandler : MonoBehaviour
                                         else if (commandMove[movingPokemon].getCategory() == MoveData.Category.SPECIAL)
                                         {
                                             if (applyCritical)
-                                            {   //same as above, only using the Special varients
+                                            {
+                                                //same as above, only using the Special varients
                                                 if (pokemonStatsMod[2][movingPokemon] > 0)
                                                 {
-                                                    damageToDeal *= calculateStatModifier(pokemonStatsMod[2][movingPokemon]);
+                                                    damageToDeal *=
+                                                        calculateStatModifier(pokemonStatsMod[2][movingPokemon]);
                                                 }
                                                 if (pokemonStatsMod[3][targetIndex] < 0)
                                                 {
-                                                    damageToDeal *= calculateStatModifier(pokemonStatsMod[3][targetIndex]);
+                                                    damageToDeal *=
+                                                        calculateStatModifier(pokemonStatsMod[3][targetIndex]);
                                                 }
                                             }
                                             else
@@ -4767,7 +5176,8 @@ public class BattleHandler : MonoBehaviour
                                     //inflict damage
                                     int DEBUG_beforeHP = pokemon[targetIndex].getCurrentHP();
                                     pokemon[targetIndex].removeHP(damageToDeal);
-                                    Debug.Log(DEBUG_beforeHP + " - " + damageToDeal + " = " + pokemon[targetIndex].getCurrentHP());
+                                    Debug.Log(DEBUG_beforeHP + " - " + damageToDeal + " = " +
+                                              pokemon[targetIndex].getCurrentHP());
 
                                     if (damageToDeal > 0)
                                     {
@@ -4786,12 +5196,20 @@ public class BattleHandler : MonoBehaviour
                                     }
 
                                     if (targetIndex == 0)
-                                    { //if player pokemon 0 (only stats bar to display HP text)
-                                        yield return StartCoroutine(stretchBar(statsHPBar[targetIndex], Mathf.CeilToInt(pokemon[targetIndex].getPercentHP() * 48f), 32f, true, pokemon0CurrentHP, pokemon0CurrentHPShadow, pokemon[targetIndex].getCurrentHP()));
+                                    {
+                                        //if player pokemon 0 (only stats bar to display HP text)
+                                        yield return
+                                            StartCoroutine(stretchBar(statsHPBar[targetIndex],
+                                                Mathf.CeilToInt(pokemon[targetIndex].getPercentHP() * 48f), 32f, true,
+                                                pokemon0CurrentHP, pokemon0CurrentHPShadow,
+                                                pokemon[targetIndex].getCurrentHP()));
                                     }
                                     else
                                     {
-                                        yield return StartCoroutine(stretchBar(statsHPBar[targetIndex], Mathf.CeilToInt(pokemon[targetIndex].getPercentHP() * 48f), 32f, true, null, null, 0));
+                                        yield return
+                                            StartCoroutine(stretchBar(statsHPBar[targetIndex],
+                                                Mathf.CeilToInt(pokemon[targetIndex].getPercentHP() * 48f), 32f, true,
+                                                null, null, 0));
                                     }
                                     yield return new WaitForSeconds(0.4f);
 
@@ -4814,7 +5232,8 @@ public class BattleHandler : MonoBehaviour
                                         }
                                         else if (superEffectiveModifier < 1)
                                         {
-                                            yield return StartCoroutine(drawTextAndWait("It's not very effective.", 2.4f));
+                                            yield return
+                                                StartCoroutine(drawTextAndWait("It's not very effective.", 2.4f));
                                         }
                                     }
 
@@ -4822,7 +5241,11 @@ public class BattleHandler : MonoBehaviour
                                     if (pokemon[targetIndex].getStatus() == Pokemon.Status.FAINTED)
                                     {
                                         //debug = array of GUITextures not yet implemented
-                                        yield return StartCoroutine(drawTextAndWait(generatePreString(targetIndex) + pokemon[targetIndex].getName() + " fainted!", 2.4f));
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    generatePreString(targetIndex) + pokemon[targetIndex].getName() +
+                                                    " fainted!", 2.4f));
                                         Dialog.UndrawDialogBox();
                                         yield return new WaitForSeconds(0.2f);
                                         yield return new WaitForSeconds(PlayCry(pokemon[targetIndex]));
@@ -4846,14 +5269,31 @@ public class BattleHandler : MonoBehaviour
                                                 if (pokemon[i2].getStatus() != Pokemon.Status.FAINTED)
                                                 {
                                                     float isWildMod = (trainerBattle) ? 1.5f : 1f;
-                                                    float baseExpYield = PokemonDatabase.getPokemon(pokemon[targetIndex].getID()).getBaseExpYield();
-                                                    float luckyEggMod = (pokemon[i2].getHeldItem() == "Lucky Egg") ? 1.5f : 1f;
-                                                    float OTMod = (pokemon[i2].getIDno() != SaveData.currentSave.playerID) ? 1.5f : 1f;
+                                                    float baseExpYield =
+                                                        PokemonDatabase.getPokemon(pokemon[targetIndex].getID())
+                                                            .getBaseExpYield();
+                                                    float luckyEggMod = (pokemon[i2].getHeldItem() == "Lucky Egg")
+                                                        ? 1.5f
+                                                        : 1f;
+                                                    float OTMod = (pokemon[i2].getIDno() !=
+                                                                   SaveData.currentSave.playerID)
+                                                        ? 1.5f
+                                                        : 1f;
                                                     float sharedMod = 1f; //shared experience
-                                                    float IVMod = 0.85f + (float)(pokemon[targetIndex].getIV_HP() + pokemon[targetIndex].getIV_ATK() + pokemon[targetIndex].getIV_DEF() +
-                                                                           pokemon[targetIndex].getIV_SPA() + pokemon[targetIndex].getIV_SPD() + pokemon[targetIndex].getIV_SPE()) / 480f;
+                                                    float IVMod = 0.85f +
+                                                                  (float)
+                                                                  (pokemon[targetIndex].getIV_HP() +
+                                                                   pokemon[targetIndex].getIV_ATK() +
+                                                                   pokemon[targetIndex].getIV_DEF() +
+                                                                   pokemon[targetIndex].getIV_SPA() +
+                                                                   pokemon[targetIndex].getIV_SPD() +
+                                                                   pokemon[targetIndex].getIV_SPE()) / 480f;
                                                     //IV Mod is unique to Pokemon Unity
-                                                    int exp = Mathf.CeilToInt((isWildMod * baseExpYield * IVMod * OTMod * luckyEggMod * (float)pokemon[targetIndex].getLevel()) / 7 * sharedMod);
+                                                    int exp =
+                                                        Mathf.CeilToInt((isWildMod * baseExpYield * IVMod * OTMod *
+                                                                         luckyEggMod *
+                                                                         (float)pokemon[targetIndex].getLevel()) / 7 *
+                                                                        sharedMod);
 
                                                     yield return StartCoroutine(addExp(i2, exp));
                                                 }
@@ -4889,8 +5329,13 @@ public class BattleHandler : MonoBehaviour
                                             //Check these booleans to prevent running an animation twice for one pokemon.
                                             bool animate = false;
                                             //check if statUp/Down Effect
-                                            if (moveEffects[i2] == MoveData.Effect.ATK || moveEffects[i2] == MoveData.Effect.DEF || moveEffects[i2] == MoveData.Effect.SPA ||
-                                               moveEffects[i2] == MoveData.Effect.SPD || moveEffects[i2] == MoveData.Effect.SPE || moveEffects[i2] == MoveData.Effect.ACC || moveEffects[i2] == MoveData.Effect.EVA)
+                                            if (moveEffects[i2] == MoveData.Effect.ATK ||
+                                                moveEffects[i2] == MoveData.Effect.DEF ||
+                                                moveEffects[i2] == MoveData.Effect.SPA ||
+                                                moveEffects[i2] == MoveData.Effect.SPD ||
+                                                moveEffects[i2] == MoveData.Effect.SPE ||
+                                                moveEffects[i2] == MoveData.Effect.ACC ||
+                                                moveEffects[i2] == MoveData.Effect.EVA)
                                             {
                                                 //if statUp, and haven't run statUp yet, set statUpRun bool to true;
                                                 if (moveEffectParameters[i2] > 0 && !statUpRun)
@@ -4905,8 +5350,13 @@ public class BattleHandler : MonoBehaviour
                                                 }
                                             }
                                             //check if Self statUp/Down Effect
-                                            else if (moveEffects[i2] == MoveData.Effect.ATKself || moveEffects[i2] == MoveData.Effect.DEFself || moveEffects[i2] == MoveData.Effect.SPAself ||
-                                                    moveEffects[i2] == MoveData.Effect.SPDself || moveEffects[i2] == MoveData.Effect.SPEself || moveEffects[i2] == MoveData.Effect.ACCself || moveEffects[i2] == MoveData.Effect.EVAself)
+                                            else if (moveEffects[i2] == MoveData.Effect.ATKself ||
+                                                     moveEffects[i2] == MoveData.Effect.DEFself ||
+                                                     moveEffects[i2] == MoveData.Effect.SPAself ||
+                                                     moveEffects[i2] == MoveData.Effect.SPDself ||
+                                                     moveEffects[i2] == MoveData.Effect.SPEself ||
+                                                     moveEffects[i2] == MoveData.Effect.ACCself ||
+                                                     moveEffects[i2] == MoveData.Effect.EVAself)
                                             {
                                                 //if statUp, and haven't run statUp yet, set statUpRun bool to true;
                                                 if (moveEffectParameters[i2] > 0 && !statUpSelfRun)
@@ -4925,22 +5375,26 @@ public class BattleHandler : MonoBehaviour
                                                 animate = true;
                                             }
 
-                                            yield return StartCoroutine(applyEffect(movingPokemon, targetIndex, moveEffects[i2], moveEffectParameters[i2], animate));
+                                            yield return
+                                                StartCoroutine(applyEffect(movingPokemon, targetIndex, moveEffects[i2],
+                                                    moveEffectParameters[i2], animate));
                                         }
                                     }
 
                                     updatePokemonStatsDisplay(targetIndex);
                                 }
-
                             }
 
                             pokemonHasMoved[movingPokemon] = true;
                         }
                         else if (command[movingPokemon] == CommandType.Switch)
-                        {   //switch pokemon
+                        {
+                            //switch pokemon
                             //enemy switching not yet implemented
 
-                            yield return StartCoroutine(drawTextAndWait(pokemon[movingPokemon].getName() + ", come back!", 1.5f, 1.5f));
+                            yield return
+                                StartCoroutine(drawTextAndWait(pokemon[movingPokemon].getName() + ", come back!", 1.5f,
+                                    1.5f));
                             Dialog.UndrawDialogBox();
 
                             StartCoroutine(slidePokemonStats(0, true));
@@ -4950,11 +5404,14 @@ public class BattleHandler : MonoBehaviour
                             switchPokemon(movingPokemon, commandPokemon[movingPokemon]);
 
                             yield return new WaitForSeconds(0.5f);
-                            yield return StartCoroutine(drawTextAndWait("Go! " + pokemon[movingPokemon].getName() + "!", 1.5f, 1.5f));
+                            yield return
+                                StartCoroutine(drawTextAndWait("Go! " + pokemon[movingPokemon].getName() + "!", 1.5f,
+                                    1.5f));
                             Dialog.UndrawDialogBox();
 
                             if (i == 0)
-                            { //DEBUG
+                            {
+                                //DEBUG
                                 Debug.Log(pokemon[0].getLongID());
                                 StopCoroutine(animatePlayer1);
                                 animatePlayer1 = StartCoroutine(animatePokemon(player1, pokemon[0].GetBackAnim_()));
@@ -4969,18 +5426,12 @@ public class BattleHandler : MonoBehaviour
                         }
                     }
                     else
-                    { //count pokemon as moved as pokemon does not exist.
+                    {
+                        //count pokemon as moved as pokemon does not exist.
                         pokemonHasMoved[movingPokemon] = true;
                     }
                 }
             }
-
-
-
-
-
-
-
 
 
             ////////////////////////////////////////
@@ -4988,33 +5439,48 @@ public class BattleHandler : MonoBehaviour
             ////////////////////////////////////////
 
             if (running)
-            { //running may be set to false by a successful flee
-              //Apply after-moved effects
+            {
+                //running may be set to false by a successful flee
+                //Apply after-moved effects
                 for (int i = 0; i < 6; i++)
                 {
                     if (pokemon[i] != null)
                     {
-                        if (pokemon[i].getStatus() == Pokemon.Status.BURNED || pokemon[i].getStatus() == Pokemon.Status.POISONED)
+                        if (pokemon[i].getStatus() == Pokemon.Status.BURNED ||
+                            pokemon[i].getStatus() == Pokemon.Status.POISONED)
                         {
                             pokemon[i].removeHP(Mathf.Floor((float)pokemon[i].getHP() / 8f));
                             if (pokemon[i].getStatus() == Pokemon.Status.BURNED)
                             {
-                                yield return StartCoroutine(drawTextAndWait(generatePreString(i) + pokemon[i].getName() + " is hurt by its burn!", 2.4f));
+                                yield return
+                                    StartCoroutine(
+                                        drawTextAndWait(
+                                            generatePreString(i) + pokemon[i].getName() + " is hurt by its burn!", 2.4f))
+                                    ;
                             }
                             else if (pokemon[i].getStatus() == Pokemon.Status.POISONED)
                             {
-                                yield return StartCoroutine(drawTextAndWait(generatePreString(i) + pokemon[i].getName() + " is hurt by poison!", 2.4f));
+                                yield return
+                                    StartCoroutine(
+                                        drawTextAndWait(
+                                            generatePreString(i) + pokemon[i].getName() + " is hurt by poison!", 2.4f));
                             }
 
                             SfxHandler.Play(hitClip);
 
                             if (i == 0)
-                            { //if player pokemon 0 (only stats bar to display HP text)
-                                yield return StartCoroutine(stretchBar(statsHPBar[i], Mathf.CeilToInt(pokemon[i].getPercentHP() * 48f), 32f, true, pokemon0CurrentHP, pokemon0CurrentHPShadow, pokemon[i].getCurrentHP()));
+                            {
+                                //if player pokemon 0 (only stats bar to display HP text)
+                                yield return
+                                    StartCoroutine(stretchBar(statsHPBar[i],
+                                        Mathf.CeilToInt(pokemon[i].getPercentHP() * 48f), 32f, true, pokemon0CurrentHP,
+                                        pokemon0CurrentHPShadow, pokemon[i].getCurrentHP()));
                             }
                             else
                             {
-                                yield return StartCoroutine(stretchBar(statsHPBar[i], Mathf.CeilToInt(pokemon[i].getPercentHP() * 48f), 32f, true, null, null, 0));
+                                yield return
+                                    StartCoroutine(stretchBar(statsHPBar[i],
+                                        Mathf.CeilToInt(pokemon[i].getPercentHP() * 48f), 32f, true, null, null, 0));
                             }
                             yield return new WaitForSeconds(1.2f);
 
@@ -5026,7 +5492,9 @@ public class BattleHandler : MonoBehaviour
                         if (pokemon[i].getStatus() == Pokemon.Status.FAINTED)
                         {
                             //debug = array of GUITextures not yet implemented
-                            yield return StartCoroutine(drawTextAndWait(generatePreString(i) + pokemon[i].getName() + " fainted!", 2.4f));
+                            yield return
+                                StartCoroutine(drawTextAndWait(
+                                    generatePreString(i) + pokemon[i].getName() + " fainted!", 2.4f));
                             Dialog.UndrawDialogBox();
                             yield return new WaitForSeconds(0.2f);
                             yield return new WaitForSeconds(PlayCry(pokemon[i]));
@@ -5045,16 +5513,7 @@ public class BattleHandler : MonoBehaviour
                         }
                     }
                 }
-
             }
-
-
-
-
-
-
-
-
 
 
             ////////////////////////////////////////
@@ -5116,13 +5575,19 @@ public class BattleHandler : MonoBehaviour
                                     {
                                         switchPokemon(i + 3, opponentParty[i2]);
 
-                                        yield return StartCoroutine(drawTextAndWait(opponentName + " sent out " + pokemon[i + 3].getName() + "!", 1.5f, 1.5f));
+                                        yield return
+                                            StartCoroutine(
+                                                drawTextAndWait(
+                                                    opponentName + " sent out " + pokemon[i + 3].getName() + "!", 1.5f,
+                                                    1.5f));
                                         Dialog.UndrawDialogBox();
                                         if (i == 0)
-                                        { //DEBUG
+                                        {
+                                            //DEBUG
                                             Debug.Log(pokemon[3].getLongID());
                                             StopCoroutine(animateOpponent1);
-                                            animateOpponent1 = StartCoroutine(animatePokemon(opponent1, pokemon[3].GetFrontAnim_()));
+                                            animateOpponent1 =
+                                                StartCoroutine(animatePokemon(opponent1, pokemon[3].GetFrontAnim_()));
                                             yield return new WaitForSeconds(0.2f);
                                             updatePokemonStatsDisplay(i + 3);
                                             yield return StartCoroutine(releasePokemon(opponent1));
@@ -5151,7 +5616,6 @@ public class BattleHandler : MonoBehaviour
                             yield return new WaitForSeconds(0.2f);
                             while (currentTask == 3)
                             {
-
                                 if (Input.GetAxisRaw("Vertical") < 0)
                                 {
                                     if (pokePartyPosition < 5)
@@ -5220,17 +5684,19 @@ public class BattleHandler : MonoBehaviour
                                 }
                                 else if (Input.GetButtonDown("Select"))
                                 {
-                                    if (pokePartyPosition == 6) { } //debug
+                                    if (pokePartyPosition == 6)
+                                    {
+                                    } //debug
                                     else if (SaveData.currentSave.PC.boxes[0][pokePartyPosition] != null)
                                     {
                                         updateCurrentTask(5);
                                         SfxHandler.Play(selectClip);
-                                        int summaryPosition = updateSummaryPosition(0); //0 = Switch, 1 = Moves, 2 = Back
+                                        int summaryPosition = updateSummaryPosition(0);
+                                        //0 = Switch, 1 = Moves, 2 = Back
 
                                         yield return new WaitForSeconds(0.2f);
                                         while (currentTask == 5)
                                         {
-
                                             if (Input.GetAxisRaw("Vertical") < 0)
                                             {
                                                 if (pokePartyPosition < 5)
@@ -5241,7 +5707,8 @@ public class BattleHandler : MonoBehaviour
                                                     {
                                                         SfxHandler.Play(scrollClip);
                                                     }
-                                                    updatePokemonSummaryDisplay(SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
+                                                    updatePokemonSummaryDisplay(
+                                                        SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
                                                     yield return new WaitForSeconds(0.2f);
                                                 }
                                             }
@@ -5273,21 +5740,26 @@ public class BattleHandler : MonoBehaviour
                                                     {
                                                         SfxHandler.Play(scrollClip);
                                                     }
-                                                    updatePokemonSummaryDisplay(SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
+                                                    updatePokemonSummaryDisplay(
+                                                        SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
                                                     yield return new WaitForSeconds(0.2f);
                                                 }
                                             }
                                             else if (Input.GetButtonDown("Select"))
                                             {
                                                 if (summaryPosition == 0)
-                                                { // switch
-                                                    if (SaveData.currentSave.PC.boxes[0][pokePartyPosition].getStatus() != Pokemon.Status.FAINTED)
+                                                {
+                                                    // switch
+                                                    if (
+                                                        SaveData.currentSave.PC.boxes[0][pokePartyPosition].getStatus() !=
+                                                        Pokemon.Status.FAINTED)
                                                     {
                                                         //check that pokemon is not on the field
                                                         bool notOnField = true;
                                                         for (int i2 = 0; i2 < pokemonPerSide; i2++)
                                                         {
-                                                            if (SaveData.currentSave.PC.boxes[0][pokePartyPosition] == pokemon[i2])
+                                                            if (SaveData.currentSave.PC.boxes[0][pokePartyPosition] ==
+                                                                pokemon[i2])
                                                             {
                                                                 notOnField = false;
                                                                 i2 = pokemonPerSide;
@@ -5295,58 +5767,79 @@ public class BattleHandler : MonoBehaviour
                                                         }
                                                         if (notOnField)
                                                         {
-                                                            switchPokemon(i, SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
+                                                            switchPokemon(i,
+                                                                SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
                                                             updateCurrentTask(-1);
                                                             SfxHandler.Play(selectClip);
 
-                                                            yield return StartCoroutine(drawTextAndWait("Go! " + pokemon[i].getName() + "!", 1.5f, 1.5f));
+                                                            yield return
+                                                                StartCoroutine(
+                                                                    drawTextAndWait(
+                                                                        "Go! " + pokemon[i].getName() + "!", 1.5f, 1.5f))
+                                                                ;
                                                             Dialog.UndrawDialogBox();
                                                             if (i == 0)
-                                                            { //DEBUG
+                                                            {
+                                                                //DEBUG
                                                                 Debug.Log(pokemon[0].getLongID());
                                                                 StopCoroutine(animatePlayer1);
-                                                                animatePlayer1 = StartCoroutine(animatePokemon(player1, pokemon[0].GetBackAnim_()));
+                                                                animatePlayer1 =
+                                                                    StartCoroutine(animatePokemon(player1,
+                                                                        pokemon[0].GetBackAnim_()));
                                                                 yield return new WaitForSeconds(0.2f);
                                                                 updatePokemonStatsDisplay(i);
                                                                 yield return StartCoroutine(releasePokemon(player1));
                                                                 PlayCry(pokemon[0]);
                                                                 yield return new WaitForSeconds(0.3f);
-                                                                yield return StartCoroutine(slidePokemonStats(0, false));
+                                                                yield return StartCoroutine(slidePokemonStats(0, false))
+                                                                    ;
                                                             }
                                                         }
                                                         else
                                                         {
-                                                            yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is already fighting!"));
+                                                            yield return
+                                                                StartCoroutine(
+                                                                    drawTextAndWait(
+                                                                        SaveData.currentSave.PC.boxes[0][
+                                                                            pokePartyPosition].getName() +
+                                                                        " is already fighting!"));
                                                             Dialog.UndrawDialogBox();
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is unable to fight!"));
+                                                        yield return
+                                                            StartCoroutine(
+                                                                drawTextAndWait(
+                                                                    SaveData.currentSave.PC.boxes[0][pokePartyPosition]
+                                                                        .getName() + " is unable to fight!"));
                                                         Dialog.UndrawDialogBox();
                                                     }
                                                 }
                                                 else if (summaryPosition == 1)
-                                                {//check moves
+                                                {
+                                                    //check moves
                                                     updateCurrentTask(6);
                                                     SfxHandler.Play(selectClip);
                                                     yield return new WaitForSeconds(0.2f);
 
-                                                    int movesPosition = 5; //0-3 = Moves, 4 = Switch, 5 = Summary, 6 = Back
+                                                    int movesPosition = 5;
+                                                    //0-3 = Moves, 4 = Switch, 5 = Summary, 6 = Back
                                                     while (currentTask == 6)
                                                     {
-
                                                         if (Input.GetAxisRaw("Vertical") < 0)
                                                         {
                                                             if (movesPosition < 4)
                                                             {
                                                                 if (movesPosition == 2)
                                                                 {
-                                                                    movesPosition = updateMovesPosition(movesPosition + 3);
+                                                                    movesPosition =
+                                                                        updateMovesPosition(movesPosition + 3);
                                                                 }
                                                                 else
                                                                 {
-                                                                    movesPosition = updateMovesPosition(movesPosition + 2);
+                                                                    movesPosition =
+                                                                        updateMovesPosition(movesPosition + 2);
                                                                 }
                                                                 SfxHandler.Play(scrollClip);
                                                                 yield return new WaitForSeconds(0.2f);
@@ -5354,7 +5847,8 @@ public class BattleHandler : MonoBehaviour
                                                         }
                                                         else if (Input.GetAxisRaw("Horizontal") > 0)
                                                         {
-                                                            if (movesPosition != 1 || movesPosition != 3 || movesPosition != 6)
+                                                            if (movesPosition != 1 || movesPosition != 3 ||
+                                                                movesPosition != 6)
                                                             {
                                                                 movesPosition = updateMovesPosition(movesPosition + 1);
                                                                 SfxHandler.Play(scrollClip);
@@ -5363,7 +5857,8 @@ public class BattleHandler : MonoBehaviour
                                                         }
                                                         else if (Input.GetAxisRaw("Horizontal") < 0)
                                                         {
-                                                            if (movesPosition == 1 || movesPosition == 3 || movesPosition > 4)
+                                                            if (movesPosition == 1 || movesPosition == 3 ||
+                                                                movesPosition > 4)
                                                             {
                                                                 movesPosition = updateMovesPosition(movesPosition - 1);
                                                                 SfxHandler.Play(scrollClip);
@@ -5380,7 +5875,8 @@ public class BattleHandler : MonoBehaviour
                                                                 }
                                                                 else
                                                                 {
-                                                                    movesPosition = updateMovesPosition(movesPosition - 2);
+                                                                    movesPosition =
+                                                                        updateMovesPosition(movesPosition - 2);
                                                                 }
                                                                 SfxHandler.Play(scrollClip);
                                                                 yield return new WaitForSeconds(0.2f);
@@ -5389,14 +5885,19 @@ public class BattleHandler : MonoBehaviour
                                                         else if (Input.GetButtonDown("Select"))
                                                         {
                                                             if (movesPosition == 4)
-                                                            { // switch
-                                                                if (SaveData.currentSave.PC.boxes[0][pokePartyPosition].getStatus() != Pokemon.Status.FAINTED)
+                                                            {
+                                                                // switch
+                                                                if (
+                                                                    SaveData.currentSave.PC.boxes[0][pokePartyPosition]
+                                                                        .getStatus() != Pokemon.Status.FAINTED)
                                                                 {
                                                                     //check that pokemon is not on the field
                                                                     bool notOnField = true;
                                                                     for (int i2 = 0; i2 < pokemonPerSide; i2++)
                                                                     {
-                                                                        if (SaveData.currentSave.PC.boxes[0][pokePartyPosition] == pokemon[i2])
+                                                                        if (
+                                                                            SaveData.currentSave.PC.boxes[0][
+                                                                                pokePartyPosition] == pokemon[i2])
                                                                         {
                                                                             notOnField = false;
                                                                             i2 = pokemonPerSide;
@@ -5404,51 +5905,74 @@ public class BattleHandler : MonoBehaviour
                                                                     }
                                                                     if (notOnField)
                                                                     {
-                                                                        switchPokemon(i, SaveData.currentSave.PC.boxes[0][pokePartyPosition]);
+                                                                        switchPokemon(i,
+                                                                            SaveData.currentSave.PC.boxes[0][
+                                                                                pokePartyPosition]);
                                                                         updateCurrentTask(-1);
                                                                         SfxHandler.Play(selectClip);
 
-                                                                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " sent out " + pokemon[i].getName() + "!", 1.5f, 1.5f));
+                                                                        yield return
+                                                                            StartCoroutine(
+                                                                                drawTextAndWait(
+                                                                                    SaveData.currentSave.playerName +
+                                                                                    " sent out " + pokemon[i].getName() +
+                                                                                    "!", 1.5f, 1.5f));
                                                                         Dialog.UndrawDialogBox();
                                                                         if (i == 0)
-                                                                        { //DEBUG
+                                                                        {
+                                                                            //DEBUG
                                                                             Debug.Log(pokemon[0].getLongID());
                                                                             StopCoroutine(animatePlayer1);
-                                                                            animatePlayer1 = StartCoroutine(animatePokemon(player1, pokemon[0].GetBackAnim_()));
+                                                                            animatePlayer1 =
+                                                                                StartCoroutine(animatePokemon(player1,
+                                                                                    pokemon[0].GetBackAnim_()));
                                                                             yield return new WaitForSeconds(0.2f);
                                                                             updatePokemonStatsDisplay(i);
-                                                                            yield return StartCoroutine(releasePokemon(player1));
+                                                                            yield return
+                                                                                StartCoroutine(releasePokemon(player1));
                                                                             PlayCry(pokemon[0]);
                                                                             yield return new WaitForSeconds(0.3f);
-                                                                            yield return StartCoroutine(slidePokemonStats(0, false));
+                                                                            yield return
+                                                                                StartCoroutine(slidePokemonStats(0,
+                                                                                    false));
                                                                         }
                                                                     }
                                                                     else
                                                                     {
-                                                                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is already fighting!"));
+                                                                        yield return
+                                                                            StartCoroutine(
+                                                                                drawTextAndWait(
+                                                                                    SaveData.currentSave.PC.boxes[0][
+                                                                                        pokePartyPosition].getName() +
+                                                                                    " is already fighting!"));
                                                                         Dialog.UndrawDialogBox();
                                                                     }
                                                                 }
                                                                 else
                                                                 {
-                                                                    yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.PC.boxes[0][pokePartyPosition].getName() + " is unable to fight!"));
+                                                                    yield return
+                                                                        StartCoroutine(
+                                                                            drawTextAndWait(
+                                                                                SaveData.currentSave.PC.boxes[0][
+                                                                                    pokePartyPosition].getName() +
+                                                                                " is unable to fight!"));
                                                                     Dialog.UndrawDialogBox();
                                                                 }
                                                             }
                                                             else if (movesPosition == 5)
-                                                            {//check summary
+                                                            {
+                                                                //check summary
                                                                 updateCurrentTask(5);
                                                                 SfxHandler.Play(selectClip);
                                                                 yield return new WaitForSeconds(0.2f);
                                                             }
                                                             else if (movesPosition == 6)
-                                                            {//back
+                                                            {
+                                                                //back
                                                                 updateCurrentTask(3);
                                                                 SfxHandler.Play(selectClip);
                                                                 yield return new WaitForSeconds(0.2f);
                                                             }
-
-
                                                         }
                                                         else if (Input.GetButtonDown("Back"))
                                                         {
@@ -5461,13 +5985,12 @@ public class BattleHandler : MonoBehaviour
                                                     }
                                                 }
                                                 else if (summaryPosition == 2)
-                                                {//back
+                                                {
+                                                    //back
                                                     updateCurrentTask(3);
                                                     SfxHandler.Play(selectClip);
                                                     yield return new WaitForSeconds(0.2f);
                                                 }
-
-
                                             }
                                             else if (Input.GetButtonDown("Back"))
                                             {
@@ -5486,15 +6009,6 @@ public class BattleHandler : MonoBehaviour
                         }
                     }
                 }
-
-
-
-
-
-
-
-
-
 
 
                 ////////////////////////////////////////
@@ -5525,7 +6039,10 @@ public class BattleHandler : MonoBehaviour
                         }
 
 
-                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " defeated " + opponentName + "!", 2.4f, 2.4f));
+                        yield return
+                            StartCoroutine(
+                                drawTextAndWait(SaveData.currentSave.playerName + " defeated " + opponentName + "!",
+                                    2.4f, 2.4f));
                         Dialog.UndrawDialogBox();
                         yield return StartCoroutine(slideTrainer(opponentBase, trainerSprite1, true, false));
                         for (int di = 0; di < trainer.playerVictoryDialog.Length; di++)
@@ -5534,7 +6051,10 @@ public class BattleHandler : MonoBehaviour
                         }
                         Dialog.UndrawDialogBox();
 
-                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " received $" + trainer.GetPrizeMoney() + " for winning!"));
+                        yield return
+                            StartCoroutine(
+                                drawTextAndWait(SaveData.currentSave.playerName + " received $" +
+                                                trainer.GetPrizeMoney() + " for winning!"));
                         SaveData.currentSave.playerMoney += trainer.GetPrizeMoney();
                     }
                     else
@@ -5558,7 +6078,10 @@ public class BattleHandler : MonoBehaviour
                 {
                     if (trainerBattle)
                     {
-                        yield return StartCoroutine(drawTextAndWait(opponentName + " defeated " + SaveData.currentSave.playerName + "!", 2.4f, 2.4f));
+                        yield return
+                            StartCoroutine(
+                                drawTextAndWait(opponentName + " defeated " + SaveData.currentSave.playerName + "!",
+                                    2.4f, 2.4f));
                         Dialog.UndrawDialogBox();
                         yield return StartCoroutine(slideTrainer(opponentBase, trainerSprite1, true, false));
                         for (int di = 0; di < trainer.playerLossDialog.Length; di++)
@@ -5571,11 +6094,17 @@ public class BattleHandler : MonoBehaviour
                     }
                     else
                     {
-                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " is out of usable Pokémon!", 2f));
-                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " dropped $200 in panic!", 2f));
+                        yield return
+                            StartCoroutine(
+                                drawTextAndWait(SaveData.currentSave.playerName + " is out of usable Pokémon!", 2f));
+                        yield return
+                            StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " dropped $200 in panic!",
+                                2f));
                         yield return StartCoroutine(drawTextAndWait("... ... ... ...", 2f));
 
-                        yield return StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " blacked out!", 1.8f, 1.8f));
+                        yield return
+                            StartCoroutine(drawTextAndWait(SaveData.currentSave.playerName + " blacked out!", 1.8f, 1.8f))
+                            ;
                         Dialog.UndrawDialogBox();
                         //overlayed dialog box not yet implemented
                         StartCoroutine(ScreenFade.main.Fade(false, 1f));
@@ -5591,7 +6120,6 @@ public class BattleHandler : MonoBehaviour
                             SaveData.currentSave.PC.boxes[0][i].healFull();
                         }
                     }
-
                 }
                 Dialog.UndrawDialogBox();
                 yield return new WaitForSeconds(0.4f);
@@ -5601,11 +6129,13 @@ public class BattleHandler : MonoBehaviour
 
         //if defeated
         if (victor == 1)
-        { //empty the paused clip, as the paused audio won't be resumed upon respawning
+        {
+            //empty the paused clip, as the paused audio won't be resumed upon respawning
             BgmHandler.main.ResumeMain(1.4f, null, 0);
         }
         else
-        { //if not defeated, the scene won't have faded out already
+        {
+            //if not defeated, the scene won't have faded out already
             StartCoroutine(ScreenFade.main.Fade(false, 1f));
             BgmHandler.main.ResumeMain(1.4f);
         }
@@ -5627,10 +6157,10 @@ public class BattleHandler : MonoBehaviour
                             BgmHandler.main.PlayOverlay(null, 0, 0);
 
                             //Set SceneEvolution to be active so that it appears
-                            Scene.main.Evolution.gameObject.SetActive(true);
-                            StartCoroutine(Scene.main.Evolution.control(SaveData.currentSave.PC.boxes[0][i], "Level"));
+                            PKUScene.main.Evolution.gameObject.SetActive(true);
+                            StartCoroutine(PKUScene.main.Evolution.control(SaveData.currentSave.PC.boxes[0][i], "Level"));
                             //Start an empty loop that will only stop when SceneEvolution is no longer active (is closed)
-                            while (Scene.main.Evolution.gameObject.activeSelf)
+                            while (PKUScene.main.Evolution.gameObject.activeSelf)
                             {
                                 yield return null;
                             }

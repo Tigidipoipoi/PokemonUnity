@@ -5,7 +5,6 @@ using System.Collections;
 
 public class MapSettings : MonoBehaviour
 {
-
     public AudioClip mapBGMClip;
     public int mapBGMLoopStartSamples = 0;
     public AudioClip mapBGMNightClip = null;
@@ -49,9 +48,10 @@ public class MapSettings : MonoBehaviour
     {
         if (mapBGMNightClip != null)
         {
-            float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
+            float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
             if (time >= 20 || time < 3.5f)
-            { //night
+            {
+                //night
                 return mapBGMNightClip;
             }
         }
@@ -62,9 +62,10 @@ public class MapSettings : MonoBehaviour
     {
         if (mapBGMNightClip != null)
         {
-            float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
+            float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
             if (time >= 20 || time < 3.5f)
-            { //night
+            {
+                //night
                 return mapBGMNightLoopStartSamples;
             }
         }
@@ -75,27 +76,34 @@ public class MapSettings : MonoBehaviour
     {
         return getBattleBackground(0);
     }
+
     public Sprite getBattleBackground(int currentTag)
     {
-        float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
+        float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
         string timeString = "";
         if (time >= 20 || time < 3.5f)
-        { //night
+        {
+            //night
             timeString = "Night";
         }
         else if (time >= 17.5f)
-        { //eve
+        {
+            //eve
             timeString = "Eve";
         }
 
         Environment check = (currentTag == 3) ? environment2 : environment;
         string checkString = check.ToString();
 
-        if (currentTag == 2) { checkString = "Water"; }
+        if (currentTag == 2)
+        {
+            checkString = "Water";
+        }
 
         //Check for bridge at player						        //0.5f to adjust for stair height
         //cast a ray directly downwards from the player		        //1f to check in line with player's head
-        RaycastHit[] hitColliders = Physics.RaycastAll(PlayerMovementOld.Instance.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
+        RaycastHit[] hitColliders =
+            Physics.RaycastAll(PlayerMovement.player.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
         BridgeHandler bridge = null;
         //cycle through each of the collisions
         if (hitColliders.Length > 0)
@@ -119,9 +127,12 @@ public class MapSettings : MonoBehaviour
 
         //if outdoor environment
         if (check == Environment.Field || check == Environment.Mountain ||
-           check == Environment.Forest || check == Environment.Snow)
+            check == Environment.Forest || check == Environment.Snow)
         {
-            if (currentTag == 2) { checkString = "Water"; }
+            if (currentTag == 2)
+            {
+                checkString = "Water";
+            }
             //return with timestring attached
             return Resources.Load<Sprite>("BattleBackgrounds/Backgrounds/" + checkString + timeString);
         }
@@ -135,28 +146,35 @@ public class MapSettings : MonoBehaviour
     {
         return getBattleBase(0);
     }
+
     public Sprite getBattleBase(int currentTag)
     {
-        float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
+        float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
         string timeString = "";
         if (time >= 20 || time < 3.5f)
-        { //night
+        {
+            //night
             timeString = "Night";
         }
         else if (time >= 17.5f)
-        { //eve
+        {
+            //eve
             timeString = "Eve";
         }
 
         Environment check = (currentTag == 3) ? environment2 : environment;
         string checkString = check.ToString();
 
-        if (currentTag == 2) { checkString = "Water"; }
+        if (currentTag == 2)
+        {
+            checkString = "Water";
+        }
 
 
         //Check for bridge at player						        //0.5f to adjust for stair height
         //cast a ray directly downwards from the player		        //1f to check in line with player's head
-        RaycastHit[] hitColliders = Physics.RaycastAll(PlayerMovementOld.Instance.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
+        RaycastHit[] hitColliders =
+            Physics.RaycastAll(PlayerMovement.player.transform.position + new Vector3(0, 1.5f, 0), Vector3.down);
         BridgeHandler bridge = null;
         //cycle through each of the collisions
         if (hitColliders.Length > 0)
@@ -180,7 +198,7 @@ public class MapSettings : MonoBehaviour
 
         //if outdoor environment
         if (check == Environment.Field || check == Environment.Mountain ||
-           check == Environment.Forest || check == Environment.Snow)
+            check == Environment.Forest || check == Environment.Snow)
         {
             //return with timestring attached
             return Resources.Load<Sprite>("BattleBackgrounds/Bases/" + checkString + timeString);
@@ -218,14 +236,15 @@ public class MapSettings : MonoBehaviour
         WildPokemonInitialiser[] list = new WildPokemonInitialiser[encounters.Length];
         int listIndex = 0;
 
-        float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
+        float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
 
         for (int i = 0; i < encounters.Length; i++)
         {
             if (encounters[i].encounterLocation == location)
             {
                 if (time >= 20 || time < 3.5f)
-                { //night
+                {
+                    //night
                     if (encounters[i].encounterNight)
                     {
                         list[listIndex] = encounters[i];
@@ -233,7 +252,8 @@ public class MapSettings : MonoBehaviour
                     }
                 }
                 else if (time < 10f)
-                { //morning
+                {
+                    //morning
                     if (encounters[i].encounterMorning)
                     {
                         list[listIndex] = encounters[i];
@@ -241,7 +261,8 @@ public class MapSettings : MonoBehaviour
                     }
                 }
                 else
-                {   //day
+                {
+                    //day
                     if (encounters[i].encounterDay)
                     {
                         list[listIndex] = encounters[i];
@@ -265,7 +286,7 @@ public class MapSettings : MonoBehaviour
     {
         WildPokemonInitialiser[] list = getEncounterList(location);
 
-        int totalEncounterLikelihood = 0;       //add up the total Likelihood
+        int totalEncounterLikelihood = 0; //add up the total Likelihood
         for (int i = 0; i < list.Length; i++)
         {
             totalEncounterLikelihood += list[i].encounterLikelihood;
@@ -274,9 +295,11 @@ public class MapSettings : MonoBehaviour
         WildPokemonInitialiser[] chanceSplitList = new WildPokemonInitialiser[totalEncounterLikelihood];
         int listIndex = 0;
         for (int i = 0; i < list.Length; i++)
-        { //loop through each position of list
+        {
+            //loop through each position of list
             for (int i2 = 0; i2 < list[i].encounterLikelihood; i2++)
-            { //add encounter once for every Likelihood
+            {
+                //add encounter once for every Likelihood
                 chanceSplitList[listIndex] = list[i];
                 listIndex += 1;
             }
@@ -293,19 +316,15 @@ public class MapSettings : MonoBehaviour
 
 
         return new Pokemon(chanceSplitList[encounterIndex].ID, Pokemon.Gender.CALCULATE,
-                           Random.Range(chanceSplitList[encounterIndex].minLevel, chanceSplitList[encounterIndex].maxLevel + 1),
-                           null, null, null, -1);
+            Random.Range(chanceSplitList[encounterIndex].minLevel, chanceSplitList[encounterIndex].maxLevel + 1),
+            null, null, null, -1);
     }
-
-
-
 }
 
 
 [System.Serializable]
 public class WildPokemonInitialiser
 {
-
     public enum Location
     {
         Grass,
@@ -327,5 +346,4 @@ public class WildPokemonInitialiser
     public bool encounterMorning = true;
     public bool encounterDay = true;
     public bool encounterNight = true;
-
 }

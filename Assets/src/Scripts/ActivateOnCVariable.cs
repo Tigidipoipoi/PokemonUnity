@@ -5,15 +5,15 @@ using System.Collections;
 
 public class ActivateOnCVariable : MonoBehaviour
 {
-
-
     public string cVariable;
+
     public enum Check
     {
         Equal,
         LessThan,
         GreaterThan
     }
+
     public bool not = false;
     public Check check;
     public float cNumber;
@@ -30,11 +30,8 @@ public class ActivateOnCVariable : MonoBehaviour
 
     void Start()
     {
-
         CheckActivation();
-
     }
-
 
 
     private void CheckActivation()
@@ -63,10 +60,10 @@ public class ActivateOnCVariable : MonoBehaviour
         }
 
         if (not)
-        {   //invert bool
+        {
+            //invert bool
             checkResult = (checkResult) ? false : true;
         }
         target.SetActive(checkResult);
     }
-
 }

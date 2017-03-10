@@ -5,44 +5,50 @@ using System.Collections;
 
 public class SettingsHandler : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
 
     private GUITexture selectRow;
+
     private GUIText
         textSpeed,
+        //textSpeedShadow,
         textSpeedHighlight,
         musicVolume,
+        //musicVolumeShadow,
         musicVolumeHighlight,
         sfxVolume,
+        //sfxVolumeShadow,
         sfxVolumeHighlight,
         frameStyle,
         frameStyleShadow,
         battleScene,
+        //battleSceneShadow,
         battleSceneHighlight,
         battleStyle,
+        //battleStyleShadow,
         battleStyleHighlight,
         screenSize,
+        //screenSizeShadow,
         screenSizeHighlight,
         fullscreen,
-        /* [UNHANDLED YET]
-        textSpeedShadow,
-        musicVolumeShadow,
-        sfxVolumeShadow,
-        battleSceneShadow,
-        battleStyleShadow,
-        screenSizeShadow,
-        fullscreenShadow,
-        //*/
+        //fullscreenShadow,
         fullscreenHighlight;
 
     private bool running;
     private int selectedOption;
-    private int[] selectedOptionSize = new int[]{
-        3, 21, 21, 2, 2, 2, 5, 3};
-    private int[] selectedOptionIndex = new int[]{
-        2, 7, 14, 0, 1, 0, 0, 0};
-    private string[] selectedOptionText = new string[]{
+
+    private int[] selectedOptionSize = new int[]
+    {
+        3, 21, 21, 2, 2, 2, 5, 3
+    };
+
+    private int[] selectedOptionIndex = new int[]
+    {
+        2, 7, 14, 0, 1, 0, 0, 0
+    };
+
+    private string[] selectedOptionText = new string[]
+    {
         "How quickly to draw text to the screen.",
         "Adjust the volume of the music.",
         "Adjust the volume of the sound effects.",
@@ -50,11 +56,10 @@ public class SettingsHandler : MonoBehaviour
         "Display animations during battles.",
         "Switch before opponent's next Pokemon?",
         "Adjust the resolution of the screen.",
-        "Set the fullscreen mode."};
+        "Set the fullscreen mode."
+    };
 
-    /* [UNHANDLED YET]
-    private AudioSource SettingsAudio;
-    //*/
+    //private AudioSource SettingsAudio;
     public AudioClip selectClip;
 
     private GameObject DialogBox;
@@ -64,36 +69,32 @@ public class SettingsHandler : MonoBehaviour
 
     void Awake()
     {
-        /* [UNHANDLED YET]
-        SettingsAudio = transform.GetComponent<AudioSource>();
-
-        textSpeedShadow = textSpeed.transform.FindChild("TextSpeedShadow").GetComponent<GUIText>();
-        musicVolumeShadow = musicVolume.transform.FindChild("MusicVolumeShadow").GetComponent<GUIText>();
-        sfxVolumeShadow = sfxVolume.transform.FindChild("SFXVolumeShadow").GetComponent<GUIText>();
-        battleSceneShadow = battleScene.transform.FindChild("BattleSceneShadow").GetComponent<GUIText>();
-        battleStyleShadow = battleStyle.transform.FindChild("BattleStyleShadow").GetComponent<GUIText>();
-        screenSizeShadow = screenSize.transform.FindChild("ScreenSizeShadow").GetComponent<GUIText>();
-        fullscreenShadow = fullscreen.transform.FindChild("FullscreenShadow").GetComponent<GUIText>();
-        //*/
         Dialog = gameObject.GetComponent<DialogBoxHandler>();
 
         selectRow = transform.FindChild("selectRow").GetComponent<GUITexture>();
 
         textSpeed = transform.FindChild("TextSpeed").GetComponent<GUIText>();
+        //textSpeedShadow = textSpeed.transform.FindChild("TextSpeedShadow").GetComponent<GUIText>();
         textSpeedHighlight = textSpeed.transform.FindChild("TextSpeedHighlight").GetComponent<GUIText>();
         musicVolume = transform.FindChild("MusicVolume").GetComponent<GUIText>();
+        //musicVolumeShadow = musicVolume.transform.FindChild("MusicVolumeShadow").GetComponent<GUIText>();
         musicVolumeHighlight = musicVolume.transform.FindChild("MusicVolumeHighlight").GetComponent<GUIText>();
         sfxVolume = transform.FindChild("SFXVolume").GetComponent<GUIText>();
+        //sfxVolumeShadow = sfxVolume.transform.FindChild("SFXVolumeShadow").GetComponent<GUIText>();
         sfxVolumeHighlight = sfxVolume.transform.FindChild("SFXVolumeHighlight").GetComponent<GUIText>();
         frameStyle = transform.FindChild("FrameStyle").GetComponent<GUIText>();
         frameStyleShadow = frameStyle.transform.FindChild("FrameStyleShadow").GetComponent<GUIText>();
         battleScene = transform.FindChild("BattleScene").GetComponent<GUIText>();
+        //battleSceneShadow = battleScene.transform.FindChild("BattleSceneShadow").GetComponent<GUIText>();
         battleSceneHighlight = battleScene.transform.FindChild("BattleSceneHighlight").GetComponent<GUIText>();
         battleStyle = transform.FindChild("BattleStyle").GetComponent<GUIText>();
+        //battleStyleShadow = battleStyle.transform.FindChild("BattleStyleShadow").GetComponent<GUIText>();
         battleStyleHighlight = battleStyle.transform.FindChild("BattleStyleHighlight").GetComponent<GUIText>();
         screenSize = transform.FindChild("ScreenSize").GetComponent<GUIText>();
+        //screenSizeShadow = screenSize.transform.FindChild("ScreenSizeShadow").GetComponent<GUIText>();
         screenSizeHighlight = screenSize.transform.FindChild("ScreenSizeHighlight").GetComponent<GUIText>();
         fullscreen = transform.FindChild("Fullscreen").GetComponent<GUIText>();
+        //fullscreenShadow = fullscreen.transform.FindChild("FullscreenShadow").GetComponent<GUIText>();
         fullscreenHighlight = fullscreen.transform.FindChild("FullscreenHighlight").GetComponent<GUIText>();
 
         DialogBox = transform.FindChild("Description").gameObject;
@@ -125,7 +126,8 @@ public class SettingsHandler : MonoBehaviour
         for (int i = 0; i < textLine.Length; i++)
         {
             if (chars[i].Equals('\\'))
-            {   //   \ is used to designate line breaks
+            {
+                //   \ is used to designate line breaks
                 DialogBoxText.text += "\n";
                 DialogBoxTextShadow.text = DialogBoxText.text;
             }
@@ -142,9 +144,11 @@ public class SettingsHandler : MonoBehaviour
             {
                 i += 1;
                 if (i < textLine.Length)
-                { //if not at the end, repeat and wait double time
+                {
+                    //if not at the end, repeat and wait double time
                     if (chars[i].Equals('\\'))
-                    {   //   \ is used to designate line breaks
+                    {
+                        //   \ is used to designate line breaks
                         DialogBoxText.text += "\n";
                         DialogBoxTextShadow.text = DialogBoxText.text;
                     }
@@ -166,7 +170,8 @@ public class SettingsHandler : MonoBehaviour
         for (int i = 0; i < textLine.Length; i++)
         {
             if (chars[i].Equals('\\'))
-            {   //   \ is used to designate line breaks
+            {
+                //   \ is used to designate line breaks
                 DialogBoxText.text += "\n";
                 DialogBoxTextShadow.text = DialogBoxText.text;
             }
@@ -190,7 +195,8 @@ public class SettingsHandler : MonoBehaviour
             {
                 increment = 1;
             }
-            selectRow.pixelInset = new Rect(selectRow.pixelInset.x, startY + (16 * increment * direction), selectRow.pixelInset.width, selectRow.pixelInset.height);
+            selectRow.pixelInset = new Rect(selectRow.pixelInset.x, startY + (16 * increment * direction),
+                selectRow.pixelInset.width, selectRow.pixelInset.height);
             yield return null;
         }
     }
@@ -426,7 +432,6 @@ public class SettingsHandler : MonoBehaviour
     }
 
 
-
     public IEnumerator control()
     {
         //sceneTransition.FadeIn();
@@ -434,7 +439,8 @@ public class SettingsHandler : MonoBehaviour
 
         running = true;
         loadSettings();
-        int[] originalIndexes = new int[]{
+        int[] originalIndexes = new int[]
+        {
             selectedOptionIndex[0],
             selectedOptionIndex[1],
             selectedOptionIndex[2],
@@ -442,7 +448,8 @@ public class SettingsHandler : MonoBehaviour
             selectedOptionIndex[4],
             selectedOptionIndex[5],
             selectedOptionIndex[6],
-            selectedOptionIndex[7]};
+            selectedOptionIndex[7]
+        };
         //	float originalMVol = PlayerPrefs.GetFloat("musicVolume");
         //		float originalSVol = PlayerPrefs.GetFloat("sfxVolume");
         selectedOption = 0;
@@ -582,7 +589,8 @@ public class SettingsHandler : MonoBehaviour
             else if (Input.GetButton("Back"))
             {
                 Dialog.drawDialogBox();
-                yield return Dialog.StartCoroutine("drawText", "Would you like to save the currently \\selected settings?");
+                yield return
+                    Dialog.StartCoroutine("drawText", "Would you like to save the currently \\selected settings?");
                 Dialog.drawChoiceBoxNo();
                 yield return new WaitForSeconds(0.2f);
                 yield return StartCoroutine(Dialog.choiceNavigateNo());
@@ -592,10 +600,11 @@ public class SettingsHandler : MonoBehaviour
                     saveSettings();
                 }
                 else
-                { //set music and sfx volume back
-                  //	PlayerPrefs.SetFloat("musicVolume",originalMVol);
-                  //	PlayerPrefs.SetFloat("sfxVolume",originalSVol);
-                  //	PlayerPrefs.Save();
+                {
+                    //set music and sfx volume back
+                    //	PlayerPrefs.SetFloat("musicVolume",originalMVol);
+                    //	PlayerPrefs.SetFloat("sfxVolume",originalSVol);
+                    //	PlayerPrefs.Save();
                     selectedOptionIndex = originalIndexes;
                     saveSettings();
                     GlobalVariables.global.updateResolution();
@@ -610,5 +619,4 @@ public class SettingsHandler : MonoBehaviour
         }
         this.gameObject.SetActive(false);
     }
-
 }

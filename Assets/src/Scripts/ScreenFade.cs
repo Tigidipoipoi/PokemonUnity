@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class ScreenFade : MonoBehaviour
 {
-
     public static ScreenFade main;
     public static float defaultSpeed = 0.4f;
     public static float slowedSpeed = 1.2f;
@@ -16,7 +15,6 @@ public class ScreenFade : MonoBehaviour
     public Sprite[] fadeCutouts;
 
     public Material fadeMat;
-
 
 
     void Awake()
@@ -29,13 +27,11 @@ public class ScreenFade : MonoBehaviour
     }
 
 
-
-
-
     public IEnumerator Fade(bool fadeIn, float speed)
     {
         yield return StartCoroutine(Fade(fadeIn, speed, Color.black));
     }
+
     public IEnumerator Fade(bool fadeIn, float speed, Color color)
     {
         image.sprite = null;
@@ -48,7 +44,10 @@ public class ScreenFade : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / speed) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
 
             alpha = (fadeIn) ? 1f - increment : increment;
 
@@ -71,14 +70,16 @@ public class ScreenFade : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / speed) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
 
             float alpha = (!fadeIn) ? 1f - increment : increment;
 
             image.material.SetFloat("_Cutoff", alpha);
             yield return null;
         }
-
     }
 
     public void SetToFadedOut()
@@ -94,6 +95,4 @@ public class ScreenFade : MonoBehaviour
         image.material = null;
         image.color = new Color(image.color.r, image.color.g, image.color.b, 0);
     }
-
-
 }

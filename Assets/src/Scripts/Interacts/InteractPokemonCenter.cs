@@ -5,7 +5,6 @@ using System.Collections;
 
 public class InteractPokemonCenter : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
 
     public AudioClip ballPlaceClip;
@@ -18,29 +17,22 @@ public class InteractPokemonCenter : MonoBehaviour
     private Light screenLight;
     private SpriteRenderer[] pokeBalls = new SpriteRenderer[6];
 
-    /* [UNHANDLED YET]
-    private AudioSource PokemonCenterAudio;
-    //*/
+    //private AudioSource PokemonCenterAudio;
 
     void Awake()
     {
         Dialog = GameObject.Find("GUI").GetComponent<DialogBoxHandler>();
 
         nurse = transform.FindChild("NPC_nurse").GetComponent<NPCHandler>();
-        screenSprite = transform.FindChild("PokeCenterScreen").FindChild("Screen_SpriteLight").GetComponent<SpriteRenderer>();
+        screenSprite =
+            transform.FindChild("PokeCenterScreen").FindChild("Screen_SpriteLight").GetComponent<SpriteRenderer>();
         screenLight = transform.FindChild("PokeCenterScreen").FindChild("Screen_Light").GetComponent<Light>();
         Transform healMachine = transform.FindChild("healMachine").transform;
         for (int i = 0; i < 6; i++)
         {
             pokeBalls[i] = healMachine.FindChild("Ball" + i).GetComponent<SpriteRenderer>();
         }
-
-        /* [UNHANDLED YET]
-        PokemonCenterAudio = transform.GetComponent<AudioSource>();
-        //*/
     }
-
-
 
 
     private IEnumerator flashScreen(float speed)
@@ -69,12 +61,10 @@ public class InteractPokemonCenter : MonoBehaviour
     }
 
 
-
     public IEnumerator interact()
     {
-        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
         {
-
             for (int i = 0; i < 6; i++)
             {
                 pokeBalls[i].enabled = false;
@@ -104,10 +94,10 @@ public class InteractPokemonCenter : MonoBehaviour
                 Dialog.drawDialogBox();
                 yield return StartCoroutine(Dialog.drawText("Okay, I'll take your Pokémon for \na few seconds."));
                 yield return new WaitForSeconds(0.1f);
-                StartCoroutine(PlayerMovementOld.Instance.followerScript.withdrawToBall());
+                StartCoroutine(PlayerMovement.player.followerScript.withdrawToBall());
                 yield return new WaitForSeconds(0.5f);
 
-                nurse.SetDirection(Direction.LEFT);
+                nurse.setDirection(3);
 
                 yield return new WaitForSeconds(0.2f);
 
@@ -154,7 +144,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
                 yield return new WaitForSeconds(0.2f);
 
-                nurse.SetDirection(Direction.DOWN);
+                nurse.setDirection(2);
 
                 Dialog.drawDialogBox();
                 yield return StartCoroutine(Dialog.drawText("Thank you for waiting."));
@@ -169,7 +159,7 @@ public class InteractPokemonCenter : MonoBehaviour
                     yield return null;
                 }
 
-                PlayerMovementOld.Instance.followerScript.canMove = true;
+                PlayerMovement.player.followerScript.canMove = true;
             }
 
             Dialog.drawDialogBox();
@@ -181,13 +171,13 @@ public class InteractPokemonCenter : MonoBehaviour
 
             Dialog.undrawDialogBox();
 
-            PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+            PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
         }
     }
 
     public IEnumerator respawnHeal()
     {
-        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
         {
             for (int i = 0; i < 6; i++)
             {
@@ -200,7 +190,7 @@ public class InteractPokemonCenter : MonoBehaviour
             yield return StartCoroutine(Dialog.drawText("First, let's restore your Pokémon\nto full health."));
             yield return new WaitForSeconds(0.5f);
 
-            nurse.SetDirection(Direction.LEFT);
+            nurse.setDirection(3);
 
             yield return new WaitForSeconds(0.2f);
 
@@ -247,7 +237,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
             yield return new WaitForSeconds(0.2f);
 
-            nurse.SetDirection(Direction.DOWN);
+            nurse.setDirection(2);
 
             Dialog.drawDialogBox();
             yield return StartCoroutine(Dialog.drawText("Your Pokémon have been healed to\nperfect health."));
@@ -256,19 +246,22 @@ public class InteractPokemonCenter : MonoBehaviour
                 yield return null;
             }
             Dialog.drawDialogBox();
-            yield return StartCoroutine(Dialog.drawText("Please visit a Pokémon Center when your\nPokémon's HP goes down."));
+            yield return
+                StartCoroutine(Dialog.drawText("Please visit a Pokémon Center when your\nPokémon's HP goes down."));
             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
             {
                 yield return null;
             }
             Dialog.drawDialogBox();
-            yield return StartCoroutine(Dialog.drawText("If you're planning to travel any distance,\nyou should stock up on Potions."));
+            yield return
+                StartCoroutine(
+                    Dialog.drawText("If you're planning to travel any distance,\nyou should stock up on Potions."));
             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
             {
                 yield return null;
             }
 
-            PlayerMovementOld.Instance.followerScript.canMove = true;
+            PlayerMovement.player.followerScript.canMove = true;
 
             Dialog.drawDialogBox();
             yield return StartCoroutine(Dialog.drawText("Good luck, Trainer!"));
@@ -279,8 +272,7 @@ public class InteractPokemonCenter : MonoBehaviour
 
             Dialog.undrawDialogBox();
 
-            PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+            PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
         }
     }
-
 }

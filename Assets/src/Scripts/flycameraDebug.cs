@@ -5,7 +5,6 @@ using System.Collections;
 
 public class flycameraDebug : MonoBehaviour
 {
-
     //Flies a camera between given nodes in order at constant speed.
     //Used to record camera panning trailer footage.
     //Currently no in-game application.
@@ -31,10 +30,8 @@ public class flycameraDebug : MonoBehaviour
 
     void Start()
     {
-
         target.transform.position = nodes[0].position;
         StartCoroutine(flyToEachPosition());
-
     }
 
     private IEnumerator flyToEachPosition()
@@ -67,7 +64,10 @@ public class flycameraDebug : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / time) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
 
             target.transform.position = startPosition + (distance * increment);
 
@@ -83,12 +83,14 @@ public class flycameraDebug : MonoBehaviour
         while (increment < 1)
         {
             increment += (1 / time) * Time.deltaTime;
-            if (increment > 1) { increment = 1; }
+            if (increment > 1)
+            {
+                increment = 1;
+            }
 
             target.transform.rotation = Quaternion.Euler(startRotation + (additiveRotation * increment));
 
             yield return null;
         }
     }
-
 }

@@ -5,80 +5,72 @@ using System.Collections;
 
 public class TrainerHandler : MonoBehaviour
 {
-
-    private DialogBoxHandler Dialog;
-
-    private GUITexture cancel;
-
     private Transform screens;
 
-    private GUITexture card;
-
-    private GUITexture IDnoBox;
-    /* [UNHANDLED YET]
-    private GUIText IDnoText;
-    private GUIText IDnoTextShadow;
-    private GUIText nameText;
-    private GUIText nameTextShadow;
-    private GUITexture picture;
-    private GUIText moneyText;
-    private GUIText moneyTextShadow;
-    private GUIText pokedexText;
-    private GUIText pokedexTextShadow;
-    private GUIText scoreText;
-    private GUIText scoreTextShadow;
-    private GUIText timeTextShadow;
-    private GUIText adventureText;
-    private GUIText adventureTextShadow;
-    private GUIText GLBeatenText;
-    private GUIText GLBeatenTextShadow;
-    private GUIText timeText;
-
-    private AudioSource TrainerAudio;
-    //*/
-
-    private GUIText IDnoData;
-    private GUIText IDnoDataShadow;
-    private GUITexture nameBox;
-    private GUIText nameData;
-    private GUIText nameDataShadow;
-    private GUITexture moneyBox;
-    private GUIText moneyData;
-    private GUIText moneyDataShadow;
-    private GUITexture pokedexBox;
-    private GUIText pokedexData;
-    private GUIText pokedexDataShadow;
-    private GUITexture scoreBox;
-    private GUIText scoreData;
-    private GUIText scoreDataShadow;
-    private GUITexture timeBox;
-    private GUIText timeHour;
-    private GUIText timeHourShadow;
-    private GUIText timeColon;
-    private GUIText timeColonShadow;
-    private GUIText timeMinute;
-    private GUIText timeMinuteShadow;
-    private GUITexture adventureBox;
-    private GUIText adventureData;
-    private GUIText adventureDataShadow;
-
-    private GUITexture badgeBox;
-
-    private GUITexture badgeBoxLid;
-    private GUITexture GLPictureBox;
-    private GUITexture GLPicture;
-    private GUITexture GLNameBox;
-    private GUIText GLNameData;
-    private GUIText GLNameDataShadow;
-    private GUITexture GLTypeBox;
-    private GUITexture GLType;
-    private GUITexture GLBeatenBox;
-    private GUIText GLBeatenData;
-    private GUIText GLBeatenDataShadow;
     private GUITexture[] badges = new GUITexture[12];
-    private GUITexture badgeSel;
+    private GUITexture
+        cancel,
+        card,
+        IDnoBox,
+        nameBox,
+        //picture,
+        moneyBox,
+        pokedexBox,
+        scoreBox,
+        timeBox,
+        adventureBox,
+        badgeBox,
+        badgeBoxLid,
+        GLPictureBox,
+        GLPicture,
+        GLNameBox,
+        GLTypeBox,
+        GLType,
+        GLBeatenBox,
+        badgeSel,
+        background;
 
-    private GUITexture background;
+    private GUIText
+        //IDnoText,
+        //IDnoTextShadow,
+        IDnoData,
+        IDnoDataShadow,
+        //nameText,
+        //nameTextShadow,
+        nameData,
+        nameDataShadow,
+        //moneyText,
+        //moneyTextShadow,
+        moneyData,
+        moneyDataShadow,
+        //pokedexText,
+        //pokedexTextShadow,
+        pokedexData,
+        pokedexDataShadow,
+        //scoreText,
+        //scoreTextShadow,
+        scoreData,
+        scoreDataShadow,
+        //timeText,
+        //timeTextShadow,
+        timeHour,
+        timeHourShadow,
+        timeColon,
+        timeColonShadow,
+        timeMinute,
+        timeMinuteShadow,
+        //adventureText,
+        //adventureTextShadow,
+        adventureData,
+        adventureDataShadow,
+        GLNameData,
+        GLNameDataShadow,
+        //GLBeatenText,
+        //GLBeatenTextShadow,
+        GLBeatenData,
+        GLBeatenDataShadow;
+
+    //private AudioSource TrainerAudio;
     public AudioClip selectClip;
 
     public Texture cancelTex;
@@ -92,30 +84,6 @@ public class TrainerHandler : MonoBehaviour
 
     void Awake()
     {
-        //sceneTransition = transform.GetComponent<SceneTransition>();
-
-        /* [UNHANDLED YET]
-        TrainerAudio = transform.GetComponent<AudioSource>();
-
-        IDnoText = IDnoBox.transform.FindChild("IDnoText").GetComponent<GUIText>();
-        IDnoTextShadow = IDnoBox.transform.FindChild("IDnoTextShadow").GetComponent<GUIText>();
-        GLBeatenText = GLBeatenBox.transform.FindChild("BeatenText").GetComponent<GUIText>();
-        GLBeatenTextShadow = GLBeatenBox.transform.FindChild("BeatenTextShadow").GetComponent<GUIText>();
-        adventureText = adventureBox.transform.FindChild("AdventureText").GetComponent<GUIText>();
-        adventureTextShadow = adventureBox.transform.FindChild("AdventureTextShadow").GetComponent<GUIText>();
-        timeTextShadow = timeText.transform.FindChild("TimeTextShadow").GetComponent<GUIText>();
-        scoreText = scoreBox.transform.FindChild("ScoreText").GetComponent<GUIText>();
-        scoreTextShadow = scoreBox.transform.FindChild("ScoreTextShadow").GetComponent<GUIText>();
-        pokedexText = pokedexBox.transform.FindChild("PokedexText").GetComponent<GUIText>();
-        pokedexTextShadow = pokedexBox.transform.FindChild("PokedexTextShadow").GetComponent<GUIText>();
-        nameText = nameBox.transform.FindChild("NameText").GetComponent<GUIText>();
-        nameTextShadow = nameBox.transform.FindChild("NameTextShadow").GetComponent<GUIText>();
-        picture = card.transform.FindChild("Picture").GetComponent<GUITexture>();
-        moneyText = moneyBox.transform.FindChild("MoneyText").GetComponent<GUIText>();
-        moneyTextShadow = moneyBox.transform.FindChild("MoneyTextShadow").GetComponent<GUIText>();
-        timeText = timeBox.transform.FindChild("TimeText").GetComponent<GUIText>();
-        //*/
-
         cancel = transform.FindChild("Cancel").GetComponent<GUITexture>();
 
         screens = transform.FindChild("Screens");
@@ -123,21 +91,34 @@ public class TrainerHandler : MonoBehaviour
         card = screens.FindChild("Card").GetComponent<GUITexture>();
 
         IDnoBox = card.transform.FindChild("IDno").GetComponent<GUITexture>();
+        //IDnoText = IDnoBox.transform.FindChild("IDnoText").GetComponent<GUIText>();
+        //IDnoTextShadow = IDnoBox.transform.FindChild("IDnoTextShadow").GetComponent<GUIText>();
         IDnoData = IDnoBox.transform.FindChild("IDnoData").GetComponent<GUIText>();
         IDnoDataShadow = IDnoBox.transform.FindChild("IDnoDataShadow").GetComponent<GUIText>();
         nameBox = card.transform.FindChild("NameBox").GetComponent<GUITexture>();
+        //nameText = nameBox.transform.FindChild("NameText").GetComponent<GUIText>();
+        //nameTextShadow = nameBox.transform.FindChild("NameTextShadow").GetComponent<GUIText>();
         nameData = nameBox.transform.FindChild("NameData").GetComponent<GUIText>();
         nameDataShadow = nameBox.transform.FindChild("NameDataShadow").GetComponent<GUIText>();
+        //picture = card.transform.FindChild("Picture").GetComponent<GUITexture>();
         moneyBox = card.transform.FindChild("Money").GetComponent<GUITexture>();
+        //moneyText = moneyBox.transform.FindChild("MoneyText").GetComponent<GUIText>();
+        //moneyTextShadow = moneyBox.transform.FindChild("MoneyTextShadow").GetComponent<GUIText>();
         moneyData = moneyBox.transform.FindChild("MoneyData").GetComponent<GUIText>();
         moneyDataShadow = moneyBox.transform.FindChild("MoneyDataShadow").GetComponent<GUIText>();
         pokedexBox = card.transform.FindChild("Pokedex").GetComponent<GUITexture>();
+        //pokedexText = pokedexBox.transform.FindChild("PokedexText").GetComponent<GUIText>();
+        //pokedexTextShadow = pokedexBox.transform.FindChild("PokedexTextShadow").GetComponent<GUIText>();
         pokedexData = pokedexBox.transform.FindChild("PokedexData").GetComponent<GUIText>();
         pokedexDataShadow = pokedexBox.transform.FindChild("PokedexDataShadow").GetComponent<GUIText>();
         scoreBox = card.transform.FindChild("Score").GetComponent<GUITexture>();
+        //scoreText = scoreBox.transform.FindChild("ScoreText").GetComponent<GUIText>();
+        //scoreTextShadow = scoreBox.transform.FindChild("ScoreTextShadow").GetComponent<GUIText>();
         scoreData = scoreBox.transform.FindChild("ScoreData").GetComponent<GUIText>();
         scoreDataShadow = scoreBox.transform.FindChild("ScoreDataShadow").GetComponent<GUIText>();
         timeBox = card.transform.FindChild("Time").GetComponent<GUITexture>();
+        //timeText = timeBox.transform.FindChild("TimeText").GetComponent<GUIText>();
+        //timeTextShadow = timeText.transform.FindChild("TimeTextShadow").GetComponent<GUIText>();
         timeHour = timeBox.transform.FindChild("TimeHour").GetComponent<GUIText>();
         timeHourShadow = timeHour.transform.FindChild("TimeHourShadow").GetComponent<GUIText>();
         timeColon = timeBox.transform.FindChild("TimeColon").GetComponent<GUIText>();
@@ -145,6 +126,8 @@ public class TrainerHandler : MonoBehaviour
         timeMinute = timeBox.transform.FindChild("TimeMinute").GetComponent<GUIText>();
         timeMinuteShadow = timeMinute.transform.FindChild("TimeMinuteShadow").GetComponent<GUIText>();
         adventureBox = card.transform.FindChild("Adventure").GetComponent<GUITexture>();
+        //adventureText = adventureBox.transform.FindChild("AdventureText").GetComponent<GUIText>();
+        //adventureTextShadow = adventureBox.transform.FindChild("AdventureTextShadow").GetComponent<GUIText>();
         adventureData = adventureBox.transform.FindChild("AdventureData").GetComponent<GUIText>();
         adventureDataShadow = adventureBox.transform.FindChild("AdventureDataShadow").GetComponent<GUIText>();
 
@@ -159,6 +142,8 @@ public class TrainerHandler : MonoBehaviour
         GLTypeBox = badgeBox.transform.FindChild("GLTypeBox").GetComponent<GUITexture>();
         GLType = GLTypeBox.transform.FindChild("Type").GetComponent<GUITexture>();
         GLBeatenBox = badgeBox.transform.FindChild("GLBeatenBox").GetComponent<GUITexture>();
+        //GLBeatenText = GLBeatenBox.transform.FindChild("BeatenText").GetComponent<GUIText>();
+        //GLBeatenTextShadow = GLBeatenBox.transform.FindChild("BeatenTextShadow").GetComponent<GUIText>();
         GLBeatenData = GLBeatenBox.transform.FindChild("BeatenData").GetComponent<GUIText>();
         GLBeatenDataShadow = GLBeatenBox.transform.FindChild("BeatenDataShadow").GetComponent<GUIText>();
 
@@ -205,7 +190,8 @@ public class TrainerHandler : MonoBehaviour
                 {
                     increment = 1;
                 }
-                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY + (162f * increment), 252, 165f - (160f * increment));
+                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY + (162f * increment), 252,
+                    165f - (160f * increment));
                 yield return null;
             }
             badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, badgeBoxLid.pixelInset.y + 5, 252, -5);
@@ -218,7 +204,8 @@ public class TrainerHandler : MonoBehaviour
                 {
                     increment = 1;
                 }
-                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY + (112f * increment), 252, -5f - (112f * increment));
+                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY + (112f * increment), 252,
+                    -5f - (112f * increment));
                 yield return null;
             }
         }
@@ -234,7 +221,8 @@ public class TrainerHandler : MonoBehaviour
                 {
                     increment = 1;
                 }
-                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY - (112f * increment), 252, -117f + (112f * increment));
+                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY - (112f * increment), 252,
+                    -117f + (112f * increment));
                 yield return null;
             }
             badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, badgeBoxLid.pixelInset.y - 5, 252, +5);
@@ -247,7 +235,8 @@ public class TrainerHandler : MonoBehaviour
                 {
                     increment = 1;
                 }
-                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY - (162f * increment), 252, 5f + (160f * increment));
+                badgeBoxLid.pixelInset = new Rect(badgeBoxLid.pixelInset.x, startY - (162f * increment), 252,
+                    5f + (160f * increment));
                 yield return null;
             }
         }
@@ -283,8 +272,8 @@ public class TrainerHandler : MonoBehaviour
             else
             {
                 /*	if(currentScreen == 1){ //this code will move the screens across to show the
-                                            //post-game gym badge box.
-
+                                              //post-game gym badge box.
+                        
                     }
                     else */
                 if (currentScreen == 2)
@@ -476,7 +465,8 @@ public class TrainerHandler : MonoBehaviour
             {
                 increment = 1;
             }
-            badgeSel.pixelInset = new Rect(startX + (increment * distanceX), startY + (increment * distanceY), badgeSel.pixelInset.width, badgeSel.pixelInset.height);
+            badgeSel.pixelInset = new Rect(startX + (increment * distanceX), startY + (increment * distanceY),
+                badgeSel.pixelInset.width, badgeSel.pixelInset.height);
             yield return null;
         }
     }
@@ -524,12 +514,12 @@ public class TrainerHandler : MonoBehaviour
                 {
                     increment = 1;
                 }
-                background.pixelInset = new Rect(Mathf.RoundToInt(-32f * increment), Mathf.RoundToInt(32f * increment), background.pixelInset.width, background.pixelInset.height);
+                background.pixelInset = new Rect(Mathf.RoundToInt(-32f * increment), Mathf.RoundToInt(32f * increment),
+                    background.pixelInset.width, background.pixelInset.height);
                 yield return null;
             }
         }
     }
-
 
 
     public IEnumerator control()
@@ -587,7 +577,6 @@ public class TrainerHandler : MonoBehaviour
                         SfxHandler.Play(selectClip);
                         yield return new WaitForSeconds(moveVisableScreen(-1));
                         currentScreen -= 1;
-
                     }
                 }
                 else
@@ -717,6 +706,4 @@ public class TrainerHandler : MonoBehaviour
         yield return StartCoroutine(ScreenFade.main.Fade(false, ScreenFade.defaultSpeed));
         this.gameObject.SetActive(false);
     }
-
-
 }

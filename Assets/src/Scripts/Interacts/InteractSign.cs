@@ -5,7 +5,6 @@ using System.Collections;
 
 public class InteractSign : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
 
     public string signText;
@@ -20,9 +19,8 @@ public class InteractSign : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+        if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
         {
-
             StartCoroutine(Dialog.drawSignBox(signTint));
             if (printTextMethod == DialogBoxHandler.PrintTextMethod.Typewriter)
             {
@@ -36,7 +34,7 @@ public class InteractSign : MonoBehaviour
             yield return null;
 
             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back") &&
-                  Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") >= 0)
+                   Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") >= 0)
             {
                 yield return null;
             }
@@ -44,16 +42,15 @@ public class InteractSign : MonoBehaviour
             StartCoroutine(Dialog.undrawSignBox());
 
             yield return null;
-            PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+            PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
         }
     }
 
     public IEnumerator bump()
     {
-        if (PlayerMovementOld.Instance.CurrentDirection == 0)
+        if (PlayerMovement.player.direction == 0)
         {
             yield return StartCoroutine(interact());
         }
     }
-
 }

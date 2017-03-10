@@ -6,7 +6,6 @@ using System.Collections;
 [ExecuteInEditMode()]
 public class RotatableGUIItem : MonoBehaviour
 {
-
     //Avoid using this if possible. Unity's Canvas UI system does this with much less trouble.
 
     public Texture texture = null;
@@ -44,7 +43,8 @@ public class RotatableGUIItem : MonoBehaviour
         }
         else
         {
-            rect = new Rect(Mathf.RoundToInt(pos.x * 342f) - size.x * 0.5f, Mathf.RoundToInt(pos.y * 192f) - size.y * 0.5f, size.x, size.y);
+            rect = new Rect(Mathf.RoundToInt(pos.x * 342f) - size.x * 0.5f,
+                Mathf.RoundToInt(pos.y * 192f) - size.y * 0.5f, size.x, size.y);
         }
         pivot = new Vector2(rect.xMin + rect.width * 0.5f, rect.yMin + rect.height * 0.5f);
     }
@@ -53,7 +53,10 @@ public class RotatableGUIItem : MonoBehaviour
     {
         BeginRenderTextureGUI(m_TargetTexture);
 
-        if (Application.isEditor) { UpdateSettings(); }
+        if (Application.isEditor)
+        {
+            UpdateSettings();
+        }
         if (texture != null)
         {
             UpdateSettings();
@@ -106,11 +109,11 @@ public class RotatableGUIItem : MonoBehaviour
     {
         if (sprite.rect.width != sprite.texture.width)
         {
-            Texture2D newText = new Texture2D((int)sprite.rect.width, (int)sprite.rect.height);
-            Color[] newColors = sprite.texture.GetPixels((int)sprite.textureRect.x,
-                                                         (int)sprite.textureRect.y,
-                                                         (int)sprite.textureRect.width,
-                                                         (int)sprite.textureRect.height);
+            Texture2D newText = new Texture2D((int) sprite.rect.width, (int) sprite.rect.height);
+            Color[] newColors = sprite.texture.GetPixels((int) sprite.textureRect.x,
+                (int) sprite.textureRect.y,
+                (int) sprite.textureRect.width,
+                (int) sprite.textureRect.height);
             newText.SetPixels(newColors);
             newText.Apply();
             return newText;
@@ -118,6 +121,4 @@ public class RotatableGUIItem : MonoBehaviour
         else
             return sprite.texture;
     }
-
-
 }

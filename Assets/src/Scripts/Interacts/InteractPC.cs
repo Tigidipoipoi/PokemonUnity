@@ -5,14 +5,11 @@ using System.Collections;
 
 public class InteractPC : MonoBehaviour
 {
-
     private DialogBoxHandler Dialog;
 
     private SpriteRenderer spriteLight;
 
-    /* [UNHANDLED YET]
-    private AudioSource PCaudio;
-    //*/
+    //private AudioSource PCaudio;
 
     public AudioClip offClip;
     public AudioClip onClip;
@@ -25,9 +22,6 @@ public class InteractPC : MonoBehaviour
     {
         Dialog = GameObject.Find("GUI").GetComponent<DialogBoxHandler>();
         spriteLight = transform.FindChild(gameObject.name + "_SpriteLight").GetComponent<SpriteRenderer>();
-        /* [UNHANDLED YET]
-        PCaudio = GetComponent<AudioSource>();
-        //*/
         PClight = GetComponentInChildren<Light>();
     }
 
@@ -62,9 +56,9 @@ public class InteractPC : MonoBehaviour
 
     public IEnumerator interact()
     {
-        if (PlayerMovementOld.Instance.CurrentDirection == 0)
+        if (PlayerMovement.player.direction == 0)
         {
-            if (PlayerMovementOld.Instance.setCheckBusyWith(this.gameObject))
+            if (PlayerMovement.player.setCheckBusyWith(this.gameObject))
             {
                 spriteLight.enabled = true;
                 PClight.enabled = true;
@@ -87,19 +81,25 @@ public class InteractPC : MonoBehaviour
                     accessedPC = Dialog.chosenIndex;
                     int accessedBox = -1;
                     if (accessedPC != 0)
-                    {   //if not turning off computer
+                    {
+                        //if not turning off computer
                         Dialog.drawDialogBox();
                         SfxHandler.Play(openClip);
-                        yield return Dialog.StartCoroutine("drawTextSilent", "The Pokémon Storage System \\was accessed.");
+                        yield return
+                            Dialog.StartCoroutine("drawTextSilent", "The Pokémon Storage System \\was accessed.");
                         while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                         {
                             yield return null;
                         }
                         while (accessedBox != 0 && accessedPC != 0)
-                        { //if not turning off computer
+                        {
+                            //if not turning off computer
                             string[] choices = new string[] { "Move", "Log off" };
-                            string[] choicesFlavour = new string[]{ "You may rearrange Pokémon in and \\between your party and Boxes.",
-                                "Log out of the Pokémon Storage \\System."};
+                            string[] choicesFlavour = new string[]
+                            {
+                                "You may rearrange Pokémon in and \\between your party and Boxes.",
+                                "Log out of the Pokémon Storage \\System."
+                            };
                             Dialog.drawChoiceBox(choices);
                             Dialog.drawDialogBox();
                             Dialog.drawTextInstant(choicesFlavour[0]);
@@ -109,17 +109,18 @@ public class InteractPC : MonoBehaviour
                             //SceneTransition sceneTransition = Dialog.transform.GetComponent<SceneTransition>();
 
                             if (accessedBox == 1)
-                            { //access Move
+                            {
+                                //access Move
                                 SfxHandler.Play(selectClip);
                                 StartCoroutine(ScreenFade.main.Fade(false, ScreenFade.defaultSpeed));
                                 yield return new WaitForSeconds(ScreenFade.defaultSpeed + 0.4f);
                                 //yield return new WaitForSeconds(sceneTransition.FadeOut(0.4f) + 0.4f);
                                 SfxHandler.Play(openClip);
                                 //Set ScenePC to be active so that it appears
-                                Scene.main.PC.gameObject.SetActive(true);
-                                StartCoroutine(Scene.main.PC.control());
+                                PKUScene.main.PC.gameObject.SetActive(true);
+                                StartCoroutine(PKUScene.main.PC.control());
                                 //Start an empty loop that will only stop when ScenePC is no longer active (is closed)
-                                while (Scene.main.PC.gameObject.activeSelf)
+                                while (PKUScene.main.PC.gameObject.activeSelf)
                                 {
                                     yield return null;
                                 }
@@ -136,10 +137,8 @@ public class InteractPC : MonoBehaviour
                 PClight.enabled = false;
                 SfxHandler.Play(offClip);
                 yield return new WaitForSeconds(0.2f);
-                PlayerMovementOld.Instance.unsetCheckBusyWith(this.gameObject);
+                PlayerMovement.player.unsetCheckBusyWith(this.gameObject);
             }
         }
     }
-
-
 }

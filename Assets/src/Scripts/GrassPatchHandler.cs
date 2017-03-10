@@ -5,22 +5,16 @@ using System.Collections;
 
 public class GrassPatchHandler : MonoBehaviour
 {
-
     private GameObject overlay;
-    /* [UNHANDLED YET]
-    private AudioSource walkSound;
-    //*/
+    //private AudioSource walkSound;
     public AudioClip walkClip;
 
     /*/    DEBUG
-	private static int encounterz = 0; //*/
+    private static int encounterz = 0; //*/
 
     void Awake()
     {
         overlay = transform.FindChild("Overlay").gameObject;
-        /* [UNHANDLED YET]
-        walkSound = transform.GetComponent<AudioSource>();
-        //*/
     }
 
     void Start()
@@ -38,7 +32,7 @@ public class GrassPatchHandler : MonoBehaviour
             if (other.transform.parent.name == "Player")
             {
                 SfxHandler.Play(walkClip, Random.Range(0.85f, 1.1f));
-                StartCoroutine(PlayerMovementOld.Instance.wildEncounter(WildPokemonInitialiser.Location.Grass));
+                StartCoroutine(PlayerMovement.player.wildEncounter(WildPokemonInitialiser.Location.Grass));
             }
         }
     }
@@ -47,7 +41,9 @@ public class GrassPatchHandler : MonoBehaviour
     {
         if (!other.name.Contains("map"))
         {
-            Collider[] hitColliders = Physics.OverlapSphere(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), 0.15f);
+            Collider[] hitColliders =
+                Physics.OverlapSphere(
+                    new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), 0.15f);
             bool deactivate = true;
             for (int i = 0; i < hitColliders.Length; i++)
             {
@@ -63,5 +59,4 @@ public class GrassPatchHandler : MonoBehaviour
             }
         }
     }
-
 }

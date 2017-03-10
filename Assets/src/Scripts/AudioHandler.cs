@@ -5,7 +5,6 @@ using System.Collections;
 
 public class AudioHandler : MonoBehaviour
 {
-
     //FOREWORD ON ALL MUSIC FOR THIS PROJECT.
 
     /*	Every track for this project is required to have a LoopStart point (defined in samples)		*/
@@ -38,9 +37,9 @@ public class AudioHandler : MonoBehaviour
     private float increment = 1;
 
     private bool loop = true;
+
     void Awake()
     {
-
         if (isBgmHandler)
         {
             if (bgmHandler == null)
@@ -65,16 +64,17 @@ public class AudioHandler : MonoBehaviour
 
     void Update()
     {
-
         if (increment < 1 && fading)
         {
-            increment += (1 / fadeSpeed) * Time.deltaTime;   //volume is measured 0-1
-            source.volume = (1f - increment * 1.2f) * PlayerPrefs.GetFloat("musicVolume"); //by reducing it by increment*1.2, it will leave  
-        }                       //a silent gap on the end before the next track begins.
+            increment += (1 / fadeSpeed) * Time.deltaTime; //volume is measured 0-1
+            source.volume = (1f - increment * 1.2f) * PlayerPrefs.GetFloat("musicVolume");
+                //by reducing it by increment*1.2, it will leave  
+        } //a silent gap on the end before the next track begins.
         else if (increment >= 1 && fading)
         {
             if (source.isPlaying)
-            { //don't start new song until unpaused.
+            {
+                //don't start new song until unpaused.
                 source.Stop();
                 source.volume = PlayerPrefs.GetFloat("musicVolume");
                 source.clip = nextClip;
@@ -107,7 +107,6 @@ public class AudioHandler : MonoBehaviour
                 }
             }
         }
-
     }
 
     private IEnumerator Fade(float fadeTime)
@@ -115,7 +114,7 @@ public class AudioHandler : MonoBehaviour
         float increment = 0;
         if (increment < 1)
         {
-            increment += (1 / fadeTime) * Time.deltaTime;   //volume is measured 0-1
+            increment += (1 / fadeTime) * Time.deltaTime; //volume is measured 0-1
             if (increment > 1)
             {
                 increment = 1;
@@ -143,9 +142,11 @@ public class AudioHandler : MonoBehaviour
             source.Play();
         }
         else if (source.clip != BGM)
-        { //if BGM is not already playing
+        {
+            //if BGM is not already playing
             if (!fading)
-            {   //if fading is off, then begin to fade
+            {
+                //if fading is off, then begin to fade
                 increment = 0;
                 fading = true;
             }
@@ -163,7 +164,8 @@ public class AudioHandler : MonoBehaviour
         nextClip = BGM; //set up the nextClip to play
         fadeSpeed = sentFadeSpeed;
         if (!fading)
-        {   //if fading is off, then begin to fade
+        {
+            //if fading is off, then begin to fade
             increment = 0;
             fading = true;
             nextLoopStartTimeSamples = loopStartTimeSamples;
@@ -252,5 +254,4 @@ public class AudioHandler : MonoBehaviour
         loop = true;
         source.Play();
     }
-
 }
