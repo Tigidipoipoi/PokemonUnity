@@ -1070,7 +1070,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator surfCheck()
     {
-        Pokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty("Surf");
+        OwnedPokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty("Surf");
         if (targetPokemon != null)
         {
             if (getForwardVector(direction, false) != Vector3.zero)

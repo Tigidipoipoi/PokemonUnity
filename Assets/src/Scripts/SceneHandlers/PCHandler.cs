@@ -33,7 +33,7 @@ public class PCHandler : MonoBehaviour
     //private GUIText choiceText;
     //private GUIText choiceTextShadow;
 
-    private Pokemon selectedPokemon;
+    private OwnedPokemon selectedPokemon;
 
     private Transform selectedInfo;
 
@@ -347,7 +347,7 @@ public class PCHandler : MonoBehaviour
     }
 
 
-    private void updateSelectedInfo(Pokemon selectedPokemon)
+    private void updateSelectedInfo(OwnedPokemon selectedPokemon)
     {
         if (!carrying)
         {
@@ -373,12 +373,12 @@ public class PCHandler : MonoBehaviour
             {
                 selectedName.text = selectedPokemon.getName();
                 selectedNameShadow.text = selectedName.text;
-                if (selectedPokemon.getGender() == Pokemon.Gender.FEMALE)
+                if (selectedPokemon.getGender() == PokemonGender.FEMALE)
                 {
                     selectedGender.text = "♀";
                     selectedGender.color = new Color(1, 0.2f, 0.2f, 1);
                 }
-                else if (selectedPokemon.getGender() == Pokemon.Gender.MALE)
+                else if (selectedPokemon.getGender() == PokemonGender.MALE)
                 {
                     selectedGender.text = "♂";
                     selectedGender.color = new Color(0.2f, 0.4f, 1, 1);
@@ -414,7 +414,7 @@ public class PCHandler : MonoBehaviour
                 }
                 selectedItemShadow.text = selectedItem.text;
                 selectedStatus.texture = null;
-                if (selectedPokemon.getStatus() != Pokemon.Status.NONE)
+                if (selectedPokemon.getStatus() != PokemonStatus.NONE)
                 {
                     selectedStatus.texture =
                         Resources.Load<Texture>("PCSprites/status" + selectedPokemon.getStatus().ToString());
@@ -424,7 +424,7 @@ public class PCHandler : MonoBehaviour
     }
 
     //Show the selectedInfo regardless of carrying or not.
-    private void updateSelectedInfoOverride(Pokemon selectedPokemon)
+    private void updateSelectedInfoOverride(OwnedPokemon selectedPokemon)
     {
         if (carrying)
         {
@@ -1158,7 +1158,7 @@ public class PCHandler : MonoBehaviour
                         yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
 
                         PKUScene.main.Typing.gameObject.SetActive(true);
-                        StartCoroutine(PKUScene.main.Typing.control(8, currentBoxHeader.text, Pokemon.Gender.NONE,
+                        StartCoroutine(PKUScene.main.Typing.control(8, currentBoxHeader.text, PokemonGender.NONE,
                             new Sprite[] { boxEditIcon }));
                         while (PKUScene.main.Typing.gameObject.activeSelf)
                         {
@@ -1365,7 +1365,7 @@ public class PCHandler : MonoBehaviour
                                 else if (chosenIndex == 3)
                                 {
                                     //ITEM
-                                    Pokemon currentPokemon =
+                                    OwnedPokemon currentPokemon =
                                         SaveData.currentSave.PC.boxes[currentBoxID][currentPosition - 3];
 
                                     Dialog.undrawChoiceBox();
@@ -1833,7 +1833,7 @@ public class PCHandler : MonoBehaviour
                                     else if (chosenIndex == 3)
                                     {
                                         //ITEM
-                                        Pokemon currentPokemon = SaveData.currentSave.PC.boxes[0][currentPosition - 33];
+                                        OwnedPokemon currentPokemon = SaveData.currentSave.PC.boxes[0][currentPosition - 33];
 
                                         Dialog.undrawChoiceBox();
                                         Dialog.drawDialogBox();

@@ -136,26 +136,26 @@ public class GlobalVariables : MonoBehaviour
         SaveData.currentSave.playerOutfit = "hgss";
 
         //PC test
-        SaveData.currentSave.PC.addPokemon(new Pokemon(006, null, Pokemon.Gender.CALCULATE, 3, true, "Poké Ball", "",
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(006, null, PokemonGender.CALCULATE, 3, true, "Poké Ball", "",
             "Gold",
             Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32),
             Random.Range(0, 32),
-            0, 0, 0, 0, 0, 0, "ADAMANT", 0, PokemonDatabase.getPokemon(6).GenerateMoveset(42), new int[4]));
-        SaveData.currentSave.PC.addPokemon(new Pokemon(197, Pokemon.Gender.CALCULATE, 34, "Great Ball", "", "Gold", 0));
-        SaveData.currentSave.PC.addPokemon(new Pokemon(393, Pokemon.Gender.CALCULATE, 6, "Poké Ball", "", "Gold", 0));
-        SaveData.currentSave.PC.addPokemon(new Pokemon(197, Pokemon.Gender.CALCULATE, 28, "Great Ball", "", "Gold", -1));
-        SaveData.currentSave.PC.addPokemon(new Pokemon(68, Pokemon.Gender.CALCULATE, 37, "Ultra Ball", "", "Gold", -1));
-        SaveData.currentSave.PC.addPokemon(new Pokemon(448, Pokemon.Gender.CALCULATE, 56, "Great Ball", "", "Gold", 0));
+            0, 0, 0, 0, 0, 0, PokemonNature.Adamant, 0, PokemonDatabase.getPokemon(6).GenerateMoveset(42), new int[4]));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(197, PokemonGender.CALCULATE, 34, "Great Ball", "", "Gold", 0));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(393, PokemonGender.CALCULATE, 6, "Poké Ball", "", "Gold", 0));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(197, PokemonGender.CALCULATE, 28, "Great Ball", "", "Gold", -1));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(68, PokemonGender.CALCULATE, 37, "Ultra Ball", "", "Gold", -1));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(448, PokemonGender.CALCULATE, 56, "Great Ball", "", "Gold", 0));
 
-        SaveData.currentSave.PC.addPokemon(new Pokemon(006, Pokemon.Gender.CALCULATE, 37, "Poké Ball", "", "Gold", 0));
-        SaveData.currentSave.PC.addPokemon(new Pokemon(607, Pokemon.Gender.CALCULATE, 48, "Poké Ball", "", "Bob", 0));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(006, PokemonGender.CALCULATE, 37, "Poké Ball", "", "Gold", 0));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(607, PokemonGender.CALCULATE, 48, "Poké Ball", "", "Bob", 0));
         SaveData.currentSave.PC.boxes[1][1].addExp(7100);
-        SaveData.currentSave.PC.addPokemon(new Pokemon(157, Pokemon.Gender.CALCULATE, 51, "Poké Ball", "", "Gold", 0));
-        SaveData.currentSave.PC.addPokemon(new Pokemon(300, Pokemon.Gender.CALCULATE, 51, "Poké Ball", "", "Gold", 0));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(157, PokemonGender.CALCULATE, 51, "Poké Ball", "", "Gold", 0));
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(300, PokemonGender.CALCULATE, 51, "Poké Ball", "", "Gold", 0));
 
-        SaveData.currentSave.PC.addPokemon(new Pokemon(393, "Surf Bloke", Pokemon.Gender.MALE, 15, false, "Ultra Ball",
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(393, "Surf Bloke", PokemonGender.MALE, 15, false, "Ultra Ball",
             "", "Gold",
-            31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, "ADAMANT", 0,
+            31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, PokemonNature.Adamant, 0,
             new string[] { "Drill Peck", "Surf", "Growl", "Dragon Rage" }, new int[] { 0, 0, 0, 3 }));
 
 
@@ -168,7 +168,7 @@ public class GlobalVariables : MonoBehaviour
 
         SaveData.currentSave.PC.swapPokemon(0, 2, 1, 4);
 
-        SaveData.currentSave.PC.boxes[0][1].setStatus(Pokemon.Status.POISONED);
+        SaveData.currentSave.PC.boxes[0][1].setStatus(PokemonStatus.POISONED);
         SaveData.currentSave.PC.boxes[0][1].addExp(420);
 
         SaveData.currentSave.PC.packParty();
@@ -186,14 +186,14 @@ public class GlobalVariables : MonoBehaviour
         SaveData.currentSave.PC.boxes[0][0].removePP(2, 11);
 
         //PC.boxes[0][0].setStatus(Pokemon.Status.FROZEN);
-        SaveData.currentSave.PC.boxes[0][2].setStatus(Pokemon.Status.PARALYZED);
-        SaveData.currentSave.PC.boxes[0][3].setStatus(Pokemon.Status.BURNED);
-        SaveData.currentSave.PC.boxes[0][4].setStatus(Pokemon.Status.ASLEEP);
+        SaveData.currentSave.PC.boxes[0][2].setStatus(PokemonStatus.PARALYZED);
+        SaveData.currentSave.PC.boxes[0][3].setStatus(PokemonStatus.BURNED);
+        SaveData.currentSave.PC.boxes[0][4].setStatus(PokemonStatus.ASLEEP);
 
 
-        SaveData.currentSave.PC.addPokemon(new Pokemon(012, null, Pokemon.Gender.CALCULATE, 35, false, "Great Ball", "",
+        SaveData.currentSave.PC.addPokemon(new OwnedPokemon(012, null, PokemonGender.CALCULATE, 35, false, "Great Ball", "",
             "Gold",
-            31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, "ADAMANT", 0,
+            31, 31, 31, 31, 31, 31, 0, 252, 0, 0, 0, 252, PokemonNature.Adamant, 0,
             new string[] { "Ominous Wind", "Sunny Day", "Gust", "Sleep Powder" }, new int[] { 0, 0, 0, 0 }));
 
         //SaveData.currentSave.PC.swapPokemon(0,1,3,1);
@@ -308,7 +308,7 @@ public class GlobalVariables : MonoBehaviour
         {
             if (SaveData.currentSave.PC.boxes[0][i] != null)
             {
-                if (SaveData.currentSave.PC.boxes[0][i].getStatus() != Pokemon.Status.FAINTED)
+                if (SaveData.currentSave.PC.boxes[0][i].getStatus() != PokemonStatus.FAINTED)
                 {
                     FollowerSettings.changeFollower(i);
                     i = 6;

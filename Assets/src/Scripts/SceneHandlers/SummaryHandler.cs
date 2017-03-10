@@ -273,7 +273,7 @@ public class SummaryHandler : MonoBehaviour
     }
 
 
-    private void updateSelection(Pokemon selectedPokemon)
+    private void updateSelection(OwnedPokemon selectedPokemon)
     {
         frame = 0;
 
@@ -283,12 +283,12 @@ public class SummaryHandler : MonoBehaviour
         selectedCaughtBall.sprite = Resources.Load<Sprite>("PCSprites/summary" + selectedPokemon.getCaughtBall());
         selectedName.text = selectedPokemon.getName();
         selectedNameShadow.text = selectedName.text;
-        if (selectedPokemon.getGender() == Pokemon.Gender.FEMALE)
+        if (selectedPokemon.getGender() == PokemonGender.FEMALE)
         {
             selectedGender.text = "♀";
             selectedGender.color = new Color(1, 0.2f, 0.2f, 1);
         }
-        else if (selectedPokemon.getGender() == Pokemon.Gender.MALE)
+        else if (selectedPokemon.getGender() == PokemonGender.MALE)
         {
             selectedGender.text = "♂";
             selectedGender.color = new Color(0.2f, 0.4f, 1, 1);
@@ -314,7 +314,7 @@ public class SummaryHandler : MonoBehaviour
             selectedHeldItem.text = selectedPokemon.getHeldItem();
         }
         selectedHeldItemShadow.text = selectedHeldItem.text;
-        if (selectedPokemon.getStatus() != Pokemon.Status.NONE)
+        if (selectedPokemon.getStatus() != PokemonStatus.NONE)
         {
             selectedStatus.sprite = Resources.Load<Sprite>("PCSprites/status" + selectedPokemon.getStatus().ToString());
         }
@@ -372,7 +372,7 @@ public class SummaryHandler : MonoBehaviour
         toNextLevelShadow.text = toNextLevel.text;
         expBar.rectTransform.sizeDelta = new Vector2(Mathf.Floor(expDistance * 64f), expBar.rectTransform.sizeDelta.y);
 
-        string natureFormatted = selectedPokemon.getNature();
+        string natureFormatted = PokemonNatureHelper.GetNatureName(selectedPokemon.getNature());
         natureFormatted = natureFormatted.Substring(0, 1) + natureFormatted.Substring(1).ToLowerInvariant();
         nature.text = "<color=#F22F>" + natureFormatted + "</color> nature.";
         natureShadow.text = natureFormatted + " nature.";
@@ -415,8 +415,8 @@ public class SummaryHandler : MonoBehaviour
         characteristic.text = characteristics[highestIV][selectedPokemon.GetIV(highestIV) % 5] + ".";
         characteristicShadow.text = characteristic.text;
 
-        float currentHP = selectedPokemon.getCurrentHP();
-        float maxHP = selectedPokemon.getHP();
+        float currentHP = selectedPokemon.GetCurrentStatValue(PokemonStatType.HP);
+        float maxHP = selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.HP);
         HP.text = currentHP + "/" + maxHP;
         HPShadow.text = HP.text;
         HPBar.rectTransform.sizeDelta = new Vector2(selectedPokemon.getPercentHP() * 48f,
@@ -435,39 +435,39 @@ public class SummaryHandler : MonoBehaviour
             HPBar.color = new Color(0.125f, 1, 0.065f, 1);
         }
 
-        float[] natureMod = new float[]
-        {
-            NatureDatabase.getNature(selectedPokemon.getNature()).getATK(),
-            NatureDatabase.getNature(selectedPokemon.getNature()).getDEF(),
-            NatureDatabase.getNature(selectedPokemon.getNature()).getSPA(),
-            NatureDatabase.getNature(selectedPokemon.getNature()).getSPD(),
-            NatureDatabase.getNature(selectedPokemon.getNature()).getSPE()
-        };
+        //float[] natureMod = new float[]
+        //{
+        //    NatureDatabase.getNature(selectedPokemon.getNature()).getATK(),
+        //    NatureDatabase.getNature(selectedPokemon.getNature()).getDEF(),
+        //    NatureDatabase.getNature(selectedPokemon.getNature()).getSPA(),
+        //    NatureDatabase.getNature(selectedPokemon.getNature()).getSPD(),
+        //    NatureDatabase.getNature(selectedPokemon.getNature()).getSPE()
+        //};
         Stats.text =
-            selectedPokemon.getATK() + "\n" +
-            selectedPokemon.getDEF() + "\n" +
-            selectedPokemon.getSPA() + "\n" +
-            selectedPokemon.getSPD() + "\n" +
-            selectedPokemon.getSPE();
+            selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.Attack) + "\n" +
+            selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.Defence) + "\n" +
+            selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.SpecialAttack) + "\n" +
+            selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.SpecialDefence) + "\n" +
+            selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.Speed);
         StatsShadow.text = Stats.text;
 
-        string[] statsLines = new string[] { "Attack", "Defence", "Sp. Atk", "Sp. Def", "Speed" };
+        //string[] statsLines = new string[] { "Attack", "Defence", "Sp. Atk", "Sp. Def", "Speed" };
         StatsTextShadow.text = "";
-        for (int i = 0; i < 5; i++)
-        {
-            if (natureMod[i] > 1)
-            {
-                StatsTextShadow.text += "<color=#A01010FF>" + statsLines[i] + "</color>\n";
-            }
-            else if (natureMod[i] < 1)
-            {
-                StatsTextShadow.text += "<color=#0030A2FF>" + statsLines[i] + "</color>\n";
-            }
-            else
-            {
-                StatsTextShadow.text += statsLines[i] + "\n";
-            }
-        }
+        //for (int i = 0; i < 5; i++)
+        //{
+        //    if (natureMod[i] > 1)
+        //    {
+        //        StatsTextShadow.text += "<color=#A01010FF>" + statsLines[i] + "</color>\n";
+        //    }
+        //    else if (natureMod[i] < 1)
+        //    {
+        //        StatsTextShadow.text += "<color=#0030A2FF>" + statsLines[i] + "</color>\n";
+        //    }
+        //    else
+        //    {
+        //        StatsTextShadow.text += statsLines[i] + "\n";
+        //    }
+        //}
 
 
         abilityName.text = PokemonDatabase.getPokemon(selectedPokemon.getID()).getAbility(selectedPokemon.getAbility());
@@ -479,7 +479,7 @@ public class SummaryHandler : MonoBehaviour
         updateSelectionMoveset(selectedPokemon);
     }
 
-    private void updateSelectionMoveset(Pokemon selectedPokemon)
+    private void updateSelectionMoveset(OwnedPokemon selectedPokemon)
     {
         string[] moveset = selectedPokemon.getMoveset();
         int[] maxPP = selectedPokemon.getMaxPP();
@@ -651,23 +651,23 @@ public class SummaryHandler : MonoBehaviour
         }
     }
 
-    private void PlayCry(Pokemon pokemon)
+    private void PlayCry(OwnedPokemon pokemon)
     {
         SfxHandler.Play(pokemon.GetCry(), pokemon.GetCryPitch());
     }
 
 
-    public IEnumerator control(Pokemon[] pokemonList, int currentPosition)
+    public IEnumerator control(OwnedPokemon[] pokemonList, int currentPosition)
     {
         yield return StartCoroutine(control(pokemonList, currentPosition, false, null));
     }
 
-    public IEnumerator control(Pokemon pokemon, string newMoveString)
+    public IEnumerator control(OwnedPokemon pokemon, string newMoveString)
     {
-        yield return StartCoroutine(control(new Pokemon[] { pokemon }, 0, true, newMoveString));
+        yield return StartCoroutine(control(new OwnedPokemon[] { pokemon }, 0, true, newMoveString));
     }
 
-    public IEnumerator control(Pokemon[] pokemonList, int currentPosition, bool learning, string newMoveString)
+    public IEnumerator control(OwnedPokemon[] pokemonList, int currentPosition, bool learning, string newMoveString)
     {
         moves.localPosition = (learning) ? new Vector3(0, 32) : Vector3.zero;
         newMove.gameObject.SetActive(learning);
@@ -801,7 +801,7 @@ public class SummaryHandler : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    private IEnumerator NavigateMoves(Pokemon pokemon, bool learning, string newMoveString)
+    private IEnumerator NavigateMoves(OwnedPokemon pokemon, bool learning, string newMoveString)
     {
         learnScreen.SetActive(learning);
         newMove.gameObject.SetActive(learning);

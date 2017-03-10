@@ -627,7 +627,7 @@ public class BagHandler : MonoBehaviour
 
     private void updateParty()
     {
-        Pokemon currentPokemon;
+        OwnedPokemon currentPokemon;
         for (int i = 0; i < 6; i++)
         {
             currentPokemon = SaveData.currentSave.PC.boxes[0][i];
@@ -638,16 +638,17 @@ public class BagHandler : MonoBehaviour
             else
             {
                 partyIcon[i].texture = currentPokemon.GetIcons();
-
+                float currentHP = currentPokemon.GetCurrentStatValue(PokemonStatType.HP);
+                float maxHP = currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP);
                 partyHPBar[i].pixelInset = new Rect(partyHPBar[i].pixelInset.x, partyHPBar[i].pixelInset.y,
-                    Mathf.FloorToInt(48f * ((float)currentPokemon.getCurrentHP() / (float)currentPokemon.getHP())),
+                    Mathf.FloorToInt(48f * (currentHP / maxHP)),
                     partyHPBar[i].pixelInset.height);
 
-                if ((float)currentPokemon.getCurrentHP() < ((float)currentPokemon.getHP() / 4f))
+                if (currentHP < (maxHP / 4f))
                 {
                     partyHPBar[i].color = new Color(1, 0.125f, 0, 1);
                 }
-                else if ((float)currentPokemon.getCurrentHP() < ((float)currentPokemon.getHP() / 2f))
+                else if (currentHP < (maxHP / 2f))
                 {
                     partyHPBar[i].color = new Color(1, 0.75f, 0, 1);
                 }
@@ -658,12 +659,12 @@ public class BagHandler : MonoBehaviour
 
                 partyName[i].text = currentPokemon.getName();
                 partyNameShadow[i].text = partyName[i].text;
-                if (currentPokemon.getGender() == Pokemon.Gender.FEMALE)
+                if (currentPokemon.getGender() == PokemonGender.FEMALE)
                 {
                     partyGender[i].text = "♀";
                     partyGender[i].color = new Color(1, 0.2f, 0.2f, 1);
                 }
-                else if (currentPokemon.getGender() == Pokemon.Gender.MALE)
+                else if (currentPokemon.getGender() == PokemonGender.MALE)
                 {
                     partyGender[i].text = "♂";
                     partyGender[i].color = new Color(0.2f, 0.4f, 1, 1);
@@ -675,7 +676,7 @@ public class BagHandler : MonoBehaviour
                 partyGenderShadow[i].text = partyGender[i].text;
                 partyLevel[i].text = "" + currentPokemon.getLevel();
                 partyLevelShadow[i].text = partyLevel[i].text;
-                if (currentPokemon.getStatus() != Pokemon.Status.NONE)
+                if (currentPokemon.getStatus() != PokemonStatus.NONE)
                 {
                     partyStatus[i].texture =
                         Resources.Load<Texture>("PCSprites/status" + currentPokemon.getStatus().ToString());
@@ -1764,7 +1765,7 @@ public class BagHandler : MonoBehaviour
                                             }
                                             else if (Input.GetButtonDown("Select"))
                                             {
-                                                Pokemon currentPokemon = SaveData.currentSave.PC.boxes[0][partyPosition];
+                                                OwnedPokemon currentPokemon = SaveData.currentSave.PC.boxes[0][partyPosition];
 
                                                 yield return
                                                     StartCoroutine(runItemEffect(selectedItem, currentPokemon, true));
@@ -1831,7 +1832,7 @@ public class BagHandler : MonoBehaviour
                     else if (inParty)
                     {
                         //display options for using selected item on Pokemon
-                        Pokemon currentPokemon = SaveData.currentSave.PC.boxes[0][partyPosition];
+                        OwnedPokemon currentPokemon = SaveData.currentSave.PC.boxes[0][partyPosition];
 
                         Dialog.drawDialogBox();
                         yield return
@@ -2053,24 +2054,24 @@ public class BagHandler : MonoBehaviour
 
 
     //RUN ITEM EFFECT.		This code handles the usage of items in the bag.
-    private IEnumerator runItemEffect(ItemData selectedItem, Pokemon currentPokemon)
+    private IEnumerator runItemEffect(ItemData selectedItem, OwnedPokemon currentPokemon)
     {
         yield return StartCoroutine(runItemEffect(selectedItem, currentPokemon, false));
     }
 
-    private IEnumerator runItemEffect(ItemData selectedItem, Pokemon currentPokemon, bool booted)
+    private IEnumerator runItemEffect(ItemData selectedItem, OwnedPokemon currentPokemon, bool booted)
     {
         if (selectedItem.getItemEffect() == ItemData.ItemEffect.HP)
         {
             //HP
-            if (currentPokemon.getCurrentHP() < currentPokemon.getHP() &&
-                currentPokemon.getStatus() != Pokemon.Status.FAINTED)
+            if (currentPokemon.GetCurrentStatValue(PokemonStatType.HP) < currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) &&
+                currentPokemon.getStatus() != PokemonStatus.FAINTED)
             {
                 //determine amount / intialise HP Bar Animation variables
                 float amount = selectedItem.getFloatParameter();
                 if (amount <= 1)
                 {
-                    amount = currentPokemon.healHP(currentPokemon.getHP() * amount);
+                    amount = currentPokemon.healHP(currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) * amount);
                 }
                 else
                 {
@@ -2078,7 +2079,7 @@ public class BagHandler : MonoBehaviour
                 }
                 float startLength = partyHPBar[partyPosition].pixelInset.width;
                 float difference =
-                    Mathf.Floor(48f * ((float)currentPokemon.getCurrentHP() / (float)currentPokemon.getHP())) -
+                    Mathf.Floor(48f * ((float)currentPokemon.GetCurrentStatValue(PokemonStatType.HP) / (float)currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP))) -
                     startLength;
                 float increment = 0;
                 float speed = 0.5f;
@@ -2285,13 +2286,13 @@ public class BagHandler : MonoBehaviour
                 if (statusCurer == "FAINTED")
                 {
                     //Revive
-                    currentPokemon.setStatus(Pokemon.Status.NONE);
+                    currentPokemon.setStatus(PokemonStatus.NONE);
 
                     //determine amount / intialise HP Bar Animation variables
                     float amount = selectedItem.getFloatParameter();
                     if (amount <= 1)
                     {
-                        amount = currentPokemon.healHP(currentPokemon.getHP() * amount);
+                        amount = currentPokemon.healHP(currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) * amount);
                     }
                     else
                     {
@@ -2299,7 +2300,7 @@ public class BagHandler : MonoBehaviour
                     }
                     float startLength = partyHPBar[partyPosition].pixelInset.width;
                     float difference =
-                        Mathf.Floor(48f * ((float)currentPokemon.getCurrentHP() / (float)currentPokemon.getHP())) -
+                        Mathf.Floor(48f * ((float)currentPokemon.GetCurrentStatValue(PokemonStatType.HP) / (float)currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP))) -
                         startLength;
                     float increment = 0;
                     float speed = 0.5f;
@@ -2344,7 +2345,7 @@ public class BagHandler : MonoBehaviour
                 }
                 else
                 {
-                    currentPokemon.setStatus(Pokemon.Status.NONE);
+                    currentPokemon.setStatus(PokemonStatus.NONE);
 
                     SfxHandler.Play(healClip);
                     removeItem(selectedItem.getName(), 1);
@@ -2630,7 +2631,7 @@ public class BagHandler : MonoBehaviour
         }
     }
 
-    private IEnumerator LearnMove(Pokemon selectedPokemon, string move)
+    private IEnumerator LearnMove(OwnedPokemon selectedPokemon, string move)
     {
         int chosenIndex = 1;
         if (chosenIndex == 1)

@@ -81,7 +81,8 @@ public class PokemonData
     private string ability2;
     private string hiddenAbility;
 
-    private float maleRatio; //-1f is interpreted as genderless
+    //-1f is interpreted as genderless
+    private float maleRatio;
     private int catchRate;
     private EggGroup eggGroup1;
     private EggGroup eggGroup2;
@@ -315,7 +316,7 @@ public class PokemonData
 
     public int[] getBaseStats()
     {
-        return new int[] {baseStatsHP, baseStatsATK, baseStatsDEF, baseStatsSPA, baseStatsSPD, baseStatsSPE};
+        return new int[] { baseStatsHP, baseStatsATK, baseStatsDEF, baseStatsSPA, baseStatsSPD, baseStatsSPE };
     }
 
     public bool hasLight()

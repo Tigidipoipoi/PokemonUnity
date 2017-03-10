@@ -146,7 +146,7 @@ public class CustomEventEditor : Editor
 
         EditorGUILayout.Space();
         /* Draw a line */
-        GUILayout.Box("", new GUILayoutOption[] {GUILayout.ExpandWidth(true), GUILayout.Height(1)});
+        GUILayout.Box("", new GUILayoutOption[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) });
 
         EditorGUI.indentLevel = 0;
 
@@ -230,7 +230,7 @@ public class CustomEventEditor : Editor
 
         EditorGUILayout.Space();
         /* Draw a line */
-        GUILayout.Box("", new GUILayoutOption[] {GUILayout.ExpandWidth(true), GUILayout.Height(1)});
+        GUILayout.Box("", new GUILayoutOption[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) });
 
         serializedObject.ApplyModifiedProperties();
     }
@@ -288,7 +288,7 @@ public class CustomEventEditor : Editor
         SetEventProps(currentSEvent);
 
         //add more details according to which type of event it is
-        CustomEventDetails.CustomEventType ty = (CustomEventDetails.CustomEventType) eventType_Prop.enumValueIndex;
+        CustomEventDetails.CustomEventType ty = (CustomEventDetails.CustomEventType)eventType_Prop.enumValueIndex;
 
         //set the event description to be the enum name
         string eventDescription = ty.ToString();
@@ -392,7 +392,7 @@ public class CustomEventEditor : Editor
                 break;
 
             case CustomEventDetails.CustomEventType.LogicCheck:
-                CustomEventDetails.Logic lo = (CustomEventDetails.Logic) logic_Prop.enumValueIndex;
+                CustomEventDetails.Logic lo = (CustomEventDetails.Logic)logic_Prop.enumValueIndex;
 
                 if (lo == CustomEventDetails.Logic.CVariableEquals)
                 {
@@ -468,13 +468,13 @@ public class CustomEventEditor : Editor
         SetEventProps(currentSEvent);
 
         /* Draw a line */
-        GUILayout.Box("", new GUILayoutOption[] {GUILayout.ExpandWidth(true), GUILayout.Height(1)});
+        GUILayout.Box("", new GUILayoutOption[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) });
 
         EditorGUILayout.PropertyField(eventType_Prop);
 
         EditorGUILayout.Space();
 
-        CustomEventDetails.CustomEventType ty = (CustomEventDetails.CustomEventType) eventType_Prop.enumValueIndex;
+        CustomEventDetails.CustomEventType ty = (CustomEventDetails.CustomEventType)eventType_Prop.enumValueIndex;
 
         switch (ty)
         {
@@ -527,7 +527,7 @@ public class CustomEventEditor : Editor
                 break;
 
             case CustomEventDetails.CustomEventType.LogicCheck:
-                CustomEventDetails.Logic lo = (CustomEventDetails.Logic) logic_Prop.enumValueIndex;
+                CustomEventDetails.Logic lo = (CustomEventDetails.Logic)logic_Prop.enumValueIndex;
 
                 //Boolean Logic Checks
                 if (lo == CustomEventDetails.Logic.SpaceInParty)
@@ -611,7 +611,7 @@ public class CustomEventEditor : Editor
                     }
                     else
                     {
-//if not a set gender
+                        //if not a set gender
                         ints_Prop.GetArrayElementAtIndex(2).intValue = EditorGUILayout.Popup(new GUIContent("Gender"),
                             ints_Prop.GetArrayElementAtIndex(2).intValue, new GUIContent[]
                             {
@@ -624,34 +624,45 @@ public class CustomEventEditor : Editor
                     EditorGUILayout.LabelField(new GUIContent("Gender"));
                 }
                 EditorGUILayout.PropertyField(bool0_Prop, new GUIContent("Is Shiny"));
-                strings_Prop.GetArrayElementAtIndex(1).stringValue =
+                var stringsArrayElementAt1 = strings_Prop.GetArrayElementAtIndex(1);
+                stringsArrayElementAt1.stringValue =
                     EditorGUILayout.TextField(new GUIContent("Original Trainer"),
-                        strings_Prop.GetArrayElementAtIndex(1).stringValue);
-                strings_Prop.GetArrayElementAtIndex(2).stringValue =
+                        stringsArrayElementAt1.stringValue);
+                var stringsArrayElementAt2 = strings_Prop.GetArrayElementAtIndex(2);
+                stringsArrayElementAt2.stringValue =
                     EditorGUILayout.TextField(new GUIContent("Poké Ball"),
-                        strings_Prop.GetArrayElementAtIndex(2).stringValue);
-                strings_Prop.GetArrayElementAtIndex(3).stringValue =
+                        stringsArrayElementAt2.stringValue);
+                var stringsArrayElementAt3 = strings_Prop.GetArrayElementAtIndex(3);
+                stringsArrayElementAt3.stringValue =
                     EditorGUILayout.TextField(new GUIContent("Held Item"),
-                        strings_Prop.GetArrayElementAtIndex(3).stringValue);
+                        stringsArrayElementAt3.stringValue);
+
                 //Nature
-                string[] natureNames = NatureDatabase.getNatureNames();
+                string[] natureNames = PokemonNatureHelper.GetAllNatureNames();
                 GUIContent[] natures = new GUIContent[natureNames.Length + 1];
                 natures[0] = new GUIContent("Random");
-                for (int i = 1; i < natures.Length; i++)
+                for (int i = 0, iMax = natures.Length - 1; i != iMax; ++i)
                 {
-                    natures[i] =
-                        new GUIContent(natureNames[i - 1].Substring(0, 1) +
-                                       natureNames[i - 1].Substring(1, natureNames[i - 1].Length - 1).ToLower() +
-                                       "\t | " + NatureDatabase.getNature(i - 1).getUpStat() + "+ | " +
-                                       NatureDatabase.getNature(i - 1).getDownStat() + "-");
+                    string text = string.Format("{0}{1}\t | {2}+ | {3}-",
+                        natureNames[i][0],
+                        natureNames[i].Substring(1, natureNames[i].Length - 1).ToLower(),
+                        PokemonNatureHelper.GetUpgradedStat(i),
+                        PokemonNatureHelper.GetDowngradedStat(i));
+
+                    natures[i + 1] = new GUIContent(text);
                 }
-                ints_Prop.GetArrayElementAtIndex(3).intValue = EditorGUILayout.Popup(new GUIContent("Nature"),
-                    ints_Prop.GetArrayElementAtIndex(3).intValue, natures);
+                var intsArrayElementAt3 = ints_Prop.GetArrayElementAtIndex(3);
+                intsArrayElementAt3.intValue = EditorGUILayout.Popup(
+                    new GUIContent("Nature"),
+                    ints_Prop.GetArrayElementAtIndex(3).intValue, 
+                    natures);
+
                 //Ability
                 if (pkd != null)
                 {
-                    ints_Prop.GetArrayElementAtIndex(4).intValue = EditorGUILayout.Popup(new GUIContent("Ability"),
-                        ints_Prop.GetArrayElementAtIndex(4).intValue, new GUIContent[]
+                    var intsArrayElementAt4 = ints_Prop.GetArrayElementAtIndex(4);
+                    intsArrayElementAt4.intValue = EditorGUILayout.Popup(new GUIContent("Ability"),
+                        intsArrayElementAt4.intValue, new GUIContent[]
                         {
                             new GUIContent("1: " + pkd.getAbility(0)), new GUIContent("2: " + pkd.getAbility(1)),
                             new GUIContent("(HA) " + pkd.getAbility(2))
@@ -710,7 +721,7 @@ public class CustomEventEditor : Editor
         }
 
         /* Draw a line */
-        GUILayout.Box("", new GUILayoutOption[] {GUILayout.ExpandWidth(true), GUILayout.Height(1)});
+        GUILayout.Box("", new GUILayoutOption[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) });
         EditorGUILayout.Space();
     }
 

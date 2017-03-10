@@ -3,29 +3,30 @@
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
+using System.Collections.Generic;
+
+public enum PokemonStatus
+{
+    NONE,
+    BURNED,
+    FROZEN,
+    PARALYZED,
+    POISONED,
+    ASLEEP,
+    FAINTED
+}
+
+public enum PokemonGender
+{
+    NONE,
+    MALE,
+    FEMALE,
+    CALCULATE
+}
 
 [Serializable]
-public class Pokemon
+public class OwnedPokemon
 {
-    public enum Status
-    {
-        NONE,
-        BURNED,
-        FROZEN,
-        PARALYZED,
-        POISONED,
-        ASLEEP,
-        FAINTED
-    }
-
-    public enum Gender
-    {
-        NONE,
-        MALE,
-        FEMALE,
-        CALCULATE
-    }
-
     private int pokemonID;
     private string nickname;
 
@@ -57,8 +58,8 @@ public class Pokemon
     ///// </example>
     //private int _formId;
 
-    private Gender gender;
-    private int level;
+    private PokemonGender gender;
+    private int _currentLevel;
     private int exp;
     private int nextLevelExp;
 
@@ -68,7 +69,7 @@ public class Pokemon
     private int rareValue;
     private bool isShiny;
 
-    private Status status;
+    private PokemonStatus status;
     private int sleepTurns;
 
     private string caughtBall;
@@ -96,15 +97,9 @@ public class Pokemon
     private int EV_SPD;
     private int EV_SPE;
 
-    private string nature;
+    private PokemonNature _nature;
 
-    private int HP;
-    private int currentHP;
-    private int ATK;
-    private int DEF;
-    private int SPA;
-    private int SPD;
-    private int SPE;
+    private PokemonStatList _stats;
 
     private int ability; //(0/1/2(hiddenability)) if higher than number of abilites, rounds down to nearest ability.
     // if is 2, but pokemon only has 1 ability and no hidden, will use the one ability it does have.
@@ -116,124 +111,139 @@ public class Pokemon
     private int[] PP;
 
 
-    //New Pokemon with: every specific detail
-    public Pokemon(int pokemonID, string nickname, Gender gender, int level,
-        bool isShiny, string caughtBall, string heldItem, string OT,
-        int IV_HP, int IV_ATK, int IV_DEF, int IV_SPA, int IV_SPD, int IV_SPE,
-        int EV_HP, int EV_ATK, int EV_DEF, int EV_SPA, int EV_SPD, int EV_SPE,
-        string nature, int ability, string[] moveset, int[] PPups)
+    #region Constructors
+    public OwnedPokemon()
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemonID);
+        _stats = new PokemonStatList();
+        _stats.Add(new PokemonStat(PokemonStatType.HP, 1));
+        _stats.Add(new PokemonStat(PokemonStatType.Attack, 1));
+        _stats.Add(new PokemonStat(PokemonStatType.Defence, 1));
+        _stats.Add(new PokemonStat(PokemonStatType.SpecialAttack, 1));
+        _stats.Add(new PokemonStat(PokemonStatType.SpecialDefence, 1));
+        _stats.Add(new PokemonStat(PokemonStatType.Speed, 1));
 
-        this.pokemonID = pokemonID;
-        this.nickname = nickname;
+        _stats.Add(new PokemonStat(PokemonStatType.Accuracy, 100));
+        _stats.Add(new PokemonStat(PokemonStatType.Evasion, 100));
+    }
+
+    //New Pokemon with: every specific detail
+    public OwnedPokemon(int pPokemonID, string pNickname, PokemonGender pGender, int pLevel,
+        bool pIsShiny, string pCaughtBall, string pHeldItem, string pOT,
+        int pIV_HP, int pIV_ATK, int pIV_DEF, int pIV_SPA, int pIV_SPD, int pIV_SPE,
+        int pEV_HP, int pEV_ATK, int pEV_DEF, int pEV_SPA, int pEV_SPD, int pEV_SPE,
+        PokemonNature pNature, int pAbility, string[] pMoveset, int[] pPPups)
+        : this()
+    {
+        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pPokemonID);
+
+        pokemonID = pPokemonID;
+        nickname = pNickname;
         //SET UP FORMS LATER #####################################################################################
-        //this._formId = 0;
-        this.gender = gender;
+        //_formId = 0;
+        gender = pGender;
         //if gender is CALCULATE, then calculate gender using maleRatio
-        if (gender == Gender.CALCULATE)
+        if (pGender == PokemonGender.CALCULATE)
         {
             if (thisPokemonData.getMaleRatio() < 0)
             {
-                this.gender = Gender.NONE;
+                gender = PokemonGender.NONE;
             }
             else if (Random.Range(0f, 100f) <= thisPokemonData.getMaleRatio())
             {
-                this.gender = Gender.MALE;
+                gender = PokemonGender.MALE;
             }
             else
             {
-                this.gender = Gender.FEMALE;
+                gender = PokemonGender.FEMALE;
             }
         }
-        this.level = level;
+        _currentLevel = pLevel;
         //Find exp for current level, and next level.
-        this.exp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), level);
-        this.nextLevelExp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), level + 1);
-        this.friendship = thisPokemonData.getBaseFriendship();
+        exp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel);
+        nextLevelExp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel + 1);
+        friendship = thisPokemonData.getBaseFriendship();
 
-        this.isShiny = isShiny;
-        if (isShiny)
+        isShiny = pIsShiny;
+        if (pIsShiny)
         {
-            this.rareValue = Random.Range(0, 16);
+            rareValue = Random.Range(0, 16);
         }
         else
         {
-            this.rareValue = Random.Range(16, 65536);
-            if (this.rareValue < 19)
+            rareValue = Random.Range(16, 65536);
+            if (rareValue < 19)
             {
-                this.pokerus = true;
+                pokerus = true;
             }
         }
 
-        this.status = Status.NONE;
-        this.sleepTurns = 0;
-        this.caughtBall = caughtBall;
-        this.heldItem = heldItem;
+        status = PokemonStatus.NONE;
+        sleepTurns = 0;
+        caughtBall = pCaughtBall;
+        heldItem = pHeldItem;
 
-        this.OT = (string.IsNullOrEmpty(OT)) ? SaveData.currentSave.playerName : OT;
-        if (this.OT != SaveData.currentSave.playerName)
+        OT = (string.IsNullOrEmpty(pOT)) ? SaveData.currentSave.playerName : pOT;
+        if (OT != SaveData.currentSave.playerName)
         {
-            this.IDno = Random.Range(0, 65536); //if owned by another trainer, assign a random number. 
+            IDno = Random.Range(0, 65536); //if owned by another trainer, assign a random number. 
         } //this way if they trade it to you, it will have a different number to the player's.
         else
         {
-            this.IDno = SaveData.currentSave.playerID;
+            IDno = SaveData.currentSave.playerID;
         }
 
-        this.metLevel = level;
+        metLevel = pLevel;
         if (PlayerMovement.player != null)
         {
             if (PlayerMovement.player.accessedMapSettings != null)
             {
-                this.metMap = PlayerMovement.player.accessedMapSettings.mapName;
+                metMap = PlayerMovement.player.accessedMapSettings.mapName;
             }
             else
             {
-                this.metMap = "Somewhere";
+                metMap = "Somewhere";
             }
         }
         else
         {
-            this.metMap = "Somewhere";
+            metMap = "Somewhere";
         }
-        this.metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
+        metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
 
         //Set IVs 
-        this.IV_HP = IV_HP;
-        this.IV_ATK = IV_ATK;
-        this.IV_DEF = IV_DEF;
-        this.IV_SPA = IV_SPA;
-        this.IV_SPD = IV_SPD;
-        this.IV_SPE = IV_SPE;
+        IV_HP = pIV_HP;
+        IV_ATK = pIV_ATK;
+        IV_DEF = pIV_DEF;
+        IV_SPA = pIV_SPA;
+        IV_SPD = pIV_SPD;
+        IV_SPE = pIV_SPE;
         //set EVs
-        this.EV_HP = EV_HP;
-        this.EV_ATK = EV_ATK;
-        this.EV_DEF = EV_DEF;
-        this.EV_SPA = EV_SPA;
-        this.EV_SPD = EV_SPD;
-        this.EV_SPE = EV_SPE;
+        EV_HP = pEV_HP;
+        EV_ATK = pEV_ATK;
+        EV_DEF = pEV_DEF;
+        EV_SPA = pEV_SPA;
+        EV_SPD = pEV_SPD;
+        EV_SPE = pEV_SPE;
         //set nature
-        this.nature = nature;
+        _nature = pNature;
         //calculate stats
-        this.calculateStats();
-        //set currentHP to HP, as a new pokemon will be undamaged.
-        this.currentHP = HP;
-        this.ability = ability;
+        calculateStats();
 
-        this.moveset = moveset;
-        this.moveHistory = moveset;
+        ability = pAbility;
 
-        this.PPups = PPups;
+        moveset = pMoveset;
+        moveHistory = pMoveset;
+
+        PPups = pPPups;
         //set maxPP and PP to be the regular PP defined by the move in the database.
-        this.maxPP = new int[4];
-        this.PP = new int[4];
+        maxPP = new int[4];
+        PP = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(moveset[i]))
+            if (!string.IsNullOrEmpty(pMoveset[i]))
             {
-                this.maxPP[i] = Mathf.FloorToInt(MoveDatabase.getMove(moveset[i]).getPP() * ((this.PPups[i] * 0.2f) + 1));
-                this.PP[i] = this.maxPP[i];
+                maxPP[i] = Mathf.FloorToInt(MoveDatabase.getMove(pMoveset[i]).getPP() * ((PPups[i] * 0.2f) + 1));
+                PP[i] = maxPP[i];
             }
         }
         packMoveset();
@@ -242,316 +252,259 @@ public class Pokemon
 
     //New Pokemon with: random IVS, and Shininess 
     //					default moveset, and EVS (0)
-    public Pokemon(int pokemonID, Gender gender, int level, string caughtBall, string heldItem, string OT, int ability)
+    public OwnedPokemon(int pPokemonID, PokemonGender pGender, int pLevel, string pCaughtBall, string pHeldItem, string pOT, int pAbility)
+        : this()
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemonID);
+        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pPokemonID);
 
-        this.pokemonID = pokemonID;
+        pokemonID = pPokemonID;
 
         //SET UP FORMS LATER #####################################################################################
-        //this._formId = 0;
+        //_formId = 0;
 
-        this.gender = gender;
+        gender = pGender;
         //if gender is CALCULATE, then calculate gender using maleRatio
-        if (gender == Gender.CALCULATE)
+        if (pGender == PokemonGender.CALCULATE)
         {
             if (thisPokemonData.getMaleRatio() < 0)
             {
-                this.gender = Gender.NONE;
+                gender = PokemonGender.NONE;
             }
             else if (Random.Range(0f, 100f) <= thisPokemonData.getMaleRatio())
             {
-                this.gender = Gender.MALE;
+                gender = PokemonGender.MALE;
             }
             else
             {
-                this.gender = Gender.FEMALE;
+                gender = PokemonGender.FEMALE;
             }
         }
 
-        this.level = level;
+        _currentLevel = pLevel;
         //Find exp for current level, and next level.
-        this.exp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), level);
-        this.nextLevelExp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), level + 1);
+        exp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel);
+        nextLevelExp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel + 1);
 
-        this.friendship = thisPokemonData.getBaseFriendship();
+        friendship = thisPokemonData.getBaseFriendship();
 
         //Set Shininess randomly. 16/65535 if not shiny, then pokerus. 3/65535
-        this.rareValue = Random.Range(0, 65536);
-        if (this.rareValue < 16)
+        rareValue = Random.Range(0, 65536);
+        if (rareValue < 16)
         {
-            this.isShiny = true;
+            isShiny = true;
         }
-        else if (this.rareValue < 19)
+        else if (rareValue < 19)
         {
-            this.pokerus = true;
+            pokerus = true;
         }
 
-        this.status = Status.NONE;
-        this.sleepTurns = 0;
+        status = PokemonStatus.NONE;
+        sleepTurns = 0;
 
-        this.caughtBall = caughtBall;
-        this.heldItem = heldItem;
+        caughtBall = pCaughtBall;
+        heldItem = pHeldItem;
 
-        this.metLevel = level;
+        metLevel = pLevel;
         if (PlayerMovement.player != null)
         {
             if (PlayerMovement.player.accessedMapSettings != null)
             {
-                this.metMap = PlayerMovement.player.accessedMapSettings.mapName;
+                metMap = PlayerMovement.player.accessedMapSettings.mapName;
             }
             else
             {
-                this.metMap = "Somewhere";
+                metMap = "Somewhere";
             }
         }
         else
         {
-            this.metMap = "Somewhere";
+            metMap = "Somewhere";
         }
-        this.metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
+        metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
 
-        this.OT = (string.IsNullOrEmpty(OT)) ? SaveData.currentSave.playerName : OT;
-        if (this.OT != SaveData.currentSave.playerName)
+        OT = (string.IsNullOrEmpty(pOT)) ? SaveData.currentSave.playerName : pOT;
+        if (OT != SaveData.currentSave.playerName)
         {
-            this.IDno = Random.Range(0, 65536); //if owned by another trainer, assign a random number. 
+            IDno = Random.Range(0, 65536); //if owned by another trainer, assign a random number. 
         } //this way if they trade it to you, it will have a different number to the player's.
         else
         {
-            this.IDno = SaveData.currentSave.playerID;
+            IDno = SaveData.currentSave.playerID;
         }
 
         //Set IVs randomly between 0 and 32 (32 is exlcuded)
-        this.IV_HP = Random.Range(0, 32);
-        this.IV_ATK = Random.Range(0, 32);
-        this.IV_DEF = Random.Range(0, 32);
-        this.IV_SPA = Random.Range(0, 32);
-        this.IV_SPD = Random.Range(0, 32);
-        this.IV_SPE = Random.Range(0, 32);
+        IV_HP = Random.Range(0, 32);
+        IV_ATK = Random.Range(0, 32);
+        IV_DEF = Random.Range(0, 32);
+        IV_SPA = Random.Range(0, 32);
+        IV_SPD = Random.Range(0, 32);
+        IV_SPE = Random.Range(0, 32);
 
         //unless specified with a full new Pokemon constructor, set EVs to 0.
-        this.EV_HP = 0;
-        this.EV_ATK = 0;
-        this.EV_DEF = 0;
-        this.EV_SPA = 0;
-        this.EV_SPD = 0;
-        this.EV_SPE = 0;
+        EV_HP = 0;
+        EV_ATK = 0;
+        EV_DEF = 0;
+        EV_SPA = 0;
+        EV_SPD = 0;
+        EV_SPE = 0;
 
         //Randomize nature
-        this.nature = NatureDatabase.getRandomNature().getName();
+        _nature = PokemonNatureHelper.GetRandomNature();
 
         //calculate stats
-        this.calculateStats();
-        //set currentHP to HP, as a new pokemon will be undamaged.
-        this.currentHP = HP;
+        calculateStats();
 
         //set ability 
-        if (ability < 0 || ability > 2)
+        if (pAbility < 0 || pAbility > 2)
         {
             //if ability out of range, randomize ability
-            this.ability = Random.Range(0, 2);
+            ability = Random.Range(0, 2);
         }
         else
         {
-            this.ability = ability;
+            ability = pAbility;
         }
 
         //Set moveset based off of the highest level moves possible.
-        this.moveset = thisPokemonData.GenerateMoveset(this.level);
-        this.moveHistory = this.moveset;
+        moveset = thisPokemonData.GenerateMoveset(_currentLevel);
+        moveHistory = moveset;
 
         //set maxPP and PP to be the regular PP defined by the move in the database.
-        this.PPups = new int[4];
-        this.maxPP = new int[4];
-        this.PP = new int[4];
+        PPups = new int[4];
+        maxPP = new int[4];
+        PP = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(this.moveset[i]))
+            if (!string.IsNullOrEmpty(moveset[i]))
             {
-                this.maxPP[i] = MoveDatabase.getMove(this.moveset[i]).getPP();
-                this.PP[i] = this.maxPP[i];
+                maxPP[i] = MoveDatabase.getMove(moveset[i]).getPP();
+                PP[i] = maxPP[i];
             }
         }
         packMoveset();
     }
 
     //adding a caught pokemon (only a few customizable details)
-    public Pokemon(Pokemon pokemon, string nickname, string caughtBall)
+    public OwnedPokemon(OwnedPokemon pPokemon, string pNickname, string pCaughtBall)
+        : this()
     {
         //PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemon.pokemonID);
 
-        this.pokemonID = pokemon.pokemonID;
-        this.nickname = nickname;
+        pokemonID = pPokemon.pokemonID;
+        nickname = pNickname;
         //SET UP FORMS LATER #####################################################################################
-        //this._formId = 0;
-        this.gender = pokemon.gender;
+        //_formId = 0;
+        gender = pPokemon.gender;
 
-        this.level = pokemon.level;
+        _currentLevel = pPokemon._currentLevel;
         //Find exp for current level, and next level.
-        this.exp = pokemon.exp;
-        this.nextLevelExp = pokemon.nextLevelExp;
-        this.friendship = pokemon.friendship;
+        exp = pPokemon.exp;
+        nextLevelExp = pPokemon.nextLevelExp;
+        friendship = pPokemon.friendship;
 
-        this.isShiny = pokemon.isShiny;
-        this.rareValue = pokemon.rareValue;
-        this.pokerus = pokemon.pokerus;
+        isShiny = pPokemon.isShiny;
+        rareValue = pPokemon.rareValue;
+        pokerus = pPokemon.pokerus;
 
-        this.status = pokemon.status;
-        this.sleepTurns = pokemon.sleepTurns;
-        this.caughtBall = caughtBall;
-        this.heldItem = pokemon.heldItem;
+        status = pPokemon.status;
+        sleepTurns = pPokemon.sleepTurns;
+        caughtBall = pCaughtBall;
+        heldItem = pPokemon.heldItem;
 
-        this.OT = SaveData.currentSave.playerName;
-        this.IDno = SaveData.currentSave.playerID;
+        OT = SaveData.currentSave.playerName;
+        IDno = SaveData.currentSave.playerID;
 
-        this.metLevel = level;
+        metLevel = _currentLevel;
         if (PlayerMovement.player.accessedMapSettings != null)
         {
-            this.metMap = PlayerMovement.player.accessedMapSettings.mapName;
+            metMap = PlayerMovement.player.accessedMapSettings.mapName;
         }
         else
         {
-            this.metMap = "Somewhere";
+            metMap = "Somewhere";
         }
-        this.metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
+        metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
 
         //Set IVs 
-        this.IV_HP = pokemon.IV_HP;
-        this.IV_ATK = pokemon.IV_ATK;
-        this.IV_DEF = pokemon.IV_DEF;
-        this.IV_SPA = pokemon.IV_SPA;
-        this.IV_SPD = pokemon.IV_SPD;
-        this.IV_SPE = pokemon.IV_SPE;
+        IV_HP = pPokemon.IV_HP;
+        IV_ATK = pPokemon.IV_ATK;
+        IV_DEF = pPokemon.IV_DEF;
+        IV_SPA = pPokemon.IV_SPA;
+        IV_SPD = pPokemon.IV_SPD;
+        IV_SPE = pPokemon.IV_SPE;
         //set EVs
-        this.EV_HP = pokemon.EV_HP;
-        this.EV_ATK = pokemon.EV_ATK;
-        this.EV_DEF = pokemon.EV_DEF;
-        this.EV_SPA = pokemon.EV_SPA;
-        this.EV_SPD = pokemon.EV_SPD;
-        this.EV_SPE = pokemon.EV_SPE;
+        EV_HP = pPokemon.EV_HP;
+        EV_ATK = pPokemon.EV_ATK;
+        EV_DEF = pPokemon.EV_DEF;
+        EV_SPA = pPokemon.EV_SPA;
+        EV_SPD = pPokemon.EV_SPD;
+        EV_SPE = pPokemon.EV_SPE;
         //set nature
-        this.nature = pokemon.nature;
-        //calculate stats
-        this.calculateStats();
-        this.currentHP = pokemon.currentHP;
+        _nature = pPokemon._nature;
 
-        this.ability = pokemon.ability;
+        _stats = pPokemon._stats;
 
-        this.moveset = pokemon.moveset;
-        this.moveHistory = pokemon.moveHistory;
+        ability = pPokemon.ability;
 
-        this.PPups = pokemon.PPups;
+        moveset = pPokemon.moveset;
+        moveHistory = pPokemon.moveHistory;
+
+        PPups = pPokemon.PPups;
         //set maxPP and PP to be the regular PP defined by the move in the database.
-        this.maxPP = new int[4];
-        this.PP = new int[4];
+        maxPP = new int[4];
+        PP = new int[4];
         for (int i = 0; i < 4; i++)
         {
             if (!string.IsNullOrEmpty(moveset[i]))
             {
-                this.maxPP[i] = Mathf.FloorToInt(MoveDatabase.getMove(moveset[i]).getPP() * ((this.PPups[i] * 0.2f) + 1));
-                this.PP[i] = this.maxPP[i];
+                maxPP[i] = Mathf.FloorToInt(MoveDatabase.getMove(moveset[i]).getPP() * ((PPups[i] * 0.2f) + 1));
+                PP[i] = maxPP[i];
             }
         }
         packMoveset();
     }
+    #endregion
 
-
-    //Recalculate the pokemon's Stats.
-    public void calculateStats()
+    public int GetCurrentLevelStatValue(PokemonStatType pStatType)
     {
-        int[] baseStats = PokemonDatabase.getPokemon(pokemonID).getBaseStats();
-        if (baseStats[0] == 1)
-        {
-            this.HP = 1;
-        }
-        else
-        {
-            int prevMaxHP = this.HP;
-            this.HP = Mathf.FloorToInt(((IV_HP + (2 * baseStats[0]) + (EV_HP / 4) + 100) * level) / 100 + 10);
-            this.currentHP = (this.currentHP + (this.HP - prevMaxHP) < this.HP)
-                ? this.currentHP + (this.HP - prevMaxHP)
-                : this.HP;
-        }
-        if (baseStats[1] == 1)
-        {
-            this.ATK = 1;
-        }
-        else
-        {
-            this.ATK =
-                Mathf.FloorToInt(Mathf.FloorToInt(((IV_ATK + (2 * baseStats[1]) + (EV_ATK / 4)) * level) / 100 + 5) *
-                                 NatureDatabase.getNature(nature).getATK());
-        }
-        if (baseStats[2] == 1)
-        {
-            this.DEF = 1;
-        }
-        else
-        {
-            this.DEF =
-                Mathf.FloorToInt(Mathf.FloorToInt(((IV_DEF + (2 * baseStats[2]) + (EV_DEF / 4)) * level) / 100 + 5) *
-                                 NatureDatabase.getNature(nature).getDEF());
-        }
-        if (baseStats[3] == 1)
-        {
-            this.SPA = 1;
-        }
-        else
-        {
-            this.SPA =
-                Mathf.FloorToInt(Mathf.FloorToInt(((IV_SPA + (2 * baseStats[3]) + (EV_SPA / 4)) * level) / 100 + 5) *
-                                 NatureDatabase.getNature(nature).getSPA());
-        }
-        if (baseStats[4] == 1)
-        {
-            this.SPD = 1;
-        }
-        else
-        {
-            this.SPD =
-                Mathf.FloorToInt(Mathf.FloorToInt(((IV_SPD + (2 * baseStats[4]) + (EV_SPD / 4)) * level) / 100 + 5) *
-                                 NatureDatabase.getNature(nature).getSPD());
-        }
-        if (baseStats[5] == 1)
-        {
-            this.SPE = 1;
-        }
-        else
-        {
-            this.SPE =
-                Mathf.FloorToInt(Mathf.FloorToInt(((IV_SPE + (2 * baseStats[5]) + (EV_SPE / 4)) * level) / 100 + 5) *
-                                 NatureDatabase.getNature(nature).getSPE());
-        }
+        return _stats[pStatType].GetCurrentLevelValue(_currentLevel, _nature);
     }
 
-    //set Nickname
-    public void setNickname(string nickname)
+    public int GetCurrentStatValue(PokemonStatType pStatType)
     {
-        this.nickname = nickname;
+        return _stats[pStatType].GetCurrentValue(_currentLevel, _nature);
+    }
+
+    //Recalculate the pokemon's Stats.
+    public void calculateStats() { }
+
+    //set Nickname
+    public void setNickname(string pNickname)
+    {
+        nickname = pNickname;
     }
 
     public string swapHeldItem(string newItem)
     {
-        string oldItem = this.heldItem;
-        this.heldItem = newItem;
+        string oldItem = heldItem;
+        heldItem = newItem;
         return oldItem;
     }
 
     public void addExp(int expAdded)
     {
-        if (level < 100)
+        if (_currentLevel < 100)
         {
-            this.exp += expAdded;
+            exp += expAdded;
             while (exp >= nextLevelExp)
             {
-                this.level += 1;
-                this.nextLevelExp = PokemonDatabase.getLevelExp(
-                    PokemonDatabase.getPokemon(pokemonID).getLevelingRate(), level + 1);
-                calculateStats();
-                if (this.HP > 0 && this.status == Status.FAINTED)
-                {
-                    this.status = Status.NONE;
-                }
+                _currentLevel += 1;
+                nextLevelExp = PokemonDatabase.getLevelExp(
+                    PokemonDatabase.getPokemon(pokemonID).getLevelingRate(), _currentLevel + 1);
+
+                // ToDo: Update current HP !
+                //if (HP > 0 && status == PokemonStatus.FAINTED)
+                //    status = PokemonStatus.NONE;
             }
         }
     }
@@ -756,7 +709,7 @@ public class Pokemon
                 }
                 else
                 {
-                    if (this.level < int.Parse(parameters[i]))
+                    if (_currentLevel < int.Parse(parameters[i]))
                     {
                         //and pokemon's level is not high enough to evolve,
                         return false; //cannot evolve. return false stop checking.
@@ -793,7 +746,7 @@ public class Pokemon
             else if (methods[i] == "Friendship")
             {
                 //if method contains a Friendship requirement
-                if (this.friendship < 220)
+                if (friendship < 220)
                 {
                     //and pokemon's friendship is less than 220
                     return false; //cannot evolve. return false and stop checking.
@@ -802,7 +755,7 @@ public class Pokemon
             else if (methods[i] == "Item")
             {
                 //if method contains an Item requirement
-                if (this.heldItem == parameters[i])
+                if (heldItem == parameters[i])
                 {
                     //and pokemon's Held Item is not the specified Item
                     return false; //cannot evolve. return false and stop checking.
@@ -811,7 +764,7 @@ public class Pokemon
             else if (methods[i] == "Gender")
             {
                 //if method contains a Gender requirement
-                if (this.gender.ToString() != parameters[i])
+                if (gender.ToString() != parameters[i])
                 {
                     //and pokemon's gender is not the required gender to evolve,
                     return false; //cannot evolve. return false and stop checking.
@@ -869,11 +822,15 @@ public class Pokemon
         {
             if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
             {
-                float hpPercent = ((float)this.currentHP / (float)this.HP);
-                this.pokemonID = evolutions[i];
+                int currentHP = GetCurrentStatValue(PokemonStatType.HP);
+                int maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
+                float hpPercent = (float)currentHP / maxHP;
+                pokemonID = evolutions[i];
                 calculateStats();
                 i = evolutions.Length;
-                currentHP = Mathf.RoundToInt(HP * hpPercent);
+                // ToDo: Update modifier instead
+                currentHP = Mathf.RoundToInt(maxHP * hpPercent);
+
                 return true;
             }
         }
@@ -883,18 +840,48 @@ public class Pokemon
     //return a string that contains all of this pokemon's data
     public override string ToString()
     {
-        string result = pokemonID + ": " + this.getName() + "(" + PokemonDatabase.getPokemon(pokemonID).getName() +
-                        "), " +
-                        gender.ToString() + ", Level " + level + ", EXP: " + exp + ", To next: " + (nextLevelExp - exp) +
-                        ", Friendship: " + friendship + ", RareValue=" + rareValue + ", Pokerus=" + pokerus.ToString() +
-                        ", Shiny=" + isShiny.ToString() +
-                        ", Status: " + status + ", Ball: " + caughtBall + ", Item: " + heldItem +
-                        ", met at Level " + metLevel + " on " + metDate + " at " + metMap +
-                        ", OT: " + OT + ", ID: " + IDno +
-                        ", IVs: " + IV_HP + "," + IV_ATK + "," + IV_DEF + "," + IV_SPA + "," + IV_SPD + "," + IV_SPE +
-                        ", EVs: " + EV_HP + "," + EV_ATK + "," + EV_DEF + "," + EV_SPA + "," + EV_SPD + "," + EV_SPE +
-                        ", Stats: " + currentHP + "/" + HP + "," + ATK + "," + DEF + "," + SPA + "," + SPD + "," + SPE +
-                        ", Nature: " + nature + ", " + PokemonDatabase.getPokemon(pokemonID).getAbility(ability);
+        string result = string.Format("{0}: {1}({2}), {3}, Level {4}, EXP: {5}, To next: {6}, Friendship: {7}, RareValue={8}, Pokerus={9}, Shiny={10}, Status: {11}, Ball: {12}, Item: {13}, met at Level {14} on {15} at {16}, OT: {17}, IVs: {18}, {19}, {20}, {21}, {22}, {23}, EVs: {24}, {25}, {26}, {27}, {28}, {29}, Stats: {30}/{31}, {32}, {33}, {34}, {35}, {36}, Nature: {37}, Ability: {38}",
+            pokemonID,
+            getName(),
+            PokemonDatabase.getPokemon(pokemonID).getName(),
+            gender.ToString(),
+            _currentLevel,
+            exp,
+            (nextLevelExp - exp),
+            friendship,
+            rareValue,
+            pokerus.ToString(),
+            isShiny.ToString(),
+            status,
+            caughtBall,
+            heldItem,
+            metLevel,
+            metDate,
+            metMap,
+            OT,
+            IDno,
+            _stats[PokemonStatType.HP].IV,
+            _stats[PokemonStatType.Attack].IV,
+            _stats[PokemonStatType.Defence].IV,
+            _stats[PokemonStatType.SpecialAttack].IV,
+            _stats[PokemonStatType.SpecialDefence].IV,
+            _stats[PokemonStatType.Speed].IV,
+            _stats[PokemonStatType.HP].EV,
+            _stats[PokemonStatType.Attack].EV,
+            _stats[PokemonStatType.Defence].EV,
+            _stats[PokemonStatType.SpecialAttack].EV,
+            _stats[PokemonStatType.SpecialDefence].EV,
+            _stats[PokemonStatType.Speed].EV,
+            GetCurrentStatValue(PokemonStatType.HP),
+            GetCurrentLevelStatValue(PokemonStatType.HP),
+            GetCurrentLevelStatValue(PokemonStatType.Attack),
+            GetCurrentLevelStatValue(PokemonStatType.Defence),
+            GetCurrentLevelStatValue(PokemonStatType.SpecialAttack),
+            GetCurrentLevelStatValue(PokemonStatType.SpecialDefence),
+            GetCurrentLevelStatValue(PokemonStatType.Speed),
+            _nature,
+            PokemonDatabase.getPokemon(pokemonID).getAbility(ability));
+
         result += ", [";
         for (int i = 0; i < 4; i++)
         {
@@ -912,12 +899,13 @@ public class Pokemon
     //Heal the pokemon
     public void healFull()
     {
-        currentHP = HP;
+        // ToDo: Update modifers.
+        //currentHP = HP;
         PP[0] = maxPP[0];
         PP[1] = maxPP[1];
         PP[2] = maxPP[2];
         PP[3] = maxPP[3];
-        status = Status.NONE;
+        status = PokemonStatus.NONE;
     }
 
     ///returns the excess hp
@@ -925,16 +913,19 @@ public class Pokemon
     {
         int excess = 0;
         int intAmount = Mathf.RoundToInt(amount);
-        currentHP += intAmount;
-        if (currentHP > HP)
-        {
-            excess = currentHP - HP;
-            currentHP = HP;
-        }
-        if (status == Status.FAINTED && currentHP > 0)
-        {
-            status = Status.NONE;
-        }
+
+        // ToDo: Update modifers.
+        //currentHP = HP;
+        //currentHP += intAmount;
+        //if (currentHP > HP)
+        //{
+        //    excess = currentHP - HP;
+        //    currentHP = HP;
+        //}
+        //if (status == PokemonStatus.FAINTED && currentHP > 0)
+        //{
+        //    status = PokemonStatus.NONE;
+        //}
         return intAmount - excess;
     }
 
@@ -942,29 +933,30 @@ public class Pokemon
     {
         int excess = 0;
         int intAmount = Mathf.RoundToInt(amount);
-        this.PP[move] += intAmount;
-        if (this.PP[move] > this.maxPP[move])
+        PP[move] += intAmount;
+        if (PP[move] > maxPP[move])
         {
-            excess = this.PP[move] - this.maxPP[move];
-            this.PP[move] = this.maxPP[move];
+            excess = PP[move] - maxPP[move];
+            PP[move] = maxPP[move];
         }
         return intAmount - excess;
     }
 
     public void healStatus()
     {
-        status = Status.NONE;
+        status = PokemonStatus.NONE;
     }
 
     public void removeHP(float amount)
     {
         int intAmount = Mathf.RoundToInt(amount);
-        this.currentHP -= intAmount;
-        if (this.currentHP <= 0)
-        {
-            this.currentHP = 0;
-            this.status = Status.FAINTED;
-        }
+        // ToDo: Update modifers.
+        //currentHP -= intAmount;
+        //if (currentHP <= 0)
+        //{
+        //    currentHP = 0;
+        //    status = PokemonStatus.FAINTED;
+        //}
     }
 
 
@@ -978,21 +970,21 @@ public class Pokemon
         if (move >= 0)
         {
             int intAmount = Mathf.RoundToInt(amount);
-            this.PP[move] -= intAmount;
-            if (this.PP[move] < 0)
+            PP[move] -= intAmount;
+            if (PP[move] < 0)
             {
-                this.PP[move] = 0;
+                PP[move] = 0;
             }
         }
     }
 
 
-    public bool setStatus(Status status)
+    public bool setStatus(PokemonStatus pStatus)
     {
-        if (this.status == Status.NONE)
+        if (status == PokemonStatus.NONE)
         {
-            this.status = status;
-            if (status == Status.ASLEEP)
+            status = pStatus;
+            if (pStatus == PokemonStatus.ASLEEP)
             {
                 //if applying sleep, set sleeping 
                 sleepTurns = Random.Range(1, 4);
@@ -1001,9 +993,9 @@ public class Pokemon
         }
         else
         {
-            if (status == Status.NONE || status == Status.FAINTED)
+            if (pStatus == PokemonStatus.NONE || pStatus == PokemonStatus.FAINTED)
             {
-                this.status = status;
+                status = pStatus;
                 sleepTurns = 0;
                 return true;
             }
@@ -1014,12 +1006,12 @@ public class Pokemon
 
     public void removeSleepTurn()
     {
-        if (status == Status.ASLEEP)
+        if (status == PokemonStatus.ASLEEP)
         {
             sleepTurns -= 1;
             if (sleepTurns <= 0)
             {
-                setStatus(Status.NONE);
+                setStatus(PokemonStatus.NONE);
             }
         }
     }
@@ -1080,14 +1072,14 @@ public class Pokemon
         }
     }
 
-    public Gender getGender()
+    public PokemonGender getGender()
     {
         return gender;
     }
 
     public int getLevel()
     {
-        return level;
+        return _currentLevel;
     }
 
     public int getExp()
@@ -1120,7 +1112,7 @@ public class Pokemon
         return isShiny;
     }
 
-    public Status getStatus()
+    public PokemonStatus getStatus()
     {
         return status;
     }
@@ -1282,49 +1274,14 @@ public class Pokemon
         return EV_SPE;
     }
 
-    public string getNature()
+    public PokemonNature getNature()
     {
-        return nature;
-    }
-
-    public int getHP()
-    {
-        return HP;
-    }
-
-    public int getCurrentHP()
-    {
-        return currentHP;
+        return _nature;
     }
 
     public float getPercentHP()
     {
-        return 1f - (((float)HP - (float)currentHP) / (float)HP);
-    }
-
-    public int getATK()
-    {
-        return ATK;
-    }
-
-    public int getDEF()
-    {
-        return DEF;
-    }
-
-    public int getSPA()
-    {
-        return SPA;
-    }
-
-    public int getSPD()
-    {
-        return SPD;
-    }
-
-    public int getSPE()
-    {
-        return SPE;
+        return (float)GetCurrentStatValue(PokemonStatType.HP) / GetCurrentLevelStatValue(PokemonStatType.HP);
     }
 
     public int getAbility()
@@ -1361,8 +1318,8 @@ public class Pokemon
     public void swapMoves(int target1, int target2)
     {
         string temp = moveset[target1];
-        this.moveset[target1] = moveset[target2];
-        this.moveset[target2] = temp;
+        moveset[target1] = moveset[target2];
+        moveset[target2] = temp;
     }
 
 
@@ -1561,21 +1518,21 @@ public class Pokemon
     }
 
 
-    public static Sprite[] GetFrontAnimFromID_(int ID, Gender gender, bool isShiny)
+    public static Sprite[] GetFrontAnimFromID_(int ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID_("PokemonSprites", ID, gender, isShiny);
     }
 
-    public static Sprite[] GetBackAnimFromID_(int ID, Gender gender, bool isShiny)
+    public static Sprite[] GetBackAnimFromID_(int ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID_("PokemonBackSprites", ID, gender, isShiny);
     }
 
-    private static Sprite[] GetAnimFromID_(string folder, int ID, Gender gender, bool isShiny)
+    private static Sprite[] GetAnimFromID_(string folder, int ID, PokemonGender gender, bool isShiny)
     {
         Sprite[] animation;
         string shiny = (isShiny) ? "s" : "";
-        if (gender == Gender.FEMALE)
+        if (gender == PokemonGender.FEMALE)
         {
             //Attempt to load Female Variant
             animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + "f" + shiny + "/");
@@ -1621,7 +1578,7 @@ public class Pokemon
 
     public float GetCryPitch()
     {
-        return (status == Pokemon.Status.FAINTED) ? 0.9f : 1f - (0.06f * (1 - getPercentHP()));
+        return (status == PokemonStatus.FAINTED) ? 0.9f : 1f - (0.06f * (1 - getPercentHP()));
     }
 
     public AudioClip GetCry()
@@ -1656,21 +1613,21 @@ public class Pokemon
     }
 
 
-    public static Texture[] GetFrontAnimFromID(int ID, Gender gender, bool isShiny)
+    public static Texture[] GetFrontAnimFromID(int ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID("PokemonSprites", ID, gender, isShiny);
     }
 
-    public static Texture[] GetBackAnimFromID(int ID, Gender gender, bool isShiny)
+    public static Texture[] GetBackAnimFromID(int ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID("PokemonBackSprites", ID, gender, isShiny);
     }
 
-    private static Texture[] GetAnimFromID(string folder, int ID, Gender gender, bool isShiny)
+    private static Texture[] GetAnimFromID(string folder, int ID, PokemonGender gender, bool isShiny)
     {
         Texture[] animation;
         string shiny = (isShiny) ? "s" : "";
-        if (gender == Gender.FEMALE)
+        if (gender == PokemonGender.FEMALE)
         {
             //Attempt to load Female Variant
             animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + "f" + shiny + "/");

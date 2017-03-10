@@ -100,7 +100,7 @@ public class PartyHandler : MonoBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
-            Pokemon selectedPokemon = SaveData.currentSave.PC.boxes[0][i];
+            OwnedPokemon selectedPokemon = SaveData.currentSave.PC.boxes[0][i];
             if (selectedPokemon == null)
             {
                 slot[i].gameObject.SetActive(false);
@@ -112,12 +112,12 @@ public class PartyHandler : MonoBehaviour
                 icon[i].texture = selectedPokemon.GetIcons();
                 pokemonName[i].text = selectedPokemon.getName();
                 pokemonNameShadow[i].text = pokemonName[i].text;
-                if (selectedPokemon.getGender() == Pokemon.Gender.FEMALE)
+                if (selectedPokemon.getGender() == PokemonGender.FEMALE)
                 {
                     gender[i].text = "♀";
                     gender[i].color = new Color(1, 0.2f, 0.2f, 1);
                 }
-                else if (selectedPokemon.getGender() == Pokemon.Gender.MALE)
+                else if (selectedPokemon.getGender() == PokemonGender.MALE)
                 {
                     gender[i].text = "♂";
                     gender[i].color = new Color(0.2f, 0.4f, 1, 1);
@@ -128,14 +128,14 @@ public class PartyHandler : MonoBehaviour
                 }
                 genderShadow[i].text = gender[i].text;
                 HPBar[i].pixelInset = new Rect(HPBar[i].pixelInset.x, HPBar[i].pixelInset.y,
-                    Mathf.FloorToInt(48f * ((float)selectedPokemon.getCurrentHP() / (float)selectedPokemon.getHP())),
+                    Mathf.FloorToInt(48f * ((float)selectedPokemon.GetCurrentStatValue(PokemonStatType.HP) / (float)selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.HP))),
                     HPBar[i].pixelInset.height);
 
-                if ((float)selectedPokemon.getCurrentHP() < ((float)selectedPokemon.getHP() / 4f))
+                if ((float)selectedPokemon.GetCurrentStatValue(PokemonStatType.HP) < ((float)selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) / 4f))
                 {
                     HPBar[i].color = new Color(1, 0.125f, 0, 1);
                 }
-                else if ((float)selectedPokemon.getCurrentHP() < ((float)selectedPokemon.getHP() / 2f))
+                else if ((float)selectedPokemon.GetCurrentStatValue(PokemonStatType.HP) < ((float)selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) / 2f))
                 {
                     HPBar[i].color = new Color(1, 0.75f, 0, 1);
                 }
@@ -146,11 +146,11 @@ public class PartyHandler : MonoBehaviour
 
                 level[i].text = "" + selectedPokemon.getLevel();
                 levelShadow[i].text = level[i].text;
-                currentHP[i].text = "" + selectedPokemon.getCurrentHP();
+                currentHP[i].text = "" + selectedPokemon.GetCurrentStatValue(PokemonStatType.HP);
                 currentHPShadow[i].text = currentHP[i].text;
-                maxHp[i].text = "" + selectedPokemon.getHP();
+                maxHp[i].text = "" + selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.HP);
                 maxHPShadow[i].text = maxHp[i].text;
-                if (selectedPokemon.getStatus() != Pokemon.Status.NONE)
+                if (selectedPokemon.getStatus() != PokemonStatus.NONE)
                 {
                     status[i].texture =
                         Resources.Load<Texture>("PCSprites/status" + selectedPokemon.getStatus().ToString());
@@ -219,7 +219,7 @@ public class PartyHandler : MonoBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
-            Pokemon selectedPokemon = SaveData.currentSave.PC.boxes[0][i];
+            OwnedPokemon selectedPokemon = SaveData.currentSave.PC.boxes[0][i];
             if (selectedPokemon != null)
             {
                 if (i == swapPosition)
@@ -249,7 +249,7 @@ public class PartyHandler : MonoBehaviour
                 }
                 else
                 {
-                    if (selectedPokemon.getCurrentHP() == 0)
+                    if (selectedPokemon.GetCurrentStatValue(PokemonStatType.HP) == 0)
                     {
                         if (i == 0)
                         {
@@ -573,7 +573,7 @@ public class PartyHandler : MonoBehaviour
                 }
                 else
                 {
-                    Pokemon selectedPokemon = SaveData.currentSave.PC.boxes[0][currentPosition];
+                    OwnedPokemon selectedPokemon = SaveData.currentSave.PC.boxes[0][currentPosition];
                     int chosenIndex = -1;
                     while (chosenIndex != 0)
                     {
