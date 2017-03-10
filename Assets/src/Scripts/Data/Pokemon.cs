@@ -29,32 +29,32 @@ public class Pokemon
     private int pokemonID;
     private string nickname;
 
-    /// <summary>
-    /// Used only for a few pokemon to specify what form is in.
-    /// Default value is 0.
-    /// </summary>
-    /// <example>
-    /// Unown = letter of the alphabet.
-    /// Deoxys = which of the four forms.
-    /// Burmy/Wormadam = cloak type. Does not change for Wormadam.
-    /// Shellos/Gastrodon = west/east alt colours.
-    /// Rotom = different possesed appliance forms.
-    /// Giratina = Origin/Altered form.
-    /// Shaymin = Land/Sky form.
-    /// Arceus = Type.
-    /// Basculin = appearance.
-    /// Deerling/Sawsbuck = appearance.
-    /// Tornadus/Thundurus/Landorus = Incarnate/Therian forms.
-    /// Kyurem = Normal/White/Black forms.
-    /// Keldeo = Ordinary/Resolute forms.
-    /// Meloetta = Aria/Pirouette forms.
-    /// Genesect = different Drives.
-    /// Vivillon = different Patterns.
-    /// Flabebe/Floette/Florges = Flower colour.
-    /// Furfrou = haircut.
-    /// Pumpkaboo/Gourgeist = small/average/large/super sizes. 
-    /// Hoopa = Confined/Unbound forms.
-    /// </example>
+    ///// <summary>
+    ///// Used only for a few pokemon to specify what form is in.
+    ///// Default value is 0.
+    ///// </summary>
+    ///// <example>
+    ///// Unown = letter of the alphabet.
+    ///// Deoxys = which of the four forms.
+    ///// Burmy/Wormadam = cloak type. Does not change for Wormadam.
+    ///// Shellos/Gastrodon = west/east alt colours.
+    ///// Rotom = different possesed appliance forms.
+    ///// Giratina = Origin/Altered form.
+    ///// Shaymin = Land/Sky form.
+    ///// Arceus = Type.
+    ///// Basculin = appearance.
+    ///// Deerling/Sawsbuck = appearance.
+    ///// Tornadus/Thundurus/Landorus = Incarnate/Therian forms.
+    ///// Kyurem = Normal/White/Black forms.
+    ///// Keldeo = Ordinary/Resolute forms.
+    ///// Meloetta = Aria/Pirouette forms.
+    ///// Genesect = different Drives.
+    ///// Vivillon = different Patterns.
+    ///// Flabebe/Floette/Florges = Flower colour.
+    ///// Furfrou = haircut.
+    ///// Pumpkaboo/Gourgeist = small/average/large/super sizes. 
+    ///// Hoopa = Confined/Unbound forms.
+    ///// </example>
     //private int _formId;
 
     private Gender gender;
