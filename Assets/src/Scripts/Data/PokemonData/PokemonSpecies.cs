@@ -1,25 +1,4 @@
-﻿using UnityEngine;
-using System;
-using Random = UnityEngine.Random;
-using System.Collections.Generic;
-
-public enum BodyStyleType
-{
-    HeadOnly,
-    HandAndLegs,
-    WithFins,
-    Insectoid,
-    Quadruped,
-    MultiWinged,
-    MultiBody,
-    Tentacles,
-    HeadAndBase,
-    BipedalWithTail,
-    BipedalTailless,
-    SingleWinged,
-    Serpentine,
-    HeadAndArms,
-}
+﻿using System;
 
 [Serializable]
 public class PokemonSpecies
@@ -65,15 +44,17 @@ public class PokemonSpecies
     public int BaseFriendship { get; set; }
 
     #region Foreign Keys
-    public BodyStyleType BodyStyle { get; set; }
+    public PokemonBodyStyle BodyStyle { get; set; }
 
     public PokemonLevelingRateType LevelingRate { get; set; }
 
-    public object BattleReward { get; set; }
+    public PokemonBattleReward BattleReward { get; set; }
     #endregion
 
     #region External tables
     public PokemonStatList Stats { get; set; }
+
+    // Types
 
     // Ability ?
 
