@@ -1,9 +1,8 @@
 ﻿//Original Scripts by IIColour (IIColour_Spectrum)
 
-using UnityEngine;
 using System;
+using UnityEngine;
 using Random = UnityEngine.Random;
-using System.Collections.Generic;
 
 public enum PokemonStatus
 {
@@ -27,38 +26,15 @@ public enum PokemonGender
 [Serializable]
 public class OwnedPokemon
 {
-    private int pokemonID;
-    private string nickname;
+    public const int MAX_SUMMED_EV = 510;
+    private const int MAX_EV = 252;
+    private PokemonSpecies Species;
 
-    ///// <summary>
-    ///// Used only for a few pokemon to specify what form is in.
-    ///// Default value is 0.
-    ///// </summary>
-    ///// <example>
-    ///// Unown = letter of the alphabet.
-    ///// Deoxys = which of the four forms.
-    ///// Burmy/Wormadam = cloak type. Does not change for Wormadam.
-    ///// Shellos/Gastrodon = west/east alt colours.
-    ///// Rotom = different possesed appliance forms.
-    ///// Giratina = Origin/Altered form.
-    ///// Shaymin = Land/Sky form.
-    ///// Arceus = Type.
-    ///// Basculin = appearance.
-    ///// Deerling/Sawsbuck = appearance.
-    ///// Tornadus/Thundurus/Landorus = Incarnate/Therian forms.
-    ///// Kyurem = Normal/White/Black forms.
-    ///// Keldeo = Ordinary/Resolute forms.
-    ///// Meloetta = Aria/Pirouette forms.
-    ///// Genesect = different Drives.
-    ///// Vivillon = different Patterns.
-    ///// Flabebe/Floette/Florges = Flower colour.
-    ///// Furfrou = haircut.
-    ///// Pumpkaboo/Gourgeist = small/average/large/super sizes. 
-    ///// Hoopa = Confined/Unbound forms.
-    ///// </example>
-    //private int _formId;
+    private string _nickname;
 
-    private PokemonGender gender;
+    private PokemonGender _gender;
+
+    // ToDo: merge these 3 fields.
     private int _currentLevel;
     private int exp;
     private int nextLevelExp;
@@ -66,13 +42,17 @@ public class OwnedPokemon
     private int friendship;
 
     private bool pokerus;
+
     private int rareValue;
+
     private bool isShiny;
 
     private PokemonStatus status;
+
     private int sleepTurns;
 
     private string caughtBall;
+
     private string heldItem;
 
     private string metDate;
@@ -83,78 +63,84 @@ public class OwnedPokemon
     private string OT;
     private int IDno;
 
-    private int IV_HP;
-    private int IV_ATK;
-    private int IV_DEF;
-    private int IV_SPA;
-    private int IV_SPD;
-    private int IV_SPE;
-
-    private int EV_HP;
-    private int EV_ATK;
-    private int EV_DEF;
-    private int EV_SPA;
-    private int EV_SPD;
-    private int EV_SPE;
-
     private PokemonNature _nature;
 
-    private PokemonStatList _stats;
-
-    private int ability; //(0/1/2(hiddenability)) if higher than number of abilites, rounds down to nearest ability.
+    private int _currentAbility; //(0/1/2(hiddenability)) if higher than number of abilites, rounds down to nearest ability.
     // if is 2, but pokemon only has 1 ability and no hidden, will use the one ability it does have.
 
-    private string[] moveset;
-    private string[] moveHistory;
+    private string[] _currentMoveset;
+    private string[] _moveHistory;
     private int[] PPups;
     private int[] maxPP;
     private int[] PP;
 
 
     #region Constructors
-    public OwnedPokemon()
-    {
-        _stats = new PokemonStatList();
-        _stats.Add(new PokemonStat(PokemonStatType.HP, 1));
-        _stats.Add(new PokemonStat(PokemonStatType.Attack, 1));
-        _stats.Add(new PokemonStat(PokemonStatType.Defence, 1));
-        _stats.Add(new PokemonStat(PokemonStatType.SpecialAttack, 1));
-        _stats.Add(new PokemonStat(PokemonStatType.SpecialDefence, 1));
-        _stats.Add(new PokemonStat(PokemonStatType.Speed, 1));
+    public OwnedPokemon() : this(-1) { }
 
-        _stats.Add(new PokemonStat(PokemonStatType.Accuracy, 100));
-        _stats.Add(new PokemonStat(PokemonStatType.Evasion, 100));
+    public OwnedPokemon(int pPokemonID)
+    {
+        // ToDo: Find in Database.
+        //Species = 
+
+        Species.Stats = new PokemonStatList();
     }
 
-    //New Pokemon with: every specific detail
+    /// <summary>
+    /// New Pokemon with: every specific detail.
+    /// </summary>
+    /// <param name="pPokemonID"></param>
+    /// <param name="pNickname"></param>
+    /// <param name="pGender"></param>
+    /// <param name="pLevel"></param>
+    /// <param name="pIsShiny"></param>
+    /// <param name="pCaughtBall"></param>
+    /// <param name="pHeldItem"></param>
+    /// <param name="pOT"></param>
+    /// <param name="pIV_HP"></param>
+    /// <param name="pIV_ATK"></param>
+    /// <param name="pIV_DEF"></param>
+    /// <param name="pIV_SPA"></param>
+    /// <param name="pIV_SPD"></param>
+    /// <param name="pIV_SPE"></param>
+    /// <param name="pEV_HP"></param>
+    /// <param name="pEV_ATK"></param>
+    /// <param name="pEV_DEF"></param>
+    /// <param name="pEV_SPA"></param>
+    /// <param name="pEV_SPD"></param>
+    /// <param name="pEV_SPE"></param>
+    /// <param name="pNature"></param>
+    /// <param name="pAbility"></param>
+    /// <param name="pMoveset"></param>
+    /// <param name="pPPups"></param>
     public OwnedPokemon(int pPokemonID, string pNickname, PokemonGender pGender, int pLevel,
         bool pIsShiny, string pCaughtBall, string pHeldItem, string pOT,
         int pIV_HP, int pIV_ATK, int pIV_DEF, int pIV_SPA, int pIV_SPD, int pIV_SPE,
         int pEV_HP, int pEV_ATK, int pEV_DEF, int pEV_SPA, int pEV_SPD, int pEV_SPE,
         PokemonNature pNature, int pAbility, string[] pMoveset, int[] pPPups)
-        : this()
+        : this(pPokemonID)
     {
         PokemonData thisPokemonData = PokemonDatabase.getPokemon(pPokemonID);
 
-        pokemonID = pPokemonID;
-        nickname = pNickname;
+        Species.GameId = pPokemonID;
+        _nickname = pNickname;
         //SET UP FORMS LATER #####################################################################################
         //_formId = 0;
-        gender = pGender;
+        _gender = pGender;
         //if gender is CALCULATE, then calculate gender using maleRatio
         if (pGender == PokemonGender.CALCULATE)
         {
             if (thisPokemonData.getMaleRatio() < 0)
             {
-                gender = PokemonGender.NONE;
+                _gender = PokemonGender.NONE;
             }
             else if (Random.Range(0f, 100f) <= thisPokemonData.getMaleRatio())
             {
-                gender = PokemonGender.MALE;
+                _gender = PokemonGender.MALE;
             }
             else
             {
-                gender = PokemonGender.FEMALE;
+                _gender = PokemonGender.FEMALE;
             }
         }
         _currentLevel = pLevel;
@@ -208,31 +194,31 @@ public class OwnedPokemon
         {
             metMap = "Somewhere";
         }
-        metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
+        metDate = DateTime.Today.Day + "/" + DateTime.Today.Month + "/" + DateTime.Today.Year;
 
-        //Set IVs 
-        IV_HP = pIV_HP;
-        IV_ATK = pIV_ATK;
-        IV_DEF = pIV_DEF;
-        IV_SPA = pIV_SPA;
-        IV_SPD = pIV_SPD;
-        IV_SPE = pIV_SPE;
-        //set EVs
-        EV_HP = pEV_HP;
-        EV_ATK = pEV_ATK;
-        EV_DEF = pEV_DEF;
-        EV_SPA = pEV_SPA;
-        EV_SPD = pEV_SPD;
-        EV_SPE = pEV_SPE;
+        // IVs.
+        Species.Stats[PokemonStatType.HP].IV = pIV_HP;
+        Species.Stats[PokemonStatType.Attack].IV = pIV_ATK;
+        Species.Stats[PokemonStatType.Defence].IV = pIV_DEF;
+        Species.Stats[PokemonStatType.SpecialAttack].IV = pIV_SPA;
+        Species.Stats[PokemonStatType.SpecialDefence].IV = pIV_SPD;
+        Species.Stats[PokemonStatType.Speed].IV = pIV_SPE;
+
+        // EVs.
+        Species.Stats[PokemonStatType.HP].EV = pEV_HP;
+        Species.Stats[PokemonStatType.Attack].EV = pEV_ATK;
+        Species.Stats[PokemonStatType.Defence].EV = pEV_DEF;
+        Species.Stats[PokemonStatType.SpecialAttack].EV = pEV_SPA;
+        Species.Stats[PokemonStatType.SpecialDefence].EV = pEV_SPD;
+        Species.Stats[PokemonStatType.Speed].EV = pEV_SPE;
+
         //set nature
         _nature = pNature;
-        //calculate stats
-        calculateStats();
 
-        ability = pAbility;
+        _currentAbility = pAbility;
 
-        moveset = pMoveset;
-        moveHistory = pMoveset;
+        _currentMoveset = pMoveset;
+        _moveHistory = pMoveset;
 
         PPups = pPPups;
         //set maxPP and PP to be the regular PP defined by the move in the database.
@@ -249,34 +235,41 @@ public class OwnedPokemon
         packMoveset();
     }
 
-
-    //New Pokemon with: random IVS, and Shininess 
-    //					default moveset, and EVS (0)
+    /// <summary>
+    /// New Pokemon with: random IVS, Shininess, default moveset, and EVS (0)
+    /// </summary>
+    /// <param name="pPokemonID"></param>
+    /// <param name="pGender"></param>
+    /// <param name="pLevel"></param>
+    /// <param name="pCaughtBall"></param>
+    /// <param name="pHeldItem"></param>
+    /// <param name="pOT"></param>
+    /// <param name="pAbility"></param>
     public OwnedPokemon(int pPokemonID, PokemonGender pGender, int pLevel, string pCaughtBall, string pHeldItem, string pOT, int pAbility)
-        : this()
+        : this(pPokemonID)
     {
         PokemonData thisPokemonData = PokemonDatabase.getPokemon(pPokemonID);
 
-        pokemonID = pPokemonID;
+        Species.GameId = pPokemonID;
 
         //SET UP FORMS LATER #####################################################################################
         //_formId = 0;
 
-        gender = pGender;
+        _gender = pGender;
         //if gender is CALCULATE, then calculate gender using maleRatio
         if (pGender == PokemonGender.CALCULATE)
         {
             if (thisPokemonData.getMaleRatio() < 0)
             {
-                gender = PokemonGender.NONE;
+                _gender = PokemonGender.NONE;
             }
             else if (Random.Range(0f, 100f) <= thisPokemonData.getMaleRatio())
             {
-                gender = PokemonGender.MALE;
+                _gender = PokemonGender.MALE;
             }
             else
             {
-                gender = PokemonGender.FEMALE;
+                _gender = PokemonGender.FEMALE;
             }
         }
 
@@ -320,7 +313,7 @@ public class OwnedPokemon
         {
             metMap = "Somewhere";
         }
-        metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
+        metDate = DateTime.Today.Day + "/" + DateTime.Today.Month + "/" + DateTime.Today.Year;
 
         OT = (string.IsNullOrEmpty(pOT)) ? SaveData.currentSave.playerName : pOT;
         if (OT != SaveData.currentSave.playerName)
@@ -332,42 +325,25 @@ public class OwnedPokemon
             IDno = SaveData.currentSave.playerID;
         }
 
-        //Set IVs randomly between 0 and 32 (32 is exlcuded)
-        IV_HP = Random.Range(0, 32);
-        IV_ATK = Random.Range(0, 32);
-        IV_DEF = Random.Range(0, 32);
-        IV_SPA = Random.Range(0, 32);
-        IV_SPD = Random.Range(0, 32);
-        IV_SPE = Random.Range(0, 32);
-
-        //unless specified with a full new Pokemon constructor, set EVs to 0.
-        EV_HP = 0;
-        EV_ATK = 0;
-        EV_DEF = 0;
-        EV_SPA = 0;
-        EV_SPD = 0;
-        EV_SPE = 0;
+        setNewPokemonIVsAndEVs();
 
         //Randomize nature
         _nature = PokemonNatureHelper.GetRandomNature();
-
-        //calculate stats
-        calculateStats();
 
         //set ability 
         if (pAbility < 0 || pAbility > 2)
         {
             //if ability out of range, randomize ability
-            ability = Random.Range(0, 2);
+            _currentAbility = Random.Range(0, 2);
         }
         else
         {
-            ability = pAbility;
+            _currentAbility = pAbility;
         }
 
         //Set moveset based off of the highest level moves possible.
-        moveset = thisPokemonData.GenerateMoveset(_currentLevel);
-        moveHistory = moveset;
+        _currentMoveset = thisPokemonData.GenerateMoveset(_currentLevel);
+        _moveHistory = _currentMoveset;
 
         //set maxPP and PP to be the regular PP defined by the move in the database.
         PPups = new int[4];
@@ -375,26 +351,31 @@ public class OwnedPokemon
         PP = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(moveset[i]))
+            if (!string.IsNullOrEmpty(_currentMoveset[i]))
             {
-                maxPP[i] = MoveDatabase.getMove(moveset[i]).getPP();
+                maxPP[i] = MoveDatabase.getMove(_currentMoveset[i]).getPP();
                 PP[i] = maxPP[i];
             }
         }
         packMoveset();
     }
 
-    //adding a caught pokemon (only a few customizable details)
+    /// <summary>
+    /// Adding a caught pokemon (only a few customizable details)
+    /// </summary>
+    /// <param name="pPokemon"></param>
+    /// <param name="pNickname"></param>
+    /// <param name="pCaughtBall"></param>
     public OwnedPokemon(OwnedPokemon pPokemon, string pNickname, string pCaughtBall)
-        : this()
+        : this(pPokemon.getID())
     {
-        //PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemon.pokemonID);
+        //PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemon.Species.Id);
 
-        pokemonID = pPokemon.pokemonID;
-        nickname = pNickname;
+        Species.GameId = pPokemon.Species.GameId;
+        _nickname = pNickname;
         //SET UP FORMS LATER #####################################################################################
         //_formId = 0;
-        gender = pPokemon.gender;
+        _gender = pPokemon._gender;
 
         _currentLevel = pPokemon._currentLevel;
         //Find exp for current level, and next level.
@@ -423,31 +404,33 @@ public class OwnedPokemon
         {
             metMap = "Somewhere";
         }
-        metDate = System.DateTime.Today.Day + "/" + System.DateTime.Today.Month + "/" + System.DateTime.Today.Year;
+        metDate = DateTime.Today.Day + "/" + DateTime.Today.Month + "/" + DateTime.Today.Year;
 
-        //Set IVs 
-        IV_HP = pPokemon.IV_HP;
-        IV_ATK = pPokemon.IV_ATK;
-        IV_DEF = pPokemon.IV_DEF;
-        IV_SPA = pPokemon.IV_SPA;
-        IV_SPD = pPokemon.IV_SPD;
-        IV_SPE = pPokemon.IV_SPE;
-        //set EVs
-        EV_HP = pPokemon.EV_HP;
-        EV_ATK = pPokemon.EV_ATK;
-        EV_DEF = pPokemon.EV_DEF;
-        EV_SPA = pPokemon.EV_SPA;
-        EV_SPD = pPokemon.EV_SPD;
-        EV_SPE = pPokemon.EV_SPE;
+        // IVs.
+        Species.Stats[PokemonStatType.HP].IV = pPokemon.GetIV(PokemonStatType.HP);
+        Species.Stats[PokemonStatType.Attack].IV = pPokemon.GetIV(PokemonStatType.Attack);
+        Species.Stats[PokemonStatType.Defence].IV = pPokemon.GetIV(PokemonStatType.Defence);
+        Species.Stats[PokemonStatType.SpecialAttack].IV = pPokemon.GetIV(PokemonStatType.SpecialAttack);
+        Species.Stats[PokemonStatType.SpecialDefence].IV = pPokemon.GetIV(PokemonStatType.SpecialDefence);
+        Species.Stats[PokemonStatType.Speed].IV = pPokemon.GetIV(PokemonStatType.Speed);
+
+        // EVs.
+        Species.Stats[PokemonStatType.HP].EV = pPokemon.GetEV(PokemonStatType.HP);
+        Species.Stats[PokemonStatType.Attack].EV = pPokemon.GetEV(PokemonStatType.Attack);
+        Species.Stats[PokemonStatType.Defence].EV = pPokemon.GetEV(PokemonStatType.Defence);
+        Species.Stats[PokemonStatType.SpecialAttack].EV = pPokemon.GetEV(PokemonStatType.SpecialAttack);
+        Species.Stats[PokemonStatType.SpecialDefence].EV = pPokemon.GetEV(PokemonStatType.SpecialDefence);
+        Species.Stats[PokemonStatType.Speed].EV = pPokemon.GetEV(PokemonStatType.Speed);
+
         //set nature
         _nature = pPokemon._nature;
 
-        _stats = pPokemon._stats;
+        Species.Stats = pPokemon.Species.Stats;
 
-        ability = pPokemon.ability;
+        _currentAbility = pPokemon._currentAbility;
 
-        moveset = pPokemon.moveset;
-        moveHistory = pPokemon.moveHistory;
+        _currentMoveset = pPokemon._currentMoveset;
+        _moveHistory = pPokemon._moveHistory;
 
         PPups = pPokemon.PPups;
         //set maxPP and PP to be the regular PP defined by the move in the database.
@@ -455,9 +438,9 @@ public class OwnedPokemon
         PP = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(moveset[i]))
+            if (!string.IsNullOrEmpty(_currentMoveset[i]))
             {
-                maxPP[i] = Mathf.FloorToInt(MoveDatabase.getMove(moveset[i]).getPP() * ((PPups[i] * 0.2f) + 1));
+                maxPP[i] = Mathf.FloorToInt(MoveDatabase.getMove(_currentMoveset[i]).getPP() * ((PPups[i] * 0.2f) + 1));
                 PP[i] = maxPP[i];
             }
         }
@@ -465,23 +448,39 @@ public class OwnedPokemon
     }
     #endregion
 
+    private void setNewPokemonIVsAndEVs()
+    {
+        // IVs.
+        Species.Stats[PokemonStatType.HP].IV = Random.Range(0, 32);
+        Species.Stats[PokemonStatType.Attack].IV = Random.Range(0, 32);
+        Species.Stats[PokemonStatType.Defence].IV = Random.Range(0, 32);
+        Species.Stats[PokemonStatType.SpecialAttack].IV = Random.Range(0, 32);
+        Species.Stats[PokemonStatType.SpecialDefence].IV = Random.Range(0, 32);
+        Species.Stats[PokemonStatType.Speed].IV = Random.Range(0, 32);
+
+        // EVs.
+        Species.Stats[PokemonStatType.HP].EV = 0;
+        Species.Stats[PokemonStatType.Attack].EV = 0;
+        Species.Stats[PokemonStatType.Defence].EV = 0;
+        Species.Stats[PokemonStatType.SpecialAttack].EV = 0;
+        Species.Stats[PokemonStatType.SpecialDefence].EV = 0;
+        Species.Stats[PokemonStatType.Speed].EV = 0;
+    }
+
     public int GetCurrentLevelStatValue(PokemonStatType pStatType)
     {
-        return _stats[pStatType].GetCurrentLevelValue(_currentLevel, _nature);
+        return Species.Stats[pStatType].GetCurrentLevelValue(_currentLevel, _nature);
     }
 
     public int GetCurrentStatValue(PokemonStatType pStatType)
     {
-        return _stats[pStatType].GetCurrentValue(_currentLevel, _nature);
+        return Species.Stats[pStatType].GetCurrentValue(_currentLevel, _nature);
     }
-
-    //Recalculate the pokemon's Stats.
-    public void calculateStats() { }
 
     //set Nickname
     public void setNickname(string pNickname)
     {
-        nickname = pNickname;
+        _nickname = pNickname;
     }
 
     public string swapHeldItem(string newItem)
@@ -498,126 +497,85 @@ public class OwnedPokemon
             exp += expAdded;
             while (exp >= nextLevelExp)
             {
+                int currentBaseHP = GetCurrentLevelStatValue(PokemonStatType.HP);
+
                 _currentLevel += 1;
                 nextLevelExp = PokemonDatabase.getLevelExp(
-                    PokemonDatabase.getPokemon(pokemonID).getLevelingRate(), _currentLevel + 1);
+                    PokemonDatabase.getPokemon(Species.GameId).getLevelingRate(), _currentLevel + 1);
 
-                // ToDo: Update current HP !
-                //if (HP > 0 && status == PokemonStatus.FAINTED)
-                //    status = PokemonStatus.NONE;
+                // We heal the amount of gained HP by leveling.
+                Species.Stats[PokemonStatType.HP].SetCurrentHP(currentBaseHP - GetCurrentLevelStatValue(PokemonStatType.HP));
+
+                // We remove the death flag if needed.
+                if (status == PokemonStatus.FAINTED
+                    && GetCurrentStatValue(PokemonStatType.HP) > 0)
+                    status = PokemonStatus.NONE;
             }
         }
     }
 
-    public bool addEVs(string stat, float amount)
+    public bool TryAddEV(PokemonStatType pStatType, int pAmount)
     {
-        int intAmount = Mathf.FloorToInt(amount);
-        int evTotal = EV_HP + EV_ATK + EV_DEF + EV_SPA + EV_SPD + EV_SPE;
-        if (evTotal < 510)
+        int hpEV = GetEV(PokemonStatType.HP);
+        int atkEV = GetEV(PokemonStatType.Attack);
+        int defEV = GetEV(PokemonStatType.Defence);
+        int sAtkEV = GetEV(PokemonStatType.SpecialAttack);
+        int sDefEV = GetEV(PokemonStatType.SpecialDefence);
+        int spdEV = GetEV(PokemonStatType.Speed);
+
+        int currentEV = 0;
+        switch (pStatType)
         {
-            //if total EV cap is already reached.
-            if (evTotal + intAmount > 510)
-            {
-                //if this addition will pass the total EV cap.
-                intAmount = 510 - evTotal; //set intAmount to be the remaining points before cap is reached.
-            }
-            if (stat == "HP")
-            {
-                //if adding to HP.
-                if (EV_HP < 252)
-                {
-                    //if HP is not full.
-                    EV_HP += intAmount;
-                    if (EV_HP > 252)
-                    {
-                        //if single stat EV cap is passed.
-                        EV_HP = 252;
-                    } //set stat back to the cap.
-                    return true;
-                }
-            }
-            else if (stat == "ATK")
-            {
-                //if adding to ATK.
-                if (EV_ATK < 252)
-                {
-                    //if ATK is not full.
-                    EV_ATK += intAmount;
-                    if (EV_ATK > 252)
-                    {
-                        //if single stat EV cap is passed.
-                        EV_ATK = 252;
-                    } //set stat back to the cap.
-                    return true;
-                }
-            }
-            else if (stat == "DEF")
-            {
-                //if adding to DEF.
-                if (EV_DEF < 252)
-                {
-                    //if DEF is not full.
-                    EV_DEF += intAmount;
-                    if (EV_DEF > 252)
-                    {
-                        //if single stat EV cap is passed.
-                        EV_DEF = 252;
-                    } //set stat back to the cap.
-                    return true;
-                }
-            }
-            else if (stat == "SPA")
-            {
-                //if adding to SPA.
-                if (EV_SPA < 252)
-                {
-                    //if SPA is not full.
-                    EV_SPA += intAmount;
-                    if (EV_SPA > 252)
-                    {
-                        //if single stat EV cap is passed.
-                        EV_SPA = 252;
-                    } //set stat back to the cap.
-                    return true;
-                }
-            }
-            else if (stat == "SPD")
-            {
-                //if adding to SPD.
-                if (EV_SPD < 252)
-                {
-                    //if SPD is not full.
-                    EV_SPD += intAmount;
-                    if (EV_SPD > 252)
-                    {
-                        //if single stat EV cap is passed.
-                        EV_SPD = 252;
-                    } //set stat back to the cap.
-                    return true;
-                }
-            }
-            else if (stat == "SPE")
-            {
-                //if adding to SPE.
-                if (EV_SPE < 252)
-                {
-                    //if SPE is not full.
-                    EV_SPE += intAmount;
-                    if (EV_SPE > 252)
-                    {
-                        //if single stat EV cap is passed.
-                        EV_SPE = 252;
-                    } //set stat back to the cap.
-                    return true;
-                }
-            }
+            case PokemonStatType.HP:
+                currentEV = hpEV;
+                break;
+            case PokemonStatType.Attack:
+                currentEV = atkEV;
+                break;
+            case PokemonStatType.Defence:
+                currentEV = defEV;
+                break;
+            case PokemonStatType.Speed:
+                currentEV = sAtkEV;
+                break;
+            case PokemonStatType.SpecialAttack:
+                currentEV = sDefEV;
+                break;
+            case PokemonStatType.SpecialDefence:
+                currentEV = spdEV;
+                break;
+
+            default:
+                // Non EV stat.
+                return false;
         }
-        return false; //returns false if total or relevant EV cap was reached before running.
+
+        int evTotal = hpEV + atkEV + defEV + sAtkEV + sDefEV + spdEV;
+
+        if (evTotal >= MAX_SUMMED_EV
+            || currentEV >= MAX_EV)
+            // EV cap reached.
+            return false;
+
+        // We check if we will pass the max total amount.
+        if (evTotal + pAmount > MAX_SUMMED_EV)
+            // If we do, we clamp.
+            pAmount = MAX_SUMMED_EV - evTotal;
+
+        // We check if we will pass the max single amount.
+        if (currentEV + pAmount > MAX_EV)
+            // If we do, we clamp.
+            pAmount = MAX_EV - currentEV;
+
+        // We add the EV.
+        Species.Stats[pStatType].EV += pAmount;
+
+        return true;
     }
 
     /*/
         public int getEvolutionID(string currentMethod){
-            PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemonID);
+            PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.Id);
             int[] evolutions = thisPokemonData.getEvolutions();
             string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
             string[] evolutionRequirementsSplit = new string[evolutionRequirements.Length];
@@ -646,7 +604,7 @@ public class OwnedPokemon
 
     public int getEvolutionID(string currentMethod)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemonID);
+        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
         int[] evolutions = thisPokemonData.getEvolutions();
         string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
 
@@ -665,7 +623,7 @@ public class OwnedPokemon
     //Check PokemonData.cs for list of evolution method names.
     public bool canEvolve(string currentMethod)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemonID);
+        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
         int[] evolutions = thisPokemonData.getEvolutions();
         string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
 
@@ -764,7 +722,7 @@ public class OwnedPokemon
             else if (methods[i] == "Gender")
             {
                 //if method contains a Gender requirement
-                if (gender.ToString() != parameters[i])
+                if (_gender.ToString() != parameters[i])
                 {
                     //and pokemon's gender is not the required gender to evolve,
                     return false; //cannot evolve. return false and stop checking.
@@ -793,7 +751,7 @@ public class OwnedPokemon
             {
                 //if method contains a Time requirement
                 string dayNight = "Day";
-                if (System.DateTime.Now.Hour >= 21 || System.DateTime.Now.Hour < 4)
+                if (DateTime.Now.Hour >= 21 || DateTime.Now.Hour < 4)
                 {
                     //if time is night time
                     dayNight = "Night"; //set dayNight to be "Night"
@@ -816,19 +774,21 @@ public class OwnedPokemon
 
     public bool evolve(string currentMethod)
     {
-        int[] evolutions = PokemonDatabase.getPokemon(pokemonID).getEvolutions();
-        string[] evolutionRequirements = PokemonDatabase.getPokemon(pokemonID).getEvolutionRequirements();
+        int[] evolutions = PokemonDatabase.getPokemon(Species.GameId).getEvolutions();
+        string[] evolutionRequirements = PokemonDatabase.getPokemon(Species.GameId).getEvolutionRequirements();
         for (int i = 0; i < evolutions.Length; i++)
         {
             if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
             {
+                // ToDo: Handle evolution.
+                // We want to keep the same HP rate before and after evolution.
                 int currentHP = GetCurrentStatValue(PokemonStatType.HP);
                 int maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
                 float hpPercent = (float)currentHP / maxHP;
-                pokemonID = evolutions[i];
-                calculateStats();
-                i = evolutions.Length;
-                // ToDo: Update modifier instead
+
+                Species.GameId = evolutions[i];
+
+                maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
                 currentHP = Mathf.RoundToInt(maxHP * hpPercent);
 
                 return true;
@@ -841,10 +801,10 @@ public class OwnedPokemon
     public override string ToString()
     {
         string result = string.Format("{0}: {1}({2}), {3}, Level {4}, EXP: {5}, To next: {6}, Friendship: {7}, RareValue={8}, Pokerus={9}, Shiny={10}, Status: {11}, Ball: {12}, Item: {13}, met at Level {14} on {15} at {16}, OT: {17}, IVs: {18}, {19}, {20}, {21}, {22}, {23}, EVs: {24}, {25}, {26}, {27}, {28}, {29}, Stats: {30}/{31}, {32}, {33}, {34}, {35}, {36}, Nature: {37}, Ability: {38}",
-            pokemonID,
+            Species.GameId,
             getName(),
-            PokemonDatabase.getPokemon(pokemonID).getName(),
-            gender.ToString(),
+            PokemonDatabase.getPokemon(Species.GameId).getName(),
+            _gender.ToString(),
             _currentLevel,
             exp,
             (nextLevelExp - exp),
@@ -860,18 +820,18 @@ public class OwnedPokemon
             metMap,
             OT,
             IDno,
-            _stats[PokemonStatType.HP].IV,
-            _stats[PokemonStatType.Attack].IV,
-            _stats[PokemonStatType.Defence].IV,
-            _stats[PokemonStatType.SpecialAttack].IV,
-            _stats[PokemonStatType.SpecialDefence].IV,
-            _stats[PokemonStatType.Speed].IV,
-            _stats[PokemonStatType.HP].EV,
-            _stats[PokemonStatType.Attack].EV,
-            _stats[PokemonStatType.Defence].EV,
-            _stats[PokemonStatType.SpecialAttack].EV,
-            _stats[PokemonStatType.SpecialDefence].EV,
-            _stats[PokemonStatType.Speed].EV,
+            Species.Stats[PokemonStatType.HP].IV,
+            Species.Stats[PokemonStatType.Attack].IV,
+            Species.Stats[PokemonStatType.Defence].IV,
+            Species.Stats[PokemonStatType.SpecialAttack].IV,
+            Species.Stats[PokemonStatType.SpecialDefence].IV,
+            Species.Stats[PokemonStatType.Speed].IV,
+            Species.Stats[PokemonStatType.HP].EV,
+            Species.Stats[PokemonStatType.Attack].EV,
+            Species.Stats[PokemonStatType.Defence].EV,
+            Species.Stats[PokemonStatType.SpecialAttack].EV,
+            Species.Stats[PokemonStatType.SpecialDefence].EV,
+            Species.Stats[PokemonStatType.Speed].EV,
             GetCurrentStatValue(PokemonStatType.HP),
             GetCurrentLevelStatValue(PokemonStatType.HP),
             GetCurrentLevelStatValue(PokemonStatType.Attack),
@@ -880,14 +840,14 @@ public class OwnedPokemon
             GetCurrentLevelStatValue(PokemonStatType.SpecialDefence),
             GetCurrentLevelStatValue(PokemonStatType.Speed),
             _nature,
-            PokemonDatabase.getPokemon(pokemonID).getAbility(ability));
+            PokemonDatabase.getPokemon(Species.GameId).getAbility(_currentAbility));
 
         result += ", [";
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(moveset[i]))
+            if (!string.IsNullOrEmpty(_currentMoveset[i]))
             {
-                result += moveset[i] + ": " + PP[i] + "/" + maxPP[i] + ", ";
+                result += _currentMoveset[i] + ": " + PP[i] + "/" + maxPP[i] + ", ";
             }
         }
         result = result.Remove(result.Length - 2, 2);
@@ -899,8 +859,10 @@ public class OwnedPokemon
     //Heal the pokemon
     public void healFull()
     {
-        // ToDo: Update modifers.
-        //currentHP = HP;
+        var lostHPMod = Species.Stats[PokemonStatType.HP].Modifiers[PokemonStatModifierType.LostHP];
+        if (lostHPMod != null)
+            healHP(lostHPMod.CurrentValue);
+
         PP[0] = maxPP[0];
         PP[1] = maxPP[1];
         PP[2] = maxPP[2];
@@ -908,25 +870,30 @@ public class OwnedPokemon
         status = PokemonStatus.NONE;
     }
 
-    ///returns the excess hp
-    public int healHP(float amount)
+    /// <summary>
+    /// </summary>
+    /// <param name="pAmount"></param>
+    /// <returns>Returns the actually healed HP.</returns>
+    public int healHP(int pAmount)
     {
-        int excess = 0;
-        int intAmount = Mathf.RoundToInt(amount);
+        // We use absolute value first to ease comparisions.
+        pAmount = Mathf.Abs(pAmount);
 
-        // ToDo: Update modifers.
-        //currentHP = HP;
-        //currentHP += intAmount;
-        //if (currentHP > HP)
-        //{
-        //    excess = currentHP - HP;
-        //    currentHP = HP;
-        //}
-        //if (status == PokemonStatus.FAINTED && currentHP > 0)
-        //{
-        //    status = PokemonStatus.NONE;
-        //}
-        return intAmount - excess;
+        int healedHP = 0;
+
+        var lostHPMod = Species.Stats[PokemonStatType.HP].Modifiers[PokemonStatModifierType.LostHP];
+        if (lostHPMod != null)
+        {
+            if (lostHPMod.CurrentValue > pAmount)
+                healedHP = pAmount;
+            else
+                healedHP = lostHPMod.CurrentValue;
+
+            // We don't forget to negate our heal value.
+            Species.Stats[PokemonStatType.HP].SetCurrentHP(-pAmount);
+        }
+
+        return healedHP;
     }
 
     public int healPP(int move, float amount)
@@ -1024,11 +991,11 @@ public class OwnedPokemon
 
     public string getFirstFEInstance(string moveName)
     {
-        for (int i = 0; i < moveset.Length; i++)
+        for (int i = 0; i < _currentMoveset.Length; i++)
         {
-            if (MoveDatabase.getMove(moveset[i]).getFieldEffect() == moveName)
+            if (MoveDatabase.getMove(_currentMoveset[i]).getFieldEffect() == moveName)
             {
-                return moveset[i];
+                return _currentMoveset[i];
             }
         }
         return null;
@@ -1036,12 +1003,12 @@ public class OwnedPokemon
 
     public int getID()
     {
-        return pokemonID;
+        return Species.GameId;
     }
 
     public string getLongID()
     {
-        string result = pokemonID.ToString();
+        string result = Species.GameId.ToString();
         while (result.Length < 3)
         {
             result = "0" + result;
@@ -1062,19 +1029,19 @@ public class OwnedPokemon
     //Get the pokemon's nickname, or regular name if it has none.
     public string getName()
     {
-        if (string.IsNullOrEmpty(nickname))
+        if (string.IsNullOrEmpty(_nickname))
         {
-            return PokemonDatabase.getPokemon(pokemonID).getName();
+            return PokemonDatabase.getPokemon(Species.GameId).getName();
         }
         else
         {
-            return nickname;
+            return _nickname;
         }
     }
 
     public PokemonGender getGender()
     {
-        return gender;
+        return _gender;
     }
 
     public int getLevel()
@@ -1152,126 +1119,65 @@ public class OwnedPokemon
         return IDno;
     }
 
-    public int GetIV(int index)
+    public int GetIV(PokemonStatType pStatType)
     {
-        if (index == 0)
+        switch (pStatType)
         {
-            return IV_HP;
+            case PokemonStatType.HP:
+            case PokemonStatType.Attack:
+            case PokemonStatType.Defence:
+            case PokemonStatType.Speed:
+            case PokemonStatType.SpecialAttack:
+            case PokemonStatType.SpecialDefence:
+                return Species.Stats[pStatType].IV;
+
+            default:
+                return -1;
         }
-        else if (index == 1)
+    }
+
+    public PokemonStatType GetHighestIV()
+    {
+        var highestIV = PokemonStatType.None;
+        int highestValue = -1;
+
+        foreach (var stat in Species.Stats)
         {
-            return IV_ATK;
+            switch (stat.Type)
+            {
+                case PokemonStatType.HP:
+                case PokemonStatType.Attack:
+                case PokemonStatType.Defence:
+                case PokemonStatType.Speed:
+                case PokemonStatType.SpecialAttack:
+                case PokemonStatType.SpecialDefence:
+                    if (stat.IV > highestValue)
+                    {
+                        highestValue = stat.IV;
+                        highestIV = stat.Type;
+                    }
+                    break;
+            }
         }
-        else if (index == 2)
+
+        return highestIV;
+    }
+
+    public int GetEV(PokemonStatType pStatType)
+    {
+        switch (pStatType)
         {
-            return IV_DEF;
+            case PokemonStatType.HP:
+            case PokemonStatType.Attack:
+            case PokemonStatType.Defence:
+            case PokemonStatType.Speed:
+            case PokemonStatType.SpecialAttack:
+            case PokemonStatType.SpecialDefence:
+                return Species.Stats[pStatType].EV;
+
+            default:
+                return -1;
         }
-        else if (index == 3)
-        {
-            return IV_SPA;
-        }
-        else if (index == 4)
-        {
-            return IV_SPD;
-        }
-        else if (index == 5)
-        {
-            return IV_SPE;
-        }
-        return -1;
-    }
-
-    public int getIV_HP()
-    {
-        return IV_HP;
-    }
-
-    public int getIV_ATK()
-    {
-        return IV_ATK;
-    }
-
-    public int getIV_DEF()
-    {
-        return IV_DEF;
-    }
-
-    public int getIV_SPA()
-    {
-        return IV_SPA;
-    }
-
-    public int getIV_SPD()
-    {
-        return IV_SPD;
-    }
-
-    public int getIV_SPE()
-    {
-        return IV_SPE;
-    }
-
-    public int GetHighestIV()
-    {
-        int highestIVIndex = 0;
-        int highestIV = IV_HP;
-        //by default HP is highest. Check if others are higher. Use RareValue to consistantly break a tie
-        if (IV_ATK > highestIV || (IV_ATK == highestIV && rareValue > 10922))
-        {
-            highestIVIndex = 1;
-            highestIV = IV_ATK;
-        }
-        if (IV_DEF > highestIV || (IV_DEF == highestIV && rareValue > 21844))
-        {
-            highestIVIndex = 2;
-            highestIV = IV_DEF;
-        }
-        if (IV_SPA > highestIV || (IV_SPA == highestIV && rareValue > 32766))
-        {
-            highestIVIndex = 3;
-            highestIV = IV_SPA;
-        }
-        if (IV_SPD > highestIV || (IV_SPD == highestIV && rareValue > 43688))
-        {
-            highestIVIndex = 4;
-            highestIV = IV_SPD;
-        }
-        if (IV_SPE > highestIV || (IV_SPE == highestIV && rareValue > 54610))
-        {
-            highestIVIndex = 5;
-            highestIV = IV_SPE;
-        }
-        return highestIVIndex;
-    }
-
-    public int getEV_HP()
-    {
-        return EV_HP;
-    }
-
-    public int getEV_ATK()
-    {
-        return EV_ATK;
-    }
-
-    public int getEV_DEF()
-    {
-        return EV_DEF;
-    }
-
-    public int getEV_SPA()
-    {
-        return EV_SPA;
-    }
-
-    public int getEV_SPD()
-    {
-        return EV_SPD;
-    }
-
-    public int getEV_SPE()
-    {
-        return EV_SPE;
     }
 
     public PokemonNature getNature()
@@ -1286,17 +1192,17 @@ public class OwnedPokemon
 
     public int getAbility()
     {
-        return ability;
+        return _currentAbility;
     }
 
 
     public int getMoveIndex(string move)
     {
-        for (int i = 0; i < moveset.Length; i++)
+        for (int i = 0; i < _currentMoveset.Length; i++)
         {
-            if (!string.IsNullOrEmpty(moveset[i]))
+            if (!string.IsNullOrEmpty(_currentMoveset[i]))
             {
-                if (moveset[i] == move)
+                if (_currentMoveset[i] == move)
                 {
                     return i;
                 }
@@ -1310,23 +1216,23 @@ public class OwnedPokemon
         string[] result = new string[4];
         for (int i = 0; i < 4; i++)
         {
-            result[i] = moveset[i];
+            result[i] = _currentMoveset[i];
         }
         return result;
     }
 
     public void swapMoves(int target1, int target2)
     {
-        string temp = moveset[target1];
-        moveset[target1] = moveset[target2];
-        moveset[target2] = temp;
+        string temp = _currentMoveset[target1];
+        _currentMoveset[target1] = _currentMoveset[target2];
+        _currentMoveset[target2] = temp;
     }
 
 
     private void ResetPP(int index)
     {
         PPups[index] = 0;
-        maxPP[index] = Mathf.FloorToInt(MoveDatabase.getMove(moveset[index]).getPP() * ((PPups[index] * 0.2f) + 1));
+        maxPP[index] = Mathf.FloorToInt(MoveDatabase.getMove(_currentMoveset[index]).getPP() * ((PPups[index] * 0.2f) + 1));
         PP[index] = maxPP[index];
     }
 
@@ -1334,9 +1240,9 @@ public class OwnedPokemon
     /// Returns false if no room to add the new move OR move already is learned.
     public bool addMove(string newMove)
     {
-        if (!HasMove(newMove) && string.IsNullOrEmpty(moveset[3]))
+        if (!HasMove(newMove) && string.IsNullOrEmpty(_currentMoveset[3]))
         {
-            moveset[3] = newMove;
+            _currentMoveset[3] = newMove;
             ResetPP(3);
             packMoveset();
             return true;
@@ -1348,7 +1254,7 @@ public class OwnedPokemon
     {
         if (index >= 0 && index < 4)
         {
-            moveset[index] = newMove;
+            _currentMoveset[index] = newMove;
             addMoveToHistory(newMove);
             ResetPP(index);
         }
@@ -1359,7 +1265,7 @@ public class OwnedPokemon
     {
         if (getMoveCount() > 1)
         {
-            moveset[index] = null;
+            _currentMoveset[index] = null;
             packMoveset();
             return true;
         }
@@ -1371,7 +1277,7 @@ public class OwnedPokemon
         int count = 0;
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(moveset[i]))
+            if (!string.IsNullOrEmpty(_currentMoveset[i]))
             {
                 count += 1;
             }
@@ -1389,17 +1295,17 @@ public class OwnedPokemon
         int i2 = 0; //counter for packed array
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(moveset[i]))
+            if (!string.IsNullOrEmpty(_currentMoveset[i]))
             {
                 //if next move in moveset is not null
-                packedMoveset[i2] = moveset[i]; //add to packed moveset
+                packedMoveset[i2] = _currentMoveset[i]; //add to packed moveset
                 packedPP[i2] = PP[i];
                 packedMaxPP[i2] = maxPP[i];
                 packedPPups[i2] = PPups[i];
                 i2 += 1;
             } //ready packed moveset's next position
         }
-        moveset = packedMoveset;
+        _currentMoveset = packedMoveset;
         PP = packedPP;
         maxPP = packedMaxPP;
         PPups = packedPPups;
@@ -1409,13 +1315,13 @@ public class OwnedPokemon
     {
         if (!HasMoveInHistory(move))
         {
-            string[] newHistory = new string[moveHistory.Length + 1];
-            for (int i = 0; i < moveHistory.Length; i++)
+            string[] newHistory = new string[_moveHistory.Length + 1];
+            for (int i = 0; i < _moveHistory.Length; i++)
             {
-                newHistory[i] = moveHistory[i];
+                newHistory[i] = _moveHistory[i];
             }
-            newHistory[moveHistory.Length] = move;
-            moveHistory = newHistory;
+            newHistory[_moveHistory.Length] = move;
+            _moveHistory = newHistory;
         }
     }
 
@@ -1425,9 +1331,9 @@ public class OwnedPokemon
         {
             return false;
         }
-        for (int i = 0; i < moveset.Length; i++)
+        for (int i = 0; i < _currentMoveset.Length; i++)
         {
-            if (moveset[i] == move)
+            if (_currentMoveset[i] == move)
             {
                 return true;
             }
@@ -1437,9 +1343,9 @@ public class OwnedPokemon
 
     public bool HasMoveInHistory(string move)
     {
-        for (int i = 0; i < moveset.Length; i++)
+        for (int i = 0; i < _currentMoveset.Length; i++)
         {
-            if (moveset[i] == move)
+            if (_currentMoveset[i] == move)
             {
                 return true;
             }
@@ -1449,7 +1355,7 @@ public class OwnedPokemon
 
     public bool CanLearnMove(string move)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemonID);
+        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
 
         string[] moves = thisPokemonData.getMovesetMoves();
         for (int i = 0; i < moves.Length; i++)
@@ -1472,7 +1378,7 @@ public class OwnedPokemon
 
     public string MoveLearnedAtLevel(int level)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemonID);
+        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
 
         int[] movesetLevels = thisPokemonData.getMovesetLevels();
         for (int i = 0; i < movesetLevels.Length; i++)
@@ -1509,12 +1415,12 @@ public class OwnedPokemon
 
     public Sprite[] GetFrontAnim_()
     {
-        return GetAnimFromID_("PokemonSprites", pokemonID, gender, isShiny);
+        return GetAnimFromID_("PokemonSprites", Species.GameId, _gender, isShiny);
     }
 
     public Sprite[] GetBackAnim_()
     {
-        return GetAnimFromID_("PokemonBackSprites", pokemonID, gender, isShiny);
+        return GetAnimFromID_("PokemonBackSprites", Species.GameId, _gender, isShiny);
     }
 
 
@@ -1561,7 +1467,7 @@ public class OwnedPokemon
 
     public Sprite[] GetIcons_()
     {
-        return GetIconsFromID_(pokemonID, isShiny);
+        return GetIconsFromID_(Species.GameId, isShiny);
     }
 
     public static Sprite[] GetIconsFromID_(int ID, bool isShiny)
@@ -1583,7 +1489,7 @@ public class OwnedPokemon
 
     public AudioClip GetCry()
     {
-        return GetCryFromID(pokemonID);
+        return GetCryFromID(Species.GameId);
     }
 
     public static AudioClip GetCryFromID(int ID)
@@ -1594,22 +1500,22 @@ public class OwnedPokemon
 
     public Texture[] GetFrontAnim()
     {
-        return GetAnimFromID("PokemonSprites", pokemonID, gender, isShiny);
+        return GetAnimFromID("PokemonSprites", Species.GameId, _gender, isShiny);
     }
 
     public Texture[] GetBackAnim()
     {
-        return GetAnimFromID("PokemonBackSprites", pokemonID, gender, isShiny);
+        return GetAnimFromID("PokemonBackSprites", Species.GameId, _gender, isShiny);
     }
 
     public Texture GetIcons()
     {
-        return GetIconsFromID(pokemonID, isShiny);
+        return GetIconsFromID(Species.GameId, isShiny);
     }
 
     public Sprite[] GetSprite(bool getLight)
     {
-        return GetSpriteFromID(pokemonID, isShiny, getLight);
+        return GetSpriteFromID(Species.GameId, isShiny, getLight);
     }
 
 

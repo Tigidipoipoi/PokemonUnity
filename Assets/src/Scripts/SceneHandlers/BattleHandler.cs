@@ -3315,7 +3315,7 @@ public class BattleHandler : MonoBehaviour
     /// REPEATED SEQUENCES
     //
     ///This sequence heals a pokemon on the field. Do not use to heal a pokemon in the party.  
-    private IEnumerator Heal(int index, float healAmount)
+    private IEnumerator Heal(int index, int healAmount)
     {
         yield return StartCoroutine(Heal(index, healAmount, false));
     }
@@ -3325,7 +3325,7 @@ public class BattleHandler : MonoBehaviour
         yield return StartCoroutine(Heal(index, -1, curingStatus));
     }
 
-    private IEnumerator Heal(int index, float healAmount, bool curingStatus)
+    private IEnumerator Heal(int index, int healAmount, bool curingStatus)
     {
         //If healing, and HP is already full    OR   if curing status, and status is already none or fainted (fainted pokemon can only be cured off-field).
         if ((!curingStatus && pokemon[index].GetCurrentLevelStatValue(PokemonStatType.HP) == pokemon[index].GetCurrentLevelStatValue(PokemonStatType.HP)) ||
@@ -4920,7 +4920,7 @@ public class BattleHandler : MonoBehaviour
                                                     commandItem[movingPokemon].getName() + "!", 2.4f));
                                         yield return
                                             StartCoroutine(Heal(commandTarget[movingPokemon],
-                                                commandItem[movingPokemon].getFloatParameter()));
+                                                (int)commandItem[movingPokemon].getFloatParameter()));
                                     }
                                 }
                                 else if (commandItem[movingPokemon].getItemEffect() == ItemData.ItemEffect.STATUS)
@@ -5076,7 +5076,7 @@ public class BattleHandler : MonoBehaviour
                                     {
                                         yield return
                                             StartCoroutine(Heal(targetIndex,
-                                                commandMove[movingPokemon].getMoveParameter(MoveData.Effect.Heal)));
+                                                (int)commandMove[movingPokemon].getMoveParameter(MoveData.Effect.Heal)));
                                     }
                                     else if (commandMove[movingPokemon].hasMoveEffect(MoveData.Effect.SetDamage))
                                     {
@@ -5284,12 +5284,12 @@ public class BattleHandler : MonoBehaviour
                                                     float sharedMod = 1f; //shared experience
                                                     float IVMod = 0.85f +
                                                                   (float)
-                                                                  (pokemon[targetIndex].getIV_HP() +
-                                                                   pokemon[targetIndex].getIV_ATK() +
-                                                                   pokemon[targetIndex].getIV_DEF() +
-                                                                   pokemon[targetIndex].getIV_SPA() +
-                                                                   pokemon[targetIndex].getIV_SPD() +
-                                                                   pokemon[targetIndex].getIV_SPE()) / 480f;
+                                                                  (pokemon[targetIndex].GetIV(PokemonStatType.HP) +
+                                                                   pokemon[targetIndex].GetIV(PokemonStatType.Attack) +
+                                                                   pokemon[targetIndex].GetIV(PokemonStatType.Defence) +
+                                                                   pokemon[targetIndex].GetIV(PokemonStatType.SpecialAttack) +
+                                                                   pokemon[targetIndex].GetIV(PokemonStatType.SpecialDefence) +
+                                                                   pokemon[targetIndex].GetIV(PokemonStatType.Speed)) / 480f;
                                                     //IV Mod is unique to Pokemon Unity
                                                     int exp =
                                                         Mathf.CeilToInt((isWildMod * baseExpYield * IVMod * OTMod *

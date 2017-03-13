@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite4Unity3d;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,13 +20,18 @@ public enum PokemonStatType
     None,
 }
 
-// ToDo: Add modifiers (during battle only !); Idea: clear modifiers on end fight event except for HP.
-// Decide struct or class
+// ToDo: -Clear battle modifiers on end fight event.
+//      -Decide struct or class
 [Serializable]
 public class PokemonStat
 {
     #region Members
-    public PokemonStatType Type;
+    private PokemonStatType _type;
+    public PokemonStatType Type
+    {
+        get { return _type; }
+        set { _type = value; }
+    }
 
     private int _baseValue;
     public int BaseValue
@@ -57,69 +63,125 @@ public class PokemonStat
         }
     }
 
-    private int _iv;
-    /// <summary>
-    /// Individual Value.
-    /// </summary>
-    public int IV
+    private PokemonStatModifierList _modifiers;
+    public PokemonStatModifierList Modifiers
     {
-        get { return _iv; }
-        set
-        {
-            switch (Type)
-            {
-                case PokemonStatType.HP:
-                case PokemonStatType.Attack:
-                case PokemonStatType.Defence:
-                case PokemonStatType.Speed:
-                case PokemonStatType.SpecialAttack:
-                case PokemonStatType.SpecialDefence:
-                    int clampedValue = Mathf.Clamp(value, 0, 31);
-                    _iv = clampedValue;
-                    break;
-
-                case PokemonStatType.Evasion:
-                case PokemonStatType.Accuracy:
-                case PokemonStatType.None:
-                default:
-                    _iv = 0;
-                    break;
-            }
-        }
-    }
-
-    private int _ev;
-    /// <summary>
-    /// Effort Value.
-    /// </summary>
-    public int EV
-    {
-        get { return _ev; }
-        set
-        {
-            switch (Type)
-            {
-                case PokemonStatType.HP:
-                case PokemonStatType.Attack:
-                case PokemonStatType.Defence:
-                case PokemonStatType.SpecialAttack:
-                case PokemonStatType.SpecialDefence:
-                case PokemonStatType.Speed:
-                    int clampedValue = Mathf.Clamp(value, 0, 252);
-                    _ev = clampedValue;
-                    break;
-
-                case PokemonStatType.Evasion:
-                case PokemonStatType.Accuracy:
-                case PokemonStatType.None:
-                default:
-                    if (_ev != 0)
-                        _ev = 0;
-                    break;
-            }
-        }
+        get { return _modifiers; }
+        set { _modifiers = value; }
     }
     #endregion
+
+    public int IV
+    {
+        get
+        {
+            if (Modifiers == null)
+                return 0;
+
+            switch (Type)
+            {
+                case PokemonStatType.HP:
+                case PokemonStatType.Attack:
+                case PokemonStatType.Defence:
+                case PokemonStatType.Speed:
+                case PokemonStatType.SpecialAttack:
+                case PokemonStatType.SpecialDefence:
+                    break;
+
+                default:
+                    return 0;
+            }
+
+            var mod = Modifiers[PokemonStatModifierType.IV];
+            if (mod == null)
+                return 0;
+
+            return mod.CurrentValue;
+        }
+        set
+        {
+            if (Modifiers == null)
+                return;
+
+            switch (Type)
+            {
+                case PokemonStatType.HP:
+                case PokemonStatType.Attack:
+                case PokemonStatType.Defence:
+                case PokemonStatType.Speed:
+                case PokemonStatType.SpecialAttack:
+                case PokemonStatType.SpecialDefence:
+                    break;
+
+                default:
+                    return;
+            }
+
+            var mod = Modifiers[PokemonStatModifierType.IV];
+            // If the modifer doesn't exist we create and set it.
+            if (mod == null)
+                Modifiers.Add(new PokemonStatModifer(PokemonStatModifierType.IV, value));
+            // If it already exist, we just set it.
+            else
+                mod.CurrentValue = value;
+        }
+    }
+
+    public int EV
+    {
+        get
+        {
+            if (Modifiers == null)
+                return 0;
+
+            switch (Type)
+            {
+                case PokemonStatType.HP:
+                case PokemonStatType.Attack:
+                case PokemonStatType.Defence:
+                case PokemonStatType.Speed:
+                case PokemonStatType.SpecialAttack:
+                case PokemonStatType.SpecialDefence:
+                    break;
+
+                default:
+                    return 0;
+            }
+
+            var mod = Modifiers[PokemonStatModifierType.EV];
+            if (mod == null)
+                return 0;
+
+            return mod.CurrentValue;
+        }
+        set
+        {
+            if (Modifiers == null)
+                return;
+
+            switch (Type)
+            {
+                case PokemonStatType.HP:
+                case PokemonStatType.Attack:
+                case PokemonStatType.Defence:
+                case PokemonStatType.Speed:
+                case PokemonStatType.SpecialAttack:
+                case PokemonStatType.SpecialDefence:
+                    break;
+
+                default:
+                    return;
+            }
+
+            var mod = Modifiers[PokemonStatModifierType.EV];
+            // If the modifer doesn't exist we create and set it.
+            if (mod == null)
+                Modifiers.Add(new PokemonStatModifer(PokemonStatModifierType.EV, value));
+            // If it already exist, we just set it.
+            else
+                mod.CurrentValue = value;
+        }
+    }
 
     #region Constructors
     public PokemonStat() : this(PokemonStatType.None, 0) { }
@@ -128,8 +190,8 @@ public class PokemonStat
     {
         Type = pStatType;
         BaseValue = pBaseValue;
-        IV = 0;
-        EV = 0;
+
+        Modifiers = new PokemonStatModifierList();
     }
     #endregion
 
@@ -192,7 +254,77 @@ public class PokemonStat
     {
         int currentLevelValue = GetCurrentLevelValue(pPokemonLevel, pNature);
 
+        foreach (var mod in Modifiers)
+        {
+            switch (mod.Type)
+            {
+                case PokemonStatModifierType.LostHP:
+                    // Current HP
+                    currentLevelValue -= mod.CurrentValue;
+                    break;
+                case PokemonStatModifierType.Battle:
+                    // Battle modifiers for non HP stats.
+                    switch (Type)
+                    {
+                        case PokemonStatType.Attack:
+                        case PokemonStatType.Defence:
+                        case PokemonStatType.Speed:
+                        case PokemonStatType.SpecialAttack:
+                        case PokemonStatType.SpecialDefence:
+                            if (mod.CurrentValue < 0)
+                                currentLevelValue *= 2 / 2 - mod.CurrentValue;
+                            else
+                                currentLevelValue *= (2 + mod.CurrentValue) / 2;
+                            break;
+
+                        case PokemonStatType.Evasion:
+                        case PokemonStatType.Accuracy:
+                            if (mod.CurrentValue < 0)
+                                currentLevelValue *= 3 / 3 - mod.CurrentValue;
+                            else
+                                currentLevelValue *= (3 + mod.CurrentValue) / 3;
+                            break;
+                    }
+                    break;
+
+                default:
+                    continue;
+            }
+        }
+
         return currentLevelValue;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pCurrentLevel"></param>
+    /// <param name="pDamageHeal">Positive for damages, negative for heal.</param>
+    public void SetCurrentHP(int pDamageHeal)
+    {
+        if (Type != PokemonStatType.HP)
+            return;
+
+        var lostHPMod = Modifiers[PokemonStatModifierType.LostHP];
+
+        // We update lost HP modifier.
+        if (lostHPMod != null)
+            lostHPMod.CurrentValue += pDamageHeal;
+        // If it doesn't exist, we create it if needed.
+        else if (pDamageHeal > 0)
+            Modifiers.Add(new PokemonStatModifer(PokemonStatModifierType.LostHP, pDamageHeal));
+
+        // We remove the modifier if it became useless.
+        if (lostHPMod != null
+            && lostHPMod.CurrentValue <= 0)
+        {
+            Modifiers.RemoveAll(mod => mod.Type == PokemonStatModifierType.LostHP);
+        }
+    }
+
+    public void ClearBattleModifiers()
+    {
+        Modifiers.RemoveAll(mod => mod.Type == PokemonStatModifierType.Battle);
     }
 }
 

@@ -2063,66 +2063,66 @@ public class BagHandler : MonoBehaviour
     {
         if (selectedItem.getItemEffect() == ItemData.ItemEffect.HP)
         {
-            //HP
-            if (currentPokemon.GetCurrentStatValue(PokemonStatType.HP) < currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) &&
-                currentPokemon.getStatus() != PokemonStatus.FAINTED)
-            {
-                //determine amount / intialise HP Bar Animation variables
-                float amount = selectedItem.getFloatParameter();
-                if (amount <= 1)
-                {
-                    amount = currentPokemon.healHP(currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) * amount);
-                }
-                else
-                {
-                    amount = currentPokemon.healHP(amount);
-                }
-                float startLength = partyHPBar[partyPosition].pixelInset.width;
-                float difference =
-                    Mathf.Floor(48f * ((float)currentPokemon.GetCurrentStatValue(PokemonStatType.HP) / (float)currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP))) -
-                    startLength;
-                float increment = 0;
-                float speed = 0.5f;
+            // ToDo: Handle HP items.
+            //if (currentPokemon.GetCurrentStatValue(PokemonStatType.HP) < currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) &&
+            //    currentPokemon.getStatus() != PokemonStatus.FAINTED)
+            //{
+            //    //determine amount / intialise HP Bar Animation variables
+            //    float amount = selectedItem.getFloatParameter();
+            //    if (amount <= 1)
+            //    {
+            //        amount = currentPokemon.healHP(currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) * amount);
+            //    }
+            //    else
+            //    {
+            //        amount = currentPokemon.healHP(amount);
+            //    }
+            //    float startLength = partyHPBar[partyPosition].pixelInset.width;
+            //    float difference =
+            //        Mathf.Floor(48f * ((float)currentPokemon.GetCurrentStatValue(PokemonStatType.HP) / (float)currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP))) -
+            //        startLength;
+            //    float increment = 0;
+            //    float speed = 0.5f;
 
-                SfxHandler.Play(healClip);
-                removeItem(selectedItem.getName(), 1);
+            //    SfxHandler.Play(healClip);
+            //    removeItem(selectedItem.getName(), 1);
 
-                //animate HP bar restoring
-                while (increment < 1)
-                {
-                    increment += (1 / speed) * Time.deltaTime;
-                    if (increment > 1)
-                    {
-                        increment = 1;
-                    }
-                    partyHPBar[partyPosition].pixelInset = new Rect(partyHPBar[partyPosition].pixelInset.x,
-                        partyHPBar[partyPosition].pixelInset.y,
-                        startLength + (difference * increment), partyHPBar[partyPosition].pixelInset.height);
-                    //Color the bar
-                    if (partyHPBar[partyPosition].pixelInset.width < 12f)
-                    {
-                        partyHPBar[partyPosition].color = new Color(1, 0.125f, 0, 1);
-                    }
-                    else if (partyHPBar[partyPosition].pixelInset.width < 24f)
-                    {
-                        partyHPBar[partyPosition].color = new Color(1, 0.75f, 0, 1);
-                    }
-                    else
-                    {
-                        partyHPBar[partyPosition].color = new Color(0.125f, 1, 0.065f, 1);
-                    }
+            //    //animate HP bar restoring
+            //    while (increment < 1)
+            //    {
+            //        increment += (1 / speed) * Time.deltaTime;
+            //        if (increment > 1)
+            //        {
+            //            increment = 1;
+            //        }
+            //        partyHPBar[partyPosition].pixelInset = new Rect(partyHPBar[partyPosition].pixelInset.x,
+            //            partyHPBar[partyPosition].pixelInset.y,
+            //            startLength + (difference * increment), partyHPBar[partyPosition].pixelInset.height);
+            //        //Color the bar
+            //        if (partyHPBar[partyPosition].pixelInset.width < 12f)
+            //        {
+            //            partyHPBar[partyPosition].color = new Color(1, 0.125f, 0, 1);
+            //        }
+            //        else if (partyHPBar[partyPosition].pixelInset.width < 24f)
+            //        {
+            //            partyHPBar[partyPosition].color = new Color(1, 0.75f, 0, 1);
+            //        }
+            //        else
+            //        {
+            //            partyHPBar[partyPosition].color = new Color(0.125f, 1, 0.065f, 1);
+            //        }
 
-                    yield return null;
-                }
+            //        yield return null;
+            //    }
 
-                Dialog.drawDialogBox();
-                yield return Dialog.StartCoroutine("drawTextSilent", "It restored " + amount + " points.");
-                while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                {
-                    yield return null;
-                }
-            }
-            else
+            //    Dialog.drawDialogBox();
+            //    yield return Dialog.StartCoroutine("drawTextSilent", "It restored " + amount + " points.");
+            //    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+            //    {
+            //        yield return null;
+            //    }
+            //}
+            //else
             {
                 Dialog.drawDialogBox();
                 yield return Dialog.StartCoroutine("drawText", "It wouldn't have any effect.");
@@ -2271,114 +2271,114 @@ public class BagHandler : MonoBehaviour
         }
         else if (selectedItem.getItemEffect() == ItemData.ItemEffect.STATUS)
         {
-            //STATUS
-            //Check current pokemon has the status the item cures
-            string statusCurer = selectedItem.getStringParameter().ToUpper();
-            //if an ALL is used, set it to cure anything but FAINTED or NONE.
-            if (statusCurer == "ALL" && currentPokemon.getStatus().ToString() != "FAINTED" &&
-                currentPokemon.getStatus().ToString() != "NONE")
-            {
-                statusCurer = currentPokemon.getStatus().ToString();
-            }
+            // ToDo: Handle STATUS items.
+            ////Check current pokemon has the status the item cures
+            //string statusCurer = selectedItem.getStringParameter().ToUpper();
+            ////if an ALL is used, set it to cure anything but FAINTED or NONE.
+            //if (statusCurer == "ALL" && currentPokemon.getStatus().ToString() != "FAINTED" &&
+            //    currentPokemon.getStatus().ToString() != "NONE")
+            //{
+            //    statusCurer = currentPokemon.getStatus().ToString();
+            //}
 
-            if (currentPokemon.getStatus().ToString() == statusCurer)
-            {
-                if (statusCurer == "FAINTED")
-                {
-                    //Revive
-                    currentPokemon.setStatus(PokemonStatus.NONE);
+            //if (currentPokemon.getStatus().ToString() == statusCurer)
+            //{
+            //    if (statusCurer == "FAINTED")
+            //    {
+            //        //Revive
+            //        currentPokemon.setStatus(PokemonStatus.NONE);
 
-                    //determine amount / intialise HP Bar Animation variables
-                    float amount = selectedItem.getFloatParameter();
-                    if (amount <= 1)
-                    {
-                        amount = currentPokemon.healHP(currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) * amount);
-                    }
-                    else
-                    {
-                        amount = currentPokemon.healHP(amount);
-                    }
-                    float startLength = partyHPBar[partyPosition].pixelInset.width;
-                    float difference =
-                        Mathf.Floor(48f * ((float)currentPokemon.GetCurrentStatValue(PokemonStatType.HP) / (float)currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP))) -
-                        startLength;
-                    float increment = 0;
-                    float speed = 0.5f;
+            //        //determine amount / intialise HP Bar Animation variables
+            //        float amount = selectedItem.getFloatParameter();
+            //        if (amount <= 1)
+            //        {
+            //            amount = currentPokemon.healHP(currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) * amount);
+            //        }
+            //        else
+            //        {
+            //            amount = currentPokemon.healHP(amount);
+            //        }
+            //        float startLength = partyHPBar[partyPosition].pixelInset.width;
+            //        float difference =
+            //            Mathf.Floor(48f * ((float)currentPokemon.GetCurrentStatValue(PokemonStatType.HP) / (float)currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP))) -
+            //            startLength;
+            //        float increment = 0;
+            //        float speed = 0.5f;
 
-                    SfxHandler.Play(healClip);
-                    removeItem(selectedItem.getName(), 1);
+            //        SfxHandler.Play(healClip);
+            //        removeItem(selectedItem.getName(), 1);
 
-                    //animate HP bar restoring
-                    while (increment < 1)
-                    {
-                        increment += (1 / speed) * Time.deltaTime;
-                        if (increment > 1)
-                        {
-                            increment = 1;
-                        }
-                        partyHPBar[partyPosition].pixelInset = new Rect(partyHPBar[partyPosition].pixelInset.x,
-                            partyHPBar[partyPosition].pixelInset.y,
-                            startLength + (difference * increment), partyHPBar[partyPosition].pixelInset.height);
-                        //Color the bar
-                        if (partyHPBar[partyPosition].pixelInset.width < 12f)
-                        {
-                            partyHPBar[partyPosition].color = new Color(1, 0.125f, 0, 1);
-                        }
-                        else if (partyHPBar[partyPosition].pixelInset.width < 24f)
-                        {
-                            partyHPBar[partyPosition].color = new Color(1, 0.75f, 0, 1);
-                        }
-                        else
-                        {
-                            partyHPBar[partyPosition].color = new Color(0.125f, 1, 0.065f, 1);
-                        }
+            //        //animate HP bar restoring
+            //        while (increment < 1)
+            //        {
+            //            increment += (1 / speed) * Time.deltaTime;
+            //            if (increment > 1)
+            //            {
+            //                increment = 1;
+            //            }
+            //            partyHPBar[partyPosition].pixelInset = new Rect(partyHPBar[partyPosition].pixelInset.x,
+            //                partyHPBar[partyPosition].pixelInset.y,
+            //                startLength + (difference * increment), partyHPBar[partyPosition].pixelInset.height);
+            //            //Color the bar
+            //            if (partyHPBar[partyPosition].pixelInset.width < 12f)
+            //            {
+            //                partyHPBar[partyPosition].color = new Color(1, 0.125f, 0, 1);
+            //            }
+            //            else if (partyHPBar[partyPosition].pixelInset.width < 24f)
+            //            {
+            //                partyHPBar[partyPosition].color = new Color(1, 0.75f, 0, 1);
+            //            }
+            //            else
+            //            {
+            //                partyHPBar[partyPosition].color = new Color(0.125f, 1, 0.065f, 1);
+            //            }
 
-                        yield return null;
-                    }
+            //            yield return null;
+            //        }
 
-                    Dialog.drawDialogBox();
-                    yield return Dialog.StartCoroutine("drawTextSilent", "It restored " + amount + " points.");
-                    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                    {
-                        yield return null;
-                    }
-                }
-                else
-                {
-                    currentPokemon.setStatus(PokemonStatus.NONE);
+            //        Dialog.drawDialogBox();
+            //        yield return Dialog.StartCoroutine("drawTextSilent", "It restored " + amount + " points.");
+            //        while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+            //        {
+            //            yield return null;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        currentPokemon.setStatus(PokemonStatus.NONE);
 
-                    SfxHandler.Play(healClip);
-                    removeItem(selectedItem.getName(), 1);
+            //        SfxHandler.Play(healClip);
+            //        removeItem(selectedItem.getName(), 1);
 
-                    Dialog.drawDialogBox();
-                    if (statusCurer == "ASLEEP")
-                    {
-                        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " woke up!");
-                    }
-                    else if (statusCurer == "BURNED")
-                    {
-                        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " was healed!");
-                    }
-                    else if (statusCurer == "FROZEN")
-                    {
-                        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " thawed out!");
-                    }
-                    else if (statusCurer == "PARALYZED")
-                    {
-                        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " was cured!");
-                    }
-                    else if (statusCurer == "POISONED")
-                    {
-                        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " was cured!");
-                    }
+            //        Dialog.drawDialogBox();
+            //        if (statusCurer == "ASLEEP")
+            //        {
+            //            yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " woke up!");
+            //        }
+            //        else if (statusCurer == "BURNED")
+            //        {
+            //            yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " was healed!");
+            //        }
+            //        else if (statusCurer == "FROZEN")
+            //        {
+            //            yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " thawed out!");
+            //        }
+            //        else if (statusCurer == "PARALYZED")
+            //        {
+            //            yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " was cured!");
+            //        }
+            //        else if (statusCurer == "POISONED")
+            //        {
+            //            yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + " was cured!");
+            //        }
 
-                    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                    {
-                        yield return null;
-                    }
-                }
-            }
-            else
+            //        while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+            //        {
+            //            yield return null;
+            //        }
+            //    }
+            //}
+            //else
             {
                 Dialog.drawDialogBox();
                 yield return Dialog.StartCoroutine("drawText", "It wouldn't have any effect.");
@@ -2393,50 +2393,50 @@ public class BagHandler : MonoBehaviour
         }
         else if (selectedItem.getItemEffect() == ItemData.ItemEffect.EV)
         {
-            //EV
-            string statBooster = selectedItem.getStringParameter().ToUpper();
-            float amount = selectedItem.getFloatParameter();
-            bool evsAdded = currentPokemon.addEVs(statBooster, amount);
-            if (evsAdded)
-            {
-                SfxHandler.Play(healClip);
-                removeItem(selectedItem.getName(), 1);
+            // ToDo: Handle EV items.
+            //string statBooster = selectedItem.getStringParameter().ToUpper();
+            //float amount = selectedItem.getFloatParameter();
+            //bool evsAdded = currentPokemon.addEVs(statBooster, amount);
+            //if (evsAdded)
+            //{
+            //    SfxHandler.Play(healClip);
+            //    removeItem(selectedItem.getName(), 1);
 
-                Dialog.drawDialogBox();
-                if (statBooster == "HP")
-                {
-                    yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s HP rose!");
-                }
-                else if (statBooster == "ATK")
-                {
-                    yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Attack rose!");
-                }
-                else if (statBooster == "DEF")
-                {
-                    yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Defense rose!");
-                }
-                else if (statBooster == "SPA")
-                {
-                    yield return
-                        Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Special Attack rose!");
-                }
-                else if (statBooster == "SPD")
-                {
-                    yield return
-                        Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Special Defense rose!");
-                }
-                else if (statBooster == "SPE")
-                {
-                    yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Speed rose!");
-                }
+            //    Dialog.drawDialogBox();
+            //    if (statBooster == "HP")
+            //    {
+            //        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s HP rose!");
+            //    }
+            //    else if (statBooster == "ATK")
+            //    {
+            //        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Attack rose!");
+            //    }
+            //    else if (statBooster == "DEF")
+            //    {
+            //        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Defense rose!");
+            //    }
+            //    else if (statBooster == "SPA")
+            //    {
+            //        yield return
+            //            Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Special Attack rose!");
+            //    }
+            //    else if (statBooster == "SPD")
+            //    {
+            //        yield return
+            //            Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Special Defense rose!");
+            //    }
+            //    else if (statBooster == "SPE")
+            //    {
+            //        yield return Dialog.StartCoroutine("drawTextSilent", currentPokemon.getName() + "'s Speed rose!");
+            //    }
 
-                while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                {
-                    yield return null;
-                }
-                updateSelectedItem();
-            }
-            else
+            //    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+            //    {
+            //        yield return null;
+            //    }
+            //    updateSelectedItem();
+            //}
+            //else
             {
                 Dialog.drawDialogBox();
                 yield return Dialog.StartCoroutine("drawText", "It wouldn't have any effect.");

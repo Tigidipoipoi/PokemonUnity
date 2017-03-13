@@ -411,8 +411,9 @@ public class SummaryHandler : MonoBehaviour
                 "Likes to run", "Alert to sounds", "Impetuous and silly", "Somewhat of a clown", "Quick to flee"
             }
         };
-        int highestIV = selectedPokemon.GetHighestIV();
-        characteristic.text = characteristics[highestIV][selectedPokemon.GetIV(highestIV) % 5] + ".";
+
+        var highestIV = selectedPokemon.GetHighestIV();
+        characteristic.text = characteristics[(int)highestIV][selectedPokemon.GetIV(highestIV) % 5] + ".";
         characteristicShadow.text = characteristic.text;
 
         float currentHP = selectedPokemon.GetCurrentStatValue(PokemonStatType.HP);
