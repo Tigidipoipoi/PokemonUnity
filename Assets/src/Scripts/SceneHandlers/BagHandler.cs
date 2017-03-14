@@ -659,12 +659,12 @@ public class BagHandler : MonoBehaviour
 
                 partyName[i].text = currentPokemon.GetName();
                 partyNameShadow[i].text = partyName[i].text;
-                if (currentPokemon.getGender() == PokemonGender.FEMALE)
+                if (currentPokemon.Gender == PokemonGender.FEMALE)
                 {
                     partyGender[i].text = "♀";
                     partyGender[i].color = new Color(1, 0.2f, 0.2f, 1);
                 }
-                else if (currentPokemon.getGender() == PokemonGender.MALE)
+                else if (currentPokemon.Gender == PokemonGender.MALE)
                 {
                     partyGender[i].text = "♂";
                     partyGender[i].color = new Color(0.2f, 0.4f, 1, 1);
@@ -674,12 +674,12 @@ public class BagHandler : MonoBehaviour
                     partyGender[i].text = null;
                 }
                 partyGenderShadow[i].text = partyGender[i].text;
-                partyLevel[i].text = "" + currentPokemon.getLevel();
+                partyLevel[i].text = "" + currentPokemon.CurrentLevel;
                 partyLevelShadow[i].text = partyLevel[i].text;
-                if (currentPokemon.getStatus() != PokemonStatus.NONE)
+                if (currentPokemon.CurrentStatus != PokemonStatus.NONE)
                 {
                     partyStatus[i].texture =
-                        Resources.Load<Texture>("PCSprites/status" + currentPokemon.getStatus().ToString());
+                        Resources.Load<Texture>("PCSprites/status" + currentPokemon.CurrentStatus.ToString());
                 }
                 else
                 {
@@ -2065,7 +2065,7 @@ public class BagHandler : MonoBehaviour
         {
             // ToDo: Handle HP items.
             //if (currentPokemon.GetCurrentStatValue(PokemonStatType.HP) < currentPokemon.GetCurrentLevelStatValue(PokemonStatType.HP) &&
-            //    currentPokemon.getStatus() != PokemonStatus.FAINTED)
+            //    currentPokemon.CurrentStatus != PokemonStatus.FAINTED)
             //{
             //    //determine amount / intialise HP Bar Animation variables
             //    float amount = selectedItem.getFloatParameter();
@@ -2275,13 +2275,13 @@ public class BagHandler : MonoBehaviour
             ////Check current pokemon has the status the item cures
             //string statusCurer = selectedItem.getStringParameter().ToUpper();
             ////if an ALL is used, set it to cure anything but FAINTED or NONE.
-            //if (statusCurer == "ALL" && currentPokemon.getStatus().ToString() != "FAINTED" &&
-            //    currentPokemon.getStatus().ToString() != "NONE")
+            //if (statusCurer == "ALL" && currentPokemon.CurrentStatus.ToString() != "FAINTED" &&
+            //    currentPokemon.CurrentStatus.ToString() != "NONE")
             //{
-            //    statusCurer = currentPokemon.getStatus().ToString();
+            //    statusCurer = currentPokemon.CurrentStatus.ToString();
             //}
 
-            //if (currentPokemon.getStatus().ToString() == statusCurer)
+            //if (currentPokemon.CurrentStatus.ToString() == statusCurer)
             //{
             //    if (statusCurer == "FAINTED")
             //    {
@@ -2563,10 +2563,10 @@ public class BagHandler : MonoBehaviour
             string selectedItemName = selectedItem.getName();
             if (selectedItemName == "Rare Candy")
             {
-                if (currentPokemon.getLevel() < 100)
+                if (currentPokemon.CurrentLevel < 100)
                 {
                     currentPokemon.healHP(1);
-                    currentPokemon.addExp(currentPokemon.getExpNext() - currentPokemon.getExp());
+                    currentPokemon.addExp(currentPokemon.NextLevelExp - currentPokemon.CurrentExperience);
                     SfxHandler.Play(healClip);
                     updateParty();
 
@@ -2576,7 +2576,7 @@ public class BagHandler : MonoBehaviour
                     Dialog.drawDialogBox();
                     yield return
                         Dialog.StartCoroutine("drawTextSilent",
-                            currentPokemon.GetName() + "'s level rose to " + currentPokemon.getLevel() + "!");
+                            currentPokemon.GetName() + "'s level rose to " + currentPokemon.CurrentLevel + "!");
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                     {
                         yield return null;
@@ -2609,7 +2609,7 @@ public class BagHandler : MonoBehaviour
                     ////if evolution not successful / wasn't called, check for moves to learn
                     //if (pkmnID == currentPokemon.getID())
                     //{
-                    //    string move = currentPokemon.MoveLearnedAtLevel(currentPokemon.getLevel());
+                    //    string move = currentPokemon.MoveLearnedAtLevel(currentPokemon.CurrentLevel);
                     //    Debug.Log(move);
                     //    if (!string.IsNullOrEmpty(move) && !currentPokemon.HasMove(move))
                     //    {

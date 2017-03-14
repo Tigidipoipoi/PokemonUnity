@@ -283,12 +283,12 @@ public class SummaryHandler : MonoBehaviour
         selectedCaughtBall.sprite = Resources.Load<Sprite>("PCSprites/summary" + selectedPokemon.getCaughtBall());
         selectedName.text = selectedPokemon.GetName();
         selectedNameShadow.text = selectedName.text;
-        if (selectedPokemon.getGender() == PokemonGender.FEMALE)
+        if (selectedPokemon.Gender == PokemonGender.FEMALE)
         {
             selectedGender.text = "♀";
             selectedGender.color = new Color(1, 0.2f, 0.2f, 1);
         }
-        else if (selectedPokemon.getGender() == PokemonGender.MALE)
+        else if (selectedPokemon.Gender == PokemonGender.MALE)
         {
             selectedGender.text = "♂";
             selectedGender.color = new Color(0.2f, 0.4f, 1, 1);
@@ -298,7 +298,7 @@ public class SummaryHandler : MonoBehaviour
             selectedGender.text = null;
         }
         selectedGenderShadow.text = selectedGender.text;
-        selectedLevel.text = "" + selectedPokemon.getLevel();
+        selectedLevel.text = "" + selectedPokemon.CurrentLevel;
         selectedLevelShadow.text = selectedLevel.text;
         selectedSpriteAnimation = selectedPokemon.GetFrontAnim_();
         if (selectedSpriteAnimation.Length > 0)
@@ -314,16 +314,16 @@ public class SummaryHandler : MonoBehaviour
             selectedHeldItem.text = selectedPokemon.getHeldItem();
         }
         selectedHeldItemShadow.text = selectedHeldItem.text;
-        if (selectedPokemon.getStatus() != PokemonStatus.NONE)
+        if (selectedPokemon.CurrentStatus != PokemonStatus.NONE)
         {
-            selectedStatus.sprite = Resources.Load<Sprite>("PCSprites/status" + selectedPokemon.getStatus().ToString());
+            selectedStatus.sprite = Resources.Load<Sprite>("PCSprites/status" + selectedPokemon.CurrentStatus.ToString());
         }
         else
         {
             selectedStatus.sprite = Resources.Load<Sprite>("null");
         }
 
-        if (selectedPokemon.getIsShiny())
+        if (selectedPokemon.IsShiny)
         {
             selectedShiny.sprite = Resources.Load<Sprite>("PCSprites/shiny");
         }
@@ -336,6 +336,7 @@ public class SummaryHandler : MonoBehaviour
         dexNoShadow.text = dexNo.text;
         species.text = selectedPokemon.Species.Name;
         speciesShadow.text = species.text;
+
         // ToDo: implement types.
         //string type1string = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID()).getType1().ToString();
         //string type2string = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID()).getType2().ToString();
@@ -355,25 +356,28 @@ public class SummaryHandler : MonoBehaviour
         //    //if single type pokemon, center the type icon
         //    type1.rectTransform.localPosition = new Vector3(89, type1.rectTransform.localPosition.y);
         //}
-        OT.text = selectedPokemon.getOT();
-        OTShadow.text = OT.text;
-        IDNo.text = "" + selectedPokemon.getIDno();
-        IDNoShadow.text = IDNo.text;
-        expPoints.text = "" + selectedPokemon.getExp();
+
+        // ToDo: implement owner.
+        //OT.text = selectedPokemon.getOT();
+        //OTShadow.text = OT.text;
+        //IDNo.text = "" + selectedPokemon.getIDno();
+        //IDNoShadow.text = IDNo.text;
+
+        expPoints.text = "" + selectedPokemon.CurrentExperience;
         expPointsShadow.text = expPoints.text;
         float expCurrentLevel =
             PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(selectedPokemon.Species.LevelingRate,
-                selectedPokemon.getLevel());
+                selectedPokemon.CurrentLevel);
         float expNextlevel =
             PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(selectedPokemon.Species.LevelingRate,
-                selectedPokemon.getLevel() + 1);
-        float expAlong = selectedPokemon.getExp() - expCurrentLevel;
+                selectedPokemon.CurrentLevel + 1);
+        float expAlong = selectedPokemon.CurrentExperience - expCurrentLevel;
         float expDistance = expAlong / (expNextlevel - expCurrentLevel);
-        toNextLevel.text = "" + (expNextlevel - selectedPokemon.getExp());
+        toNextLevel.text = "" + (expNextlevel - selectedPokemon.CurrentExperience);
         toNextLevelShadow.text = toNextLevel.text;
         expBar.rectTransform.sizeDelta = new Vector2(Mathf.Floor(expDistance * 64f), expBar.rectTransform.sizeDelta.y);
 
-        string natureFormatted = PokemonNatureHelper.GetNatureName(selectedPokemon.getNature());
+        string natureFormatted = PokemonNatureHelper.GetNatureName(selectedPokemon.Nature);
         natureFormatted = natureFormatted.Substring(0, 1) + natureFormatted.Substring(1).ToLowerInvariant();
         nature.text = "<color=#F22F>" + natureFormatted + "</color> nature.";
         natureShadow.text = natureFormatted + " nature.";
@@ -439,11 +443,11 @@ public class SummaryHandler : MonoBehaviour
 
         //float[] natureMod = new float[]
         //{
-        //    NatureDatabase.getNature(selectedPokemon.getNature()).getATK(),
-        //    NatureDatabase.getNature(selectedPokemon.getNature()).getDEF(),
-        //    NatureDatabase.getNature(selectedPokemon.getNature()).getSPA(),
-        //    NatureDatabase.getNature(selectedPokemon.getNature()).getSPD(),
-        //    NatureDatabase.getNature(selectedPokemon.getNature()).getSPE()
+        //    NatureDatabase.getNature(selectedPokemon.Nature).getATK(),
+        //    NatureDatabase.getNature(selectedPokemon.Nature).getDEF(),
+        //    NatureDatabase.getNature(selectedPokemon.Nature).getSPA(),
+        //    NatureDatabase.getNature(selectedPokemon.Nature).getSPD(),
+        //    NatureDatabase.getNature(selectedPokemon.Nature).getSPE()
         //};
         Stats.text =
             selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.Attack) + "\n" +

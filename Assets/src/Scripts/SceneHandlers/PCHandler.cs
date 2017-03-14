@@ -373,12 +373,12 @@ public class PCHandler : MonoBehaviour
             {
                 selectedName.text = selectedPokemon.GetName();
                 selectedNameShadow.text = selectedName.text;
-                if (selectedPokemon.getGender() == PokemonGender.FEMALE)
+                if (selectedPokemon.Gender == PokemonGender.FEMALE)
                 {
                     selectedGender.text = "♀";
                     selectedGender.color = new Color(1, 0.2f, 0.2f, 1);
                 }
-                else if (selectedPokemon.getGender() == PokemonGender.MALE)
+                else if (selectedPokemon.Gender == PokemonGender.MALE)
                 {
                     selectedGender.text = "♂";
                     selectedGender.color = new Color(0.2f, 0.4f, 1, 1);
@@ -403,7 +403,7 @@ public class PCHandler : MonoBehaviour
                 //{
                 //    selectedType2.texture = Resources.Load<Texture>("PCSprites/type" + type2);
                 //}
-                selectedLevel.text = "Level " + selectedPokemon.getLevel();
+                selectedLevel.text = "Level " + selectedPokemon.CurrentLevel;
                 selectedLevelShadow.text = selectedLevel.text;
                 // ToDo: implement abilities
                 //selectedAbility.text =
@@ -416,10 +416,10 @@ public class PCHandler : MonoBehaviour
                 }
                 selectedItemShadow.text = selectedItem.text;
                 selectedStatus.texture = null;
-                if (selectedPokemon.getStatus() != PokemonStatus.NONE)
+                if (selectedPokemon.CurrentStatus != PokemonStatus.NONE)
                 {
                     selectedStatus.texture =
-                        Resources.Load<Texture>("PCSprites/status" + selectedPokemon.getStatus().ToString());
+                        Resources.Load<Texture>("PCSprites/status" + selectedPokemon.CurrentStatus.ToString());
                 }
             }
         }

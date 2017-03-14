@@ -309,7 +309,7 @@ public class GlobalVariables : MonoBehaviour
         {
             if (SaveData.currentSave.PC.boxes[0][i] != null)
             {
-                if (SaveData.currentSave.PC.boxes[0][i].getStatus() != PokemonStatus.FAINTED)
+                if (SaveData.currentSave.PC.boxes[0][i].CurrentStatus != PokemonStatus.FAINTED)
                 {
                     FollowerSettings.changeFollower(i);
                     i = 6;

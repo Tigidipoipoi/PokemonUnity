@@ -115,7 +115,7 @@ public class Trainer : MonoBehaviour
         int averageLevel = 0;
         for (int i = 0; i < party.Length; i++)
         {
-            averageLevel += party[i].getLevel();
+            averageLevel += party[i].CurrentLevel;
         }
         averageLevel = Mathf.CeilToInt((float) averageLevel / (float) party.Length);
         return averageLevel * prizeMoney;

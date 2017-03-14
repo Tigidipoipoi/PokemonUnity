@@ -66,7 +66,7 @@ public class PokemonSpecies
     [Column("BaseStatsFK")]
     public int BaseStatsFK { get; set; }
     [Ignore]
-    public PokemonStatList Stats { get; set; }
+    public PokemonBaseStat BaseStats { get; set; }
     #endregion
 
     #region External tables
@@ -126,6 +126,6 @@ public class PokemonSpecies
             return;
 
         BattleReward = pDBConnection.Find<PokemonBattleReward>(BattleRewardFK);
-        Stats = pDBConnection.Find<PokemonBaseStat>(BaseStatsFK).GenerateStatList();
+        BaseStats = pDBConnection.Find<PokemonBaseStat>(BaseStatsFK);
     }
 }

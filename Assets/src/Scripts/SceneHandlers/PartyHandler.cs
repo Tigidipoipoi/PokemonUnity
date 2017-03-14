@@ -112,12 +112,12 @@ public class PartyHandler : MonoBehaviour
                 icon[i].texture = selectedPokemon.GetIcons();
                 pokemonName[i].text = selectedPokemon.GetName();
                 pokemonNameShadow[i].text = pokemonName[i].text;
-                if (selectedPokemon.getGender() == PokemonGender.FEMALE)
+                if (selectedPokemon.Gender == PokemonGender.FEMALE)
                 {
                     gender[i].text = "♀";
                     gender[i].color = new Color(1, 0.2f, 0.2f, 1);
                 }
-                else if (selectedPokemon.getGender() == PokemonGender.MALE)
+                else if (selectedPokemon.Gender == PokemonGender.MALE)
                 {
                     gender[i].text = "♂";
                     gender[i].color = new Color(0.2f, 0.4f, 1, 1);
@@ -144,16 +144,16 @@ public class PartyHandler : MonoBehaviour
                     HPBar[i].color = new Color(0.125f, 1, 0.065f, 1);
                 }
 
-                level[i].text = "" + selectedPokemon.getLevel();
+                level[i].text = "" + selectedPokemon.CurrentLevel;
                 levelShadow[i].text = level[i].text;
                 currentHP[i].text = "" + selectedPokemon.GetCurrentStatValue(PokemonStatType.HP);
                 currentHPShadow[i].text = currentHP[i].text;
                 maxHp[i].text = "" + selectedPokemon.GetCurrentLevelStatValue(PokemonStatType.HP);
                 maxHPShadow[i].text = maxHp[i].text;
-                if (selectedPokemon.getStatus() != PokemonStatus.NONE)
+                if (selectedPokemon.CurrentStatus != PokemonStatus.NONE)
                 {
                     status[i].texture =
-                        Resources.Load<Texture>("PCSprites/status" + selectedPokemon.getStatus().ToString());
+                        Resources.Load<Texture>("PCSprites/status" + selectedPokemon.CurrentStatus.ToString());
                 }
                 else
                 {
