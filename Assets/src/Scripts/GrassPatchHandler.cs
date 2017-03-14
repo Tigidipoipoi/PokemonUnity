@@ -9,7 +9,7 @@ public class GrassPatchHandler : MonoBehaviour
     //private AudioSource walkSound;
     public AudioClip walkClip;
 
-    /*/    DEBUG
+    /*/    DEBug
     private static int encounterz = 0; //*/
 
     void Awake()

@@ -227,7 +227,7 @@ public class MainMenuHandler : MonoBehaviour
 
                     SaveData.currentSave = new SaveData(fileCount);
 
-                    GlobalVariables.global.SetDEBUGFileData();
+                    GlobalVariables.global.SetDEBugFileData();
 
                     GlobalVariables.global.playerPosition = new Vector3(78, 0, 29);
                     GlobalVariables.global.playerDirection = 2;

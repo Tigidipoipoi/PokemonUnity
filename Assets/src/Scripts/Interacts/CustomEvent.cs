@@ -365,20 +365,20 @@ public class CustomEvent : MonoBehaviour
                     //Play Great for Pokemon
                     AudioClip pokeGetMFX = Resources.Load<AudioClip>("Audio/mfx/GetGreat");
 
-                    PokemonData pkd = PokemonDatabase.getPokemon(currentEvent.ints[0]);
+                    var pkmn = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(currentEvent.ints[0].ToString());
 
-                    string pkName = pkd.getName();
+                    string pkName = pkmn.Name;
                     PokemonGender pkGender = PokemonGender.CALCULATE;
 
-                    if (pkd.getMaleRatio() == -1)
+                    if (pkmn.MaleRatio < 0)
                     {
                         pkGender = PokemonGender.NONE;
                     }
-                    else if (pkd.getMaleRatio() == 0)
+                    else if (pkmn.MaleRatio == 0)
                     {
                         pkGender = PokemonGender.FEMALE;
                     }
-                    else if (pkd.getMaleRatio() == 100)
+                    else if (pkmn.MaleRatio == 100)
                     {
                         pkGender = PokemonGender.MALE;
                     }
@@ -426,7 +426,7 @@ public class CustomEvent : MonoBehaviour
 
                             PKUScene.main.Typing.gameObject.SetActive(true);
                             StartCoroutine(PKUScene.main.Typing.control(10, "", pkGender,
-                                OwnedPokemon.GetIconsFromID_(currentEvent.ints[0], currentEvent.bool0)));
+                                OwnedPokemon.GetIconsFromID_(currentEvent.ints[0].ToString(), currentEvent.bool0)));
                             while (PKUScene.main.Typing.gameObject.activeSelf)
                             {
                                 yield return null;
@@ -460,29 +460,29 @@ public class CustomEvent : MonoBehaviour
                         IVs[5] = currentEvent.ints[10];
                     }
 
-                    PokemonNature pkNature = (currentEvent.ints[3] == 0)
-                        ? PokemonNatureHelper.GetRandomNature()
-                        : (PokemonNature)currentEvent.ints[3] - 1;
+                    //PokemonNature pkNature = (currentEvent.ints[3] == 0)
+                    //    ? PokemonNatureHelper.GetRandomNature()
+                    //    : (PokemonNature)currentEvent.ints[3] - 1;
 
-                    string[] pkMoveset = pkd.GenerateMoveset(currentEvent.ints[1]);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (currentEvent.strings[4 + i].Length > 0)
-                        {
-                            pkMoveset[i] = currentEvent.strings[4 + i];
-                        }
-                    }
+                    //string[] pkMoveset = pkd.GenerateMoveset(currentEvent.ints[1]);
+                    //for (int i = 0; i < 4; i++)
+                    //{
+                    //    if (currentEvent.strings[4 + i].Length > 0)
+                    //    {
+                    //        pkMoveset[i] = currentEvent.strings[4 + i];
+                    //    }
+                    //}
 
-                    Debug.Log(pkMoveset[0] + ", " + pkMoveset[1] + ", " + pkMoveset[2] + ", " + pkMoveset[3]);
+                    //Debug.Log(pkMoveset[0] + ", " + pkMoveset[1] + ", " + pkMoveset[2] + ", " + pkMoveset[3]);
 
 
-                    OwnedPokemon pk = new OwnedPokemon(currentEvent.ints[0], nickname, pkGender, currentEvent.ints[1],
-                        currentEvent.bool0, currentEvent.strings[2], currentEvent.strings[3],
-                        currentEvent.strings[1], IVs[0], IVs[1], IVs[2], IVs[3], IVs[4], IVs[5], 0, 0, 0, 0, 0, 0,
-                        pkNature, currentEvent.ints[4],
-                        pkMoveset, new int[4]);
+                    //OwnedPokemon pk = new OwnedPokemon(currentEvent.ints[0], nickname, pkGender, currentEvent.ints[1],
+                    //    currentEvent.bool0, currentEvent.strings[2], currentEvent.strings[3],
+                    //    currentEvent.strings[1], IVs[0], IVs[1], IVs[2], IVs[3], IVs[4], IVs[5], 0, 0, 0, 0, 0, 0,
+                    //    pkNature, currentEvent.ints[4],
+                    //    pkMoveset, new int[4]);
 
-                    SaveData.currentSave.PC.addPokemon(pk);
+                    //SaveData.currentSave.PC.addPokemon(pk);
                 }
                 else
                 {
@@ -569,12 +569,13 @@ public class CustomEvent : MonoBehaviour
                         {
                             if (SaveData.currentSave.PC.boxes[0][pi] != null)
                             {
-                                if (SaveData.currentSave.PC.boxes[0][pi].getID() ==
-                                    Mathf.FloorToInt(currentEvent.float0))
-                                {
-                                    passedCheck = true;
-                                    pi = 6;
-                                }
+                                // ToDo: Update this script so it uses the right ID.
+                                //if (SaveData.currentSave.PC.boxes[0][pi].getID() ==
+                                //    Mathf.FloorToInt(currentEvent.float0))
+                                //{
+                                //    passedCheck = true;
+                                //    pi = 6;
+                                //}
                             }
                         }
                         break;

@@ -227,7 +227,7 @@ public class PlayerMovement : MonoBehaviour
             transparentCollider.transform.parent.gameObject.SendMessage("bump", SendMessageOptions.DontRequireReceiver);
         }
 
-        //DEBUG
+        //DEBug
         if (accessedMapSettings != null)
         {
             WildPokemonInitialiser[] encounterList =
@@ -235,7 +235,7 @@ public class PlayerMovement : MonoBehaviour
             string namez = "";
             for (int i = 0; i < encounterList.Length; i++)
             {
-                namez += PokemonDatabase.getPokemon(encounterList[i].ID).getName() + ", ";
+                namez += PokemonDatabase.Instance.GetPokemonSpeciesByGameId(encounterList[i].ID.ToString()).Name + ", ";
             }
             Debug.Log("Wild Pokemon for map \"" + accessedMapSettings.mapName + "\": " + namez);
         }
@@ -423,7 +423,7 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else if (Input.GetKeyDown("g"))
                 {
-                    //DEBUG
+                    //DEBug
                     Debug.Log(currentMap.getTileTag(transform.position));
                     if (followerScript.canMove)
                     {
@@ -1090,7 +1090,7 @@ public class PlayerMovement : MonoBehaviour
                         Dialog.drawDialogBox();
                         yield return
                             Dialog.StartCoroutine("drawText",
-                                targetPokemon.getName() + " used " + targetPokemon.getFirstFEInstance("Surf") + "!");
+                                targetPokemon.GetName() + " used " + targetPokemon.getFirstFEInstance("Surf") + "!");
                         while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                         {
                             yield return null;

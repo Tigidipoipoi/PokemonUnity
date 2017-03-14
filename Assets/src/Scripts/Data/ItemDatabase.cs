@@ -94,7 +94,7 @@ public static class ItemDatabase
 
         //Status Restore
         new ItemData("Antidote", ItemData.ItemType.MEDICINE, ItemData.BattleType.STATUSHEALER, "A spray-type medicine. ",
-            100, ItemData.ItemEffect.STATUS, "POISONED"),
+            100, ItemData.ItemEffect.STATUS, "PoisonED"),
         new ItemData("Paralyze Heal", ItemData.ItemType.MEDICINE, ItemData.BattleType.STATUSHEALER,
             "A spray-type medicine. ", 200, ItemData.ItemEffect.STATUS, "PARALYZED"),
         new ItemData("Awakening", ItemData.ItemType.MEDICINE, ItemData.BattleType.STATUSHEALER,

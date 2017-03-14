@@ -351,73 +351,73 @@ public class TrainerHandler : MonoBehaviour
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Jade";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeROCK");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeRock");
                 }
                 else if (currentBadge == 1)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Bob";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeNORMAL");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeNormal");
                 }
                 else if (currentBadge == 2)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Avery";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeFLYING");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeFlying");
                 }
                 else if (currentBadge == 3)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Linda";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeGRASS");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeGrass");
                 }
                 else if (currentBadge == 4)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Cole";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeFIRE");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeFire");
                 }
                 else if (currentBadge == 5)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Brooke";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeWATER");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeWater");
                 }
                 else if (currentBadge == 6)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Doug";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeGROUND");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeGround");
                 }
                 else if (currentBadge == 7)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Apalala";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeDRAGON");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeDragon");
                 }
                 else if (currentBadge == 8)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "Zinka";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeSTEEL");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeSteel");
                 }
                 else if (currentBadge == 9)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typePSYCHIC");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typePsychic");
                 }
                 else if (currentBadge == 10)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeGHOST");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeGhost");
                 }
                 else if (currentBadge == 11)
                 {
                     GLPicture.texture = null;
                     GLNameData.text = "";
-                    GLType.texture = Resources.Load<Texture>("PCSprites/typeDARK");
+                    GLType.texture = Resources.Load<Texture>("PCSprites/typeDark");
                 }
 
                 if (SaveData.currentSave.gymsBeaten[currentBadge])

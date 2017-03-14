@@ -64,7 +64,7 @@ public class InteractPush : MonoBehaviour
                         Dialog.drawDialogBox();
                         yield return
                             Dialog.StartCoroutine("drawText",
-                                targetPokemon.getName() + " used " + targetPokemon.getFirstFEInstance("Strength") + "!")
+                                targetPokemon.GetName() + " used " + targetPokemon.getFirstFEInstance("Strength") + "!")
                             ;
                         while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                         {

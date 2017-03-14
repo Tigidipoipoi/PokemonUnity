@@ -281,7 +281,7 @@ public class SummaryHandler : MonoBehaviour
 
         selectedCaughtBall.sprite = Resources.Load<Sprite>("null");
         selectedCaughtBall.sprite = Resources.Load<Sprite>("PCSprites/summary" + selectedPokemon.getCaughtBall());
-        selectedName.text = selectedPokemon.getName();
+        selectedName.text = selectedPokemon.GetName();
         selectedNameShadow.text = selectedName.text;
         if (selectedPokemon.getGender() == PokemonGender.FEMALE)
         {
@@ -332,28 +332,29 @@ public class SummaryHandler : MonoBehaviour
             selectedShiny.sprite = Resources.Load<Sprite>("null");
         }
 
-        dexNo.text = selectedPokemon.getLongID();
+        dexNo.text = selectedPokemon.Species.GameId;
         dexNoShadow.text = dexNo.text;
-        species.text = PokemonDatabase.getPokemon(selectedPokemon.getID()).getName();
+        species.text = selectedPokemon.Species.Name;
         speciesShadow.text = species.text;
-        string type1string = PokemonDatabase.getPokemon(selectedPokemon.getID()).getType1().ToString();
-        string type2string = PokemonDatabase.getPokemon(selectedPokemon.getID()).getType2().ToString();
-        type1.sprite = Resources.Load<Sprite>("null");
-        type2.sprite = Resources.Load<Sprite>("null");
-        if (type1string != "NONE")
-        {
-            type1.sprite = Resources.Load<Sprite>("PCSprites/type" + type1string);
-            type1.rectTransform.localPosition = new Vector3(71, type1.rectTransform.localPosition.y);
-        }
-        if (type2string != "NONE")
-        {
-            type2.sprite = Resources.Load<Sprite>("PCSprites/type" + type2string);
-        }
-        else
-        {
-            //if single type pokemon, center the type icon
-            type1.rectTransform.localPosition = new Vector3(89, type1.rectTransform.localPosition.y);
-        }
+        // ToDo: implement types.
+        //string type1string = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID()).getType1().ToString();
+        //string type2string = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID()).getType2().ToString();
+        //type1.sprite = Resources.Load<Sprite>("null");
+        //type2.sprite = Resources.Load<Sprite>("null");
+        //if (type1string != "NONE")
+        //{
+        //    type1.sprite = Resources.Load<Sprite>("PCSprites/type" + type1string);
+        //    type1.rectTransform.localPosition = new Vector3(71, type1.rectTransform.localPosition.y);
+        //}
+        //if (type2string != "NONE")
+        //{
+        //    type2.sprite = Resources.Load<Sprite>("PCSprites/type" + type2string);
+        //}
+        //else
+        //{
+        //    //if single type pokemon, center the type icon
+        //    type1.rectTransform.localPosition = new Vector3(89, type1.rectTransform.localPosition.y);
+        //}
         OT.text = selectedPokemon.getOT();
         OTShadow.text = OT.text;
         IDNo.text = "" + selectedPokemon.getIDno();
@@ -361,10 +362,10 @@ public class SummaryHandler : MonoBehaviour
         expPoints.text = "" + selectedPokemon.getExp();
         expPointsShadow.text = expPoints.text;
         float expCurrentLevel =
-            PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(),
+            PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(selectedPokemon.Species.LevelingRate,
                 selectedPokemon.getLevel());
         float expNextlevel =
-            PokemonDatabase.getLevelExp(PokemonDatabase.getPokemon(selectedPokemon.getID()).getLevelingRate(),
+            PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(selectedPokemon.Species.LevelingRate,
                 selectedPokemon.getLevel() + 1);
         float expAlong = selectedPokemon.getExp() - expCurrentLevel;
         float expDistance = expAlong / (expNextlevel - expCurrentLevel);
@@ -471,7 +472,7 @@ public class SummaryHandler : MonoBehaviour
         //}
 
 
-        abilityName.text = PokemonDatabase.getPokemon(selectedPokemon.getID()).getAbility(selectedPokemon.getAbility());
+        //abilityName.text = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID().ToString()).getAbility(selectedPokemon.getAbility());
         abilityNameShadow.text = abilityName.text;
         //abilities not yet implemented
         abilityDescription.text = "";

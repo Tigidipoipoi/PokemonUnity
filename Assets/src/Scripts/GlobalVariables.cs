@@ -49,8 +49,8 @@ public class GlobalVariables : MonoBehaviour
         {
             global = this;
 
-            debugText = this.transform.FindChild("DEBUG").GetComponent<GUIText>();
-            debugTextShadow = debugText.transform.FindChild("DEBUGShadow").GetComponent<GUIText>();
+            debugText = this.transform.FindChild("DEBug").GetComponent<GUIText>();
+            debugTextShadow = debugText.transform.FindChild("DEBugShadow").GetComponent<GUIText>();
 
             Object.DontDestroyOnLoad(this.gameObject);
 
@@ -80,7 +80,7 @@ public class GlobalVariables : MonoBehaviour
             RenderTexture.active = GUIDisplay;
             GL.Clear(false, true, new Color(0.0f, 0.0f, 0.0f, 0.0f));
 
-            SetDEBUGFileData();
+            SetDEBugFileData();
         }
         else if (global != this)
         {
@@ -126,9 +126,10 @@ public class GlobalVariables : MonoBehaviour
         }
     }
 
-    public void SetDEBUGFileData()
+    public void SetDEBugFileData()
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // ToDo: update this method.
+        /*///////////////////////////////////////////////////////////////////////////////////////////////////
         SaveData.currentSave.playerName = "Gold";
         SaveData.currentSave.playerID = 29482;
         SaveData.currentSave.isMale = true;
@@ -140,7 +141,7 @@ public class GlobalVariables : MonoBehaviour
             "Gold",
             Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32), Random.Range(0, 32),
             Random.Range(0, 32),
-            0, 0, 0, 0, 0, 0, PokemonNature.Adamant, 0, PokemonDatabase.getPokemon(6).GenerateMoveset(42), new int[4]));
+            0, 0, 0, 0, 0, 0, PokemonNature.Adamant, 0, PokemonDatabase.Instance.GetPokemonSpeciesByGameId(6).GenerateMoveset(42), new int[4]));
         SaveData.currentSave.PC.addPokemon(new OwnedPokemon(197, PokemonGender.CALCULATE, 34, "Great Ball", "", "Gold", 0));
         SaveData.currentSave.PC.addPokemon(new OwnedPokemon(393, PokemonGender.CALCULATE, 6, "Poké Ball", "", "Gold", 0));
         SaveData.currentSave.PC.addPokemon(new OwnedPokemon(197, PokemonGender.CALCULATE, 28, "Great Ball", "", "Gold", -1));
@@ -168,7 +169,7 @@ public class GlobalVariables : MonoBehaviour
 
         SaveData.currentSave.PC.swapPokemon(0, 2, 1, 4);
 
-        SaveData.currentSave.PC.boxes[0][1].setStatus(PokemonStatus.POISONED);
+        SaveData.currentSave.PC.boxes[0][1].setStatus(PokemonStatus.PoisonED);
         SaveData.currentSave.PC.boxes[0][1].addExp(420);
 
         SaveData.currentSave.PC.packParty();
@@ -267,7 +268,7 @@ public class GlobalVariables : MonoBehaviour
             "Apr. 27th, 2015", "Apr. 30th, 2015", null, null, null, "May. 1st, 2015",
             null, null, null, null, null, null
         };
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////*/
     }
 
     /// Loads the new scene, placing the player in the correct position.

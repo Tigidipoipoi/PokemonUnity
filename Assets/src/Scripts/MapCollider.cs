@@ -239,15 +239,15 @@ public class MapCollider : MonoBehaviour
         {
             if (map1Hit.collider == null && map2Hit.collider == null)
             {
-                Debug.Log("DEBUG: No Map1Hit or Map2Hit!");
+                Debug.Log("DEBug: No Map1Hit or Map2Hit!");
             }
             else if (map1Hit.collider == null)
             {
-                Debug.Log("DEBUG: No Map1Hit!");
+                Debug.Log("DEBug: No Map1Hit!");
             }
             else
             {
-                Debug.Log("DEBUG: No Map1Hit!");
+                Debug.Log("DEBug: No Map1Hit!");
             }
 
             return 0;

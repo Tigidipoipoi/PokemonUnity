@@ -63,7 +63,7 @@ public class Trainer : MonoBehaviour
     {
         for (int i = 0; i < trainerParty.Length; i++)
         {
-            party[i] = new OwnedPokemon(trainerParty[i].ID, trainerParty[i].gender, trainerParty[i].level, "Poké Ball",
+            party[i] = new OwnedPokemon(trainerParty[i].ID.ToString(), trainerParty[i].gender, trainerParty[i].level, "Poké Ball",
                 trainerParty[i].heldItem, trainerName, trainerParty[i].ability);
         }
     }

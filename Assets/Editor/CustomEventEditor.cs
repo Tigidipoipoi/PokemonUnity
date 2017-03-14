@@ -386,8 +386,9 @@ public class CustomEventEditor : Editor
 
             case CustomEventDetails.CustomEventType.ReceivePokemon:
                 eventDescription = "Receive a Lv. " + ints_Prop.GetArrayElementAtIndex(1).intValue + " \"";
-                PokemonData pkd = PokemonDatabase.getPokemon(ints_Prop.GetArrayElementAtIndex(0).intValue);
-                eventDescription += (pkd != null) ? pkd.getName() : "null";
+                // ToDo: change this ints_Prop for string_Prop ?
+                PokemonSpecies pkmn = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(ints_Prop.GetArrayElementAtIndex(0).intValue.ToString());
+                eventDescription += (pkmn != null) ? pkmn.Name : "null";
                 eventDescription += "\" or Jump to " + int0_Prop.intValue + ".";
                 break;
 
@@ -585,8 +586,10 @@ public class CustomEventEditor : Editor
 
                 ints_Prop.GetArrayElementAtIndex(0).intValue = EditorGUILayout.IntField(new GUIContent("Pokemon ID"),
                     ints_Prop.GetArrayElementAtIndex(0).intValue);
-                PokemonData pkd = PokemonDatabase.getPokemon(ints_Prop.GetArrayElementAtIndex(0).intValue);
-                string pokemonName = (pkd != null) ? pkd.getName() : "null";
+
+                // ToDO: change ints_Prop.
+                var pkmn = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(ints_Prop.GetArrayElementAtIndex(0).intValue.ToString());
+                string pokemonName = (pkmn != null) ? pkmn.Name : "null";
                 EditorGUILayout.LabelField(new GUIContent(" "), new GUIContent(pokemonName));
                 EditorGUILayout.Space();
                 strings_Prop.GetArrayElementAtIndex(0).stringValue =
@@ -595,17 +598,17 @@ public class CustomEventEditor : Editor
                 ints_Prop.GetArrayElementAtIndex(1).intValue = EditorGUILayout.IntSlider(new GUIContent("Level"),
                     ints_Prop.GetArrayElementAtIndex(1).intValue, 1, 100);
                 //Gender
-                if (pkd != null)
+                if (pkmn != null)
                 {
-                    if (pkd.getMaleRatio() == -1)
+                    if (pkmn.MaleRatio < 0)
                     {
                         EditorGUILayout.LabelField(new GUIContent("Gender"), new GUIContent("Genderless"));
                     }
-                    else if (pkd.getMaleRatio() == 0)
+                    else if (pkmn.MaleRatio == 0)
                     {
                         EditorGUILayout.LabelField(new GUIContent("Gender"), new GUIContent("Female"));
                     }
-                    else if (pkd.getMaleRatio() == 100)
+                    else if (pkmn.MaleRatio == 100)
                     {
                         EditorGUILayout.LabelField(new GUIContent("Gender"), new GUIContent("Male"));
                     }
@@ -654,24 +657,24 @@ public class CustomEventEditor : Editor
                 var intsArrayElementAt3 = ints_Prop.GetArrayElementAtIndex(3);
                 intsArrayElementAt3.intValue = EditorGUILayout.Popup(
                     new GUIContent("Nature"),
-                    ints_Prop.GetArrayElementAtIndex(3).intValue, 
+                    ints_Prop.GetArrayElementAtIndex(3).intValue,
                     natures);
 
                 //Ability
-                if (pkd != null)
-                {
-                    var intsArrayElementAt4 = ints_Prop.GetArrayElementAtIndex(4);
-                    intsArrayElementAt4.intValue = EditorGUILayout.Popup(new GUIContent("Ability"),
-                        intsArrayElementAt4.intValue, new GUIContent[]
-                        {
-                            new GUIContent("1: " + pkd.getAbility(0)), new GUIContent("2: " + pkd.getAbility(1)),
-                            new GUIContent("(HA) " + pkd.getAbility(2))
-                        });
-                }
-                else
-                {
-                    EditorGUILayout.LabelField(new GUIContent("Ability"));
-                }
+                //if (pkmn != null)
+                //{
+                //    var intsArrayElementAt4 = ints_Prop.GetArrayElementAtIndex(4);
+                //    intsArrayElementAt4.intValue = EditorGUILayout.Popup(new GUIContent("Ability"),
+                //        intsArrayElementAt4.intValue, new GUIContent[]
+                //        {
+                //            new GUIContent("1: " + pkmn.getAbility(0)), new GUIContent("2: " + pkd.getAbility(1)),
+                //            new GUIContent("(HA) " + pkmn.getAbility(2))
+                //        });
+                //}
+                //else
+                //{
+                //    EditorGUILayout.LabelField(new GUIContent("Ability"));
+                //}
 
                 EditorGUILayout.Space();
 

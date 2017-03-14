@@ -110,7 +110,7 @@ public class PartyHandler : MonoBehaviour
                 slot[i].gameObject.SetActive(true);
                 selectBall[i].texture = selectBallClosed;
                 icon[i].texture = selectedPokemon.GetIcons();
-                pokemonName[i].text = selectedPokemon.getName();
+                pokemonName[i].text = selectedPokemon.GetName();
                 pokemonNameShadow[i].text = pokemonName[i].text;
                 if (selectedPokemon.getGender() == PokemonGender.FEMALE)
                 {
@@ -586,7 +586,7 @@ public class PartyHandler : MonoBehaviour
                         SfxHandler.Play(selectClip);
 
                         Dialog.drawDialogBox();
-                        Dialog.drawTextInstant("Do what with " + selectedPokemon.getName() + "?");
+                        Dialog.drawTextInstant("Do what with " + selectedPokemon.GetName() + "?");
                         Dialog.drawChoiceBox(choices);
                         yield return new WaitForSeconds(0.2f);
                         yield return StartCoroutine(Dialog.choiceNavigate(choices));
@@ -622,7 +622,7 @@ public class PartyHandler : MonoBehaviour
                             chosenIndex = 0;
                             Dialog.undrawChoiceBox();
                             Dialog.drawDialogBox();
-                            Dialog.drawTextInstant("Move " + selectedPokemon.getName() + " to where?");
+                            Dialog.drawTextInstant("Move " + selectedPokemon.GetName() + " to where?");
                             yield return new WaitForSeconds(0.2f);
                         }
                         else if (chosenIndex == 1)
@@ -634,7 +634,7 @@ public class PartyHandler : MonoBehaviour
                             {
                                 yield return
                                     StartCoroutine(
-                                        Dialog.drawText(selectedPokemon.getName() + " is holding " +
+                                        Dialog.drawText(selectedPokemon.GetName() + " is holding " +
                                                         selectedPokemon.getHeldItem() + "."));
                                 choices = new string[]
                                 {
@@ -694,7 +694,7 @@ public class PartyHandler : MonoBehaviour
                                             Dialog.drawDialogBox();
                                             yield return
                                                 Dialog.StartCoroutine("drawText",
-                                                    "Gave " + chosenItem + " to " + selectedPokemon.getName() + ",");
+                                                    "Gave " + chosenItem + " to " + selectedPokemon.GetName() + ",");
                                             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                                             {
                                                 yield return null;
@@ -724,7 +724,7 @@ public class PartyHandler : MonoBehaviour
                                     yield return
                                         StartCoroutine(
                                             Dialog.drawText("Took " + receivedItem + " from " +
-                                                            selectedPokemon.getName() + "."));
+                                                            selectedPokemon.GetName() + "."));
                                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                                     {
                                         yield return null;
@@ -735,7 +735,7 @@ public class PartyHandler : MonoBehaviour
                             {
                                 yield return
                                     StartCoroutine(
-                                        Dialog.drawText(selectedPokemon.getName() + " isn't holding anything."));
+                                        Dialog.drawText(selectedPokemon.GetName() + " isn't holding anything."));
                                 choices = new string[]
                                 {
                                     "Give", "Cancel"
@@ -782,7 +782,7 @@ public class PartyHandler : MonoBehaviour
                                         Dialog.drawDialogBox();
                                         yield return
                                             Dialog.StartCoroutine("drawText",
-                                                "Gave " + chosenItem + " to " + selectedPokemon.getName() + ".");
+                                                "Gave " + chosenItem + " to " + selectedPokemon.GetName() + ".");
                                         while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                                         {
                                             yield return null;

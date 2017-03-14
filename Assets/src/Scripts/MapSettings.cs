@@ -48,7 +48,7 @@ public class MapSettings : MonoBehaviour
     {
         if (mapBGMNightClip != null)
         {
-            float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
+            float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
             if (time >= 20 || time < 3.5f)
             {
                 //night
@@ -62,7 +62,7 @@ public class MapSettings : MonoBehaviour
     {
         if (mapBGMNightClip != null)
         {
-            float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
+            float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
             if (time >= 20 || time < 3.5f)
             {
                 //night
@@ -79,7 +79,7 @@ public class MapSettings : MonoBehaviour
 
     public Sprite getBattleBackground(int currentTag)
     {
-        float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
+        float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
         string timeString = "";
         if (time >= 20 || time < 3.5f)
         {
@@ -149,7 +149,7 @@ public class MapSettings : MonoBehaviour
 
     public Sprite getBattleBase(int currentTag)
     {
-        float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
+        float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
         string timeString = "";
         if (time >= 20 || time < 3.5f)
         {
@@ -236,7 +236,7 @@ public class MapSettings : MonoBehaviour
         WildPokemonInitialiser[] list = new WildPokemonInitialiser[encounters.Length];
         int listIndex = 0;
 
-        float time = System.DateTime.Now.Hour + ((float) System.DateTime.Now.Minute / 60f);
+        float time = System.DateTime.Now.Hour + ((float)System.DateTime.Now.Minute / 60f);
 
         for (int i = 0; i < encounters.Length; i++)
         {
@@ -307,15 +307,15 @@ public class MapSettings : MonoBehaviour
         //randomly pick a number from the list's length
         int encounterIndex = Random.Range(0, chanceSplitList.Length);
 
-        /*/		DEBUG
+        /*/		DEBug
             string debugtext = "";
             for(int i = 0; i < chanceSplitList.Length; i++){
-                debugtext += PokemonDatabase.getPokemon(chanceSplitList[i].ID).getName() + ", ";}
-            Debug.Log(encounterIndex+": "+debugtext + "("+PokemonDatabase.getPokemon(chanceSplitList[encounterIndex].ID).getName()+")");
+                debugtext += PokemonDatabase.Instance.GetPokemonSpeciesByGameId(chanceSplitList[i].ID).getName() + ", ";}
+            Debug.Log(encounterIndex+": "+debugtext + "("+PokemonDatabase.Instance.GetPokemonSpeciesByGameId(chanceSplitList[encounterIndex].ID).getName()+")");
             //*/
 
 
-        return new OwnedPokemon(chanceSplitList[encounterIndex].ID, PokemonGender.CALCULATE,
+        return new OwnedPokemon(chanceSplitList[encounterIndex].ID.ToString(), PokemonGender.CALCULATE,
             Random.Range(chanceSplitList[encounterIndex].minLevel, chanceSplitList[encounterIndex].maxLevel + 1),
             null, null, null, -1);
     }

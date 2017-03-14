@@ -300,7 +300,7 @@ public class PokemonStat
     /// </summary>
     /// <param name="pCurrentLevel"></param>
     /// <param name="pDamageHeal">Positive for damages, negative for heal.</param>
-    public void SetCurrentHP(int pDamageHeal)
+    public void LoseHP(int pDamageHeal)
     {
         if (Type != PokemonStatType.HP)
             return;
@@ -352,5 +352,41 @@ public class PokemonStatList : List<PokemonStat>
             if (statToSet != null)
                 statToSet = value;
         }
+    }
+
+    public PokemonStatList() : base((int)PokemonStatType.None) { }
+    public PokemonStatList(int pCapacity) : base(pCapacity) { }
+    public PokemonStatList(IEnumerable<PokemonStat> pCollection) : base(pCollection) { }
+}
+
+[Serializable]
+[Table("PokemonBaseStat")]
+public class PokemonBaseStat
+{
+    [Column("HP")]
+    public int HP { get; set; }
+    [Column("Attack")]
+    public int Attack { get; set; }
+    [Column("Defence")]
+    public int Defence { get; set; }
+    [Column("SpecialAttack")]
+    public int SpecialAttack { get; set; }
+    [Column("SpecialDefence")]
+    public int SpecialDefence { get; set; }
+    [Column("Speed")]
+    public int Speed { get; set; }
+
+    public PokemonStatList GenerateStatList()
+    {
+        PokemonStatList stats = new PokemonStatList();
+
+        stats.Add(new PokemonStat(PokemonStatType.HP, HP));
+        stats.Add(new PokemonStat(PokemonStatType.Attack, Attack));
+        stats.Add(new PokemonStat(PokemonStatType.Defence, Defence));
+        stats.Add(new PokemonStat(PokemonStatType.SpecialAttack, SpecialAttack));
+        stats.Add(new PokemonStat(PokemonStatType.SpecialDefence, SpecialDefence));
+        stats.Add(new PokemonStat(PokemonStatType.Speed, Speed));
+
+        return stats;
     }
 }

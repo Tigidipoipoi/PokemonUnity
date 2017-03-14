@@ -130,7 +130,7 @@ public class PC
                 }
                 else
                 {
-                    result += boxes[box][i].getID() + ": " + boxes[box][i].getName() + ", ";
+                    result += boxes[box][i].Species.GameId + ": " + boxes[box][i].GetName() + ", ";
                 }
             }
             result.Remove(result.Length - 2, 2);
@@ -146,7 +146,7 @@ public class PC
                 }
                 else
                 {
-                    result += boxes[box][i].getID() + ": " + boxes[box][i].getName() + ", ";
+                    result += boxes[box][i].Species.GameId + ": " + boxes[box][i].GetName() + ", ";
                 }
             }
         }

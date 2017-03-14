@@ -19,9 +19,7 @@ public static class PokemonLevelingRateHelper
 {
     public static int GetRequiredExperienceToTargetLevel(PokemonLevelingRateType pType, int pTargetLevel)
     {
-        if (pTargetLevel >= 100
-            || pTargetLevel <= 1)
-            return 0;
+        pTargetLevel = Mathf.Clamp(pTargetLevel, 1, 100);
 
         int requiredExperience = 0;
 

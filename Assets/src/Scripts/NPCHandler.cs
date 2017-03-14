@@ -71,11 +71,12 @@ public class NPCHandler : MonoBehaviour
         }
         else
         {
-            spriteSheet = OwnedPokemon.GetSpriteFromID(pokemonID, false, false);
+            spriteSheet = OwnedPokemon.GetSpriteFromID(pokemonID.ToString(), false, false);
 
-            npcLight.intensity = PokemonDatabase.getPokemon(pokemonID).getLuminance();
-            npcLight.color = PokemonDatabase.getPokemon(pokemonID).getLightColor();
-            lightSheet = OwnedPokemon.GetSpriteFromID(pokemonID, false, true);
+            // ToDo: Find out what is this fucking light !
+            //npcLight.intensity = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pokemonID).getLuminance();
+            //npcLight.color = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pokemonID).getLightColor();
+            lightSheet = OwnedPokemon.GetSpriteFromID(pokemonID.ToString(), false, true);
         }
 
         exclaim = transform.FindChild("Exclaim").gameObject;
@@ -163,7 +164,7 @@ public class NPCHandler : MonoBehaviour
             frame = 0;
             frames = 4;
             framesPerSec = 7;
-            secPerFrame = 1f / (float) framesPerSec;
+            secPerFrame = 1f / (float)framesPerSec;
             while (true)
             {
                 for (int i = 0; i < 4; i++)
@@ -517,7 +518,7 @@ public class NPCHandler : MonoBehaviour
                 overrideBusy)
             {
                 increment += (1f / speed) * Time.deltaTime;
-                    //speed is determined by how many squares are crossed in one second
+                //speed is determined by how many squares are crossed in one second
                 if (increment > 1)
                 {
                     increment = 1;

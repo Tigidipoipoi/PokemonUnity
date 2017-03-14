@@ -371,7 +371,7 @@ public class PCHandler : MonoBehaviour
             }
             else
             {
-                selectedName.text = selectedPokemon.getName();
+                selectedName.text = selectedPokemon.GetName();
                 selectedNameShadow.text = selectedName.text;
                 if (selectedPokemon.getGender() == PokemonGender.FEMALE)
                 {
@@ -390,23 +390,25 @@ public class PCHandler : MonoBehaviour
                 selectedGenderShadow.text = selectedGender.text;
                 selectedSpriteAnimation = selectedPokemon.GetFrontAnim();
                 selectedSprite.texture = selectedSpriteAnimation[0];
-                string type1 = PokemonDatabase.getPokemon(selectedPokemon.getID()).getType1().ToString();
-                string type2 = PokemonDatabase.getPokemon(selectedPokemon.getID()).getType2().ToString();
-                selectedType1.texture = null;
-                selectedType2.texture = null;
-                if (type1 != "NONE")
-                {
-                    selectedType1.texture = Resources.Load<Texture>("PCSprites/type" + type1);
-                }
-                if (type2 != "NONE")
-                {
-                    selectedType2.texture = Resources.Load<Texture>("PCSprites/type" + type2);
-                }
+                // ToDo: implement types.
+                //string type1 = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID()).getType1().ToString();
+                //string type2 = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID()).getType2().ToString();
+                //selectedType1.texture = null;
+                //selectedType2.texture = null;
+                //if (type1 != "NONE")
+                //{
+                //    selectedType1.texture = Resources.Load<Texture>("PCSprites/type" + type1);
+                //}
+                //if (type2 != "NONE")
+                //{
+                //    selectedType2.texture = Resources.Load<Texture>("PCSprites/type" + type2);
+                //}
                 selectedLevel.text = "Level " + selectedPokemon.getLevel();
                 selectedLevelShadow.text = selectedLevel.text;
-                selectedAbility.text =
-                    PokemonDatabase.getPokemon(selectedPokemon.getID()).getAbility(selectedPokemon.getAbility());
-                selectedAbilityShadow.text = selectedAbility.text;
+                // ToDo: implement abilities
+                //selectedAbility.text =
+                //    PokemonDatabase.Instance.GetPokemonSpeciesByGameId(selectedPokemon.getID()).getAbility(selectedPokemon.getAbility());
+                //selectedAbilityShadow.text = selectedAbility.text;
                 selectedItem.text = "None";
                 if (selectedPokemon.getHeldItem() != null)
                 {
@@ -1327,7 +1329,7 @@ public class PCHandler : MonoBehaviour
                                 Dialog.drawDialogBox();
                                 Dialog.drawTextInstant("What would you like to do with " +
                                                        SaveData.currentSave.PC.boxes[currentBoxID][currentPosition - 3]
-                                                           .getName() + "?");
+                                                           .GetName() + "?");
                                 Dialog.drawChoiceBox(choices);
                                 yield return new WaitForSeconds(0.2f);
                                 yield return StartCoroutine(Dialog.choiceNavigate(choices));
@@ -1374,7 +1376,7 @@ public class PCHandler : MonoBehaviour
                                     {
                                         yield return
                                             StartCoroutine(
-                                                Dialog.drawText(currentPokemon.getName() + " is holding " +
+                                                Dialog.drawText(currentPokemon.GetName() + " is holding " +
                                                                 currentPokemon.getHeldItem() + "."));
                                         string[] itemChoices = new string[]
                                         {
@@ -1431,7 +1433,7 @@ public class PCHandler : MonoBehaviour
                                                     Dialog.drawDialogBox();
                                                     yield return
                                                         Dialog.StartCoroutine("drawText",
-                                                            "Gave " + chosenItem + " to " + currentPokemon.getName() +
+                                                            "Gave " + chosenItem + " to " + currentPokemon.GetName() +
                                                             ",");
                                                     while (!Input.GetButtonDown("Select") &&
                                                            !Input.GetButtonDown("Back"))
@@ -1465,7 +1467,7 @@ public class PCHandler : MonoBehaviour
                                             yield return
                                                 StartCoroutine(
                                                     Dialog.drawText("Took " + receivedItem + " from " +
-                                                                    currentPokemon.getName() + "."));
+                                                                    currentPokemon.GetName() + "."));
                                             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                                             {
                                                 yield return null;
@@ -1476,7 +1478,7 @@ public class PCHandler : MonoBehaviour
                                     {
                                         yield return
                                             StartCoroutine(
-                                                Dialog.drawText(currentPokemon.getName() + " isn't holding anything."));
+                                                Dialog.drawText(currentPokemon.GetName() + " isn't holding anything."));
                                         string[] itemChoices = new string[]
                                         {
                                             "Give", "Cancel"
@@ -1521,7 +1523,7 @@ public class PCHandler : MonoBehaviour
                                                 Dialog.drawDialogBox();
                                                 yield return
                                                     Dialog.StartCoroutine("drawText",
-                                                        "Gave " + chosenItem + " to " + currentPokemon.getName() + ".");
+                                                        "Gave " + chosenItem + " to " + currentPokemon.GetName() + ".");
                                                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                                                 {
                                                     yield return null;
@@ -1562,7 +1564,7 @@ public class PCHandler : MonoBehaviour
                                     //RELEASE
                                     int releaseIndex = 1;
                                     string pokemonName =
-                                        SaveData.currentSave.PC.boxes[currentBoxID][currentPosition - 3].getName();
+                                        SaveData.currentSave.PC.boxes[currentBoxID][currentPosition - 3].GetName();
                                     while (releaseIndex != 0)
                                     {
                                         Dialog.drawDialogBox();
@@ -1841,7 +1843,7 @@ public class PCHandler : MonoBehaviour
                                         {
                                             yield return
                                                 StartCoroutine(
-                                                    Dialog.drawText(currentPokemon.getName() + " is holding " +
+                                                    Dialog.drawText(currentPokemon.GetName() + " is holding " +
                                                                     currentPokemon.getHeldItem() + "."));
                                             string[] itemChoices = new string[]
                                             {
@@ -1898,7 +1900,7 @@ public class PCHandler : MonoBehaviour
                                                         Dialog.drawDialogBox();
                                                         yield return
                                                             Dialog.StartCoroutine("drawText",
-                                                                "Gave " + chosenItem + " to " + currentPokemon.getName() +
+                                                                "Gave " + chosenItem + " to " + currentPokemon.GetName() +
                                                                 ",");
                                                         while (!Input.GetButtonDown("Select") &&
                                                                !Input.GetButtonDown("Back"))
@@ -1932,7 +1934,7 @@ public class PCHandler : MonoBehaviour
                                                 yield return
                                                     StartCoroutine(
                                                         Dialog.drawText("Took " + receivedItem + " from " +
-                                                                        currentPokemon.getName() + "."));
+                                                                        currentPokemon.GetName() + "."));
                                                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                                                 {
                                                     yield return null;
@@ -1943,7 +1945,7 @@ public class PCHandler : MonoBehaviour
                                         {
                                             yield return
                                                 StartCoroutine(
-                                                    Dialog.drawText(currentPokemon.getName() +
+                                                    Dialog.drawText(currentPokemon.GetName() +
                                                                     " isn't holding anything."));
                                             string[] itemChoices = new string[]
                                             {
@@ -1989,7 +1991,7 @@ public class PCHandler : MonoBehaviour
                                                     Dialog.drawDialogBox();
                                                     yield return
                                                         Dialog.StartCoroutine("drawText",
-                                                            "Gave " + chosenItem + " to " + currentPokemon.getName() +
+                                                            "Gave " + chosenItem + " to " + currentPokemon.GetName() +
                                                             ".");
                                                     while (!Input.GetButtonDown("Select") &&
                                                            !Input.GetButtonDown("Back"))
@@ -2060,7 +2062,7 @@ public class PCHandler : MonoBehaviour
                                             //if there is more than one pokemon in the party
                                             int releaseIndex = 1;
                                             string pokemonName =
-                                                SaveData.currentSave.PC.boxes[0][currentPosition - 33].getName();
+                                                SaveData.currentSave.PC.boxes[0][currentPosition - 33].GetName();
                                             while (releaseIndex != 0)
                                             {
                                                 Dialog.drawDialogBox();

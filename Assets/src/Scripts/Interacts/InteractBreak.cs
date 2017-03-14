@@ -80,7 +80,7 @@ public class InteractBreak : MonoBehaviour
                     Dialog.drawDialogBox();
                     yield return
                         Dialog.StartCoroutine("drawText",
-                            targetPokemon.getName() + " used " + targetPokemon.getFirstFEInstance(fieldEffect) + "!");
+                            targetPokemon.GetName() + " used " + targetPokemon.getFirstFEInstance(fieldEffect) + "!");
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                     {
                         yield return null;

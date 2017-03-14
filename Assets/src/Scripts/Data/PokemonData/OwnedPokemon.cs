@@ -10,7 +10,7 @@ public enum PokemonStatus
     BURNED,
     FROZEN,
     PARALYZED,
-    POISONED,
+    PoisonED,
     ASLEEP,
     FAINTED
 }
@@ -28,7 +28,7 @@ public class OwnedPokemon
 {
     public const int MAX_SUMMED_EV = 510;
     private const int MAX_EV = 252;
-    private PokemonSpecies Species;
+    public PokemonSpecies Species { get; private set; }
 
     private string _nickname;
 
@@ -45,9 +45,10 @@ public class OwnedPokemon
 
     private int rareValue;
 
+    // ToDo: Replace it by a shiny value.
     private bool isShiny;
 
-    private PokemonStatus status;
+    private PokemonStatus _currentStatus;
 
     private int sleepTurns;
 
@@ -76,9 +77,9 @@ public class OwnedPokemon
 
 
     #region Constructors
-    public OwnedPokemon() : this(-1) { }
+    public OwnedPokemon() : this("-1") { }
 
-    public OwnedPokemon(int pPokemonID)
+    public OwnedPokemon(string pPokemonID)
     {
         // ToDo: Find in Database.
         //Species = 
@@ -113,14 +114,14 @@ public class OwnedPokemon
     /// <param name="pAbility"></param>
     /// <param name="pMoveset"></param>
     /// <param name="pPPups"></param>
-    public OwnedPokemon(int pPokemonID, string pNickname, PokemonGender pGender, int pLevel,
+    public OwnedPokemon(string pPokemonID, string pNickname, PokemonGender pGender, int pLevel,
         bool pIsShiny, string pCaughtBall, string pHeldItem, string pOT,
         int pIV_HP, int pIV_ATK, int pIV_DEF, int pIV_SPA, int pIV_SPD, int pIV_SPE,
         int pEV_HP, int pEV_ATK, int pEV_DEF, int pEV_SPA, int pEV_SPD, int pEV_SPE,
         PokemonNature pNature, int pAbility, string[] pMoveset, int[] pPPups)
         : this(pPokemonID)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pPokemonID);
+        var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pPokemonID);
 
         Species.GameId = pPokemonID;
         _nickname = pNickname;
@@ -130,11 +131,11 @@ public class OwnedPokemon
         //if gender is CALCULATE, then calculate gender using maleRatio
         if (pGender == PokemonGender.CALCULATE)
         {
-            if (thisPokemonData.getMaleRatio() < 0)
+            if (thisPokemonData.MaleRatio < 0)
             {
                 _gender = PokemonGender.NONE;
             }
-            else if (Random.Range(0f, 100f) <= thisPokemonData.getMaleRatio())
+            else if (Random.Range(0f, 100f) <= thisPokemonData.MaleRatio)
             {
                 _gender = PokemonGender.MALE;
             }
@@ -145,9 +146,9 @@ public class OwnedPokemon
         }
         _currentLevel = pLevel;
         //Find exp for current level, and next level.
-        exp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel);
-        nextLevelExp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel + 1);
-        friendship = thisPokemonData.getBaseFriendship();
+        exp = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(thisPokemonData.LevelingRate, pLevel);
+        nextLevelExp = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(thisPokemonData.LevelingRate, pLevel + 1);
+        friendship = thisPokemonData.BaseFriendship;
 
         isShiny = pIsShiny;
         if (pIsShiny)
@@ -163,7 +164,7 @@ public class OwnedPokemon
             }
         }
 
-        status = PokemonStatus.NONE;
+        _currentStatus = PokemonStatus.NONE;
         sleepTurns = 0;
         caughtBall = pCaughtBall;
         heldItem = pHeldItem;
@@ -245,10 +246,10 @@ public class OwnedPokemon
     /// <param name="pHeldItem"></param>
     /// <param name="pOT"></param>
     /// <param name="pAbility"></param>
-    public OwnedPokemon(int pPokemonID, PokemonGender pGender, int pLevel, string pCaughtBall, string pHeldItem, string pOT, int pAbility)
+    public OwnedPokemon(string pPokemonID, PokemonGender pGender, int pLevel, string pCaughtBall, string pHeldItem, string pOT, int pAbility)
         : this(pPokemonID)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(pPokemonID);
+        var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pPokemonID);
 
         Species.GameId = pPokemonID;
 
@@ -259,11 +260,11 @@ public class OwnedPokemon
         //if gender is CALCULATE, then calculate gender using maleRatio
         if (pGender == PokemonGender.CALCULATE)
         {
-            if (thisPokemonData.getMaleRatio() < 0)
+            if (thisPokemonData.MaleRatio < 0)
             {
                 _gender = PokemonGender.NONE;
             }
-            else if (Random.Range(0f, 100f) <= thisPokemonData.getMaleRatio())
+            else if (Random.Range(0f, 100f) <= thisPokemonData.MaleRatio)
             {
                 _gender = PokemonGender.MALE;
             }
@@ -275,10 +276,10 @@ public class OwnedPokemon
 
         _currentLevel = pLevel;
         //Find exp for current level, and next level.
-        exp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel);
-        nextLevelExp = PokemonDatabase.getLevelExp(thisPokemonData.getLevelingRate(), pLevel + 1);
+        exp = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(thisPokemonData.LevelingRate, pLevel);
+        nextLevelExp = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(thisPokemonData.LevelingRate, pLevel + 1);
 
-        friendship = thisPokemonData.getBaseFriendship();
+        friendship = thisPokemonData.BaseFriendship;
 
         //Set Shininess randomly. 16/65535 if not shiny, then pokerus. 3/65535
         rareValue = Random.Range(0, 65536);
@@ -291,7 +292,7 @@ public class OwnedPokemon
             pokerus = true;
         }
 
-        status = PokemonStatus.NONE;
+        _currentStatus = PokemonStatus.NONE;
         sleepTurns = 0;
 
         caughtBall = pCaughtBall;
@@ -342,7 +343,7 @@ public class OwnedPokemon
         }
 
         //Set moveset based off of the highest level moves possible.
-        _currentMoveset = thisPokemonData.GenerateMoveset(_currentLevel);
+        //_currentMoveset = thisPokemonData.GenerateMoveset(_currentLevel);
         _moveHistory = _currentMoveset;
 
         //set maxPP and PP to be the regular PP defined by the move in the database.
@@ -367,9 +368,9 @@ public class OwnedPokemon
     /// <param name="pNickname"></param>
     /// <param name="pCaughtBall"></param>
     public OwnedPokemon(OwnedPokemon pPokemon, string pNickname, string pCaughtBall)
-        : this(pPokemon.getID())
+        : this(pPokemon.Species.GameId)
     {
-        //PokemonData thisPokemonData = PokemonDatabase.getPokemon(pokemon.Species.Id);
+        //PokemonData thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pokemon.Species.Id);
 
         Species.GameId = pPokemon.Species.GameId;
         _nickname = pNickname;
@@ -387,7 +388,7 @@ public class OwnedPokemon
         rareValue = pPokemon.rareValue;
         pokerus = pPokemon.pokerus;
 
-        status = pPokemon.status;
+        _currentStatus = pPokemon._currentStatus;
         sleepTurns = pPokemon.sleepTurns;
         caughtBall = pCaughtBall;
         heldItem = pPokemon.heldItem;
@@ -500,16 +501,16 @@ public class OwnedPokemon
                 int currentBaseHP = GetCurrentLevelStatValue(PokemonStatType.HP);
 
                 _currentLevel += 1;
-                nextLevelExp = PokemonDatabase.getLevelExp(
-                    PokemonDatabase.getPokemon(Species.GameId).getLevelingRate(), _currentLevel + 1);
+                nextLevelExp = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(
+                    PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId).LevelingRate, _currentLevel + 1);
 
                 // We heal the amount of gained HP by leveling.
-                Species.Stats[PokemonStatType.HP].SetCurrentHP(currentBaseHP - GetCurrentLevelStatValue(PokemonStatType.HP));
+                Species.Stats[PokemonStatType.HP].LoseHP(currentBaseHP - GetCurrentLevelStatValue(PokemonStatType.HP));
 
                 // We remove the death flag if needed.
-                if (status == PokemonStatus.FAINTED
+                if (_currentStatus == PokemonStatus.FAINTED
                     && GetCurrentStatValue(PokemonStatType.HP) > 0)
-                    status = PokemonStatus.NONE;
+                    _currentStatus = PokemonStatus.NONE;
             }
         }
     }
@@ -575,7 +576,7 @@ public class OwnedPokemon
 
     /*/
         public int getEvolutionID(string currentMethod){
-            PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.Id);
+            PokemonData thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.Id);
             int[] evolutions = thisPokemonData.getEvolutions();
             string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
             string[] evolutionRequirementsSplit = new string[evolutionRequirements.Length];
@@ -604,206 +605,211 @@ public class OwnedPokemon
 
     public int getEvolutionID(string currentMethod)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
-        int[] evolutions = thisPokemonData.getEvolutions();
-        string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
+        // ToDo: Implement evolutions
+        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
+        //int[] evolutions = thisPokemonData.getEvolutions();
+        //string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
 
-        for (int i = 0; i < evolutions.Length; i++)
-        {
-            //if an evolution method was satisfied, return true
-            if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
-            {
-                Debug.Log("Relevant ID[" + i + "] = " + evolutions[i]);
-                return evolutions[i];
-            }
-        }
+        //for (int i = 0; i < evolutions.Length; i++)
+        //{
+        //    //if an evolution method was satisfied, return true
+        //    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
+        //    {
+        //        Debug.Log("Relevant ID[" + i + "] = " + evolutions[i]);
+        //        return evolutions[i];
+        //    }
+        //}
         return -1;
     }
 
     //Check PokemonData.cs for list of evolution method names.
     public bool canEvolve(string currentMethod)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
-        int[] evolutions = thisPokemonData.getEvolutions();
-        string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
+        // ToDo: Implement evolutions
+        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
+        //int[] evolutions = thisPokemonData.getEvolutions();
+        //string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
 
-        for (int i = 0; i < evolutions.Length; i++)
-        {
-            //if an evolution method was satisfied, return true
-            if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
-            {
-                //		Debug.Log("All Checks Passed");
-                return true;
-            }
-        }
-        //Debug.Log("Check Failed");
+        //for (int i = 0; i < evolutions.Length; i++)
+        //{
+        //    //if an evolution method was satisfied, return true
+        //    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
+        //    {
+        //        //		Debug.Log("All Checks Passed");
+        //        return true;
+        //    }
+        //}
+
         return false;
     }
 
     //check that the evolution can be 
     public bool checkEvolutionMethods(string currentMethod, string evolutionRequirements)
     {
-        string[] evolutionSplit = evolutionRequirements.Split(',');
-        string[] methods = evolutionSplit[0].Split('\\');
-        string[] currentMethodSplit = currentMethod.Split(',');
-        //if currentMethod needs a parameter attached, it will be separated by a ' , '
-        string[] parameters = new string[] { };
-        if (evolutionSplit.Length > 0)
-        {
-            //if true, there is a parameter attached
-            parameters = evolutionSplit[1].Split('\\');
-        }
-        for (int i = 0; i < methods.Length; i++)
-        {
-            //for every method for the currently checked evolution
-            //Debug.Log(evolutionRequirements +" | "+ currentMethodSplit[0] +" "+ methods[i] +" "+ parameters[i]);
-            if (methods[i] == "Level")
-            {
-                //if method contains a Level requirement
-                if (currentMethodSplit[0] != "Level")
-                {
-                    //and system is not checking for a level evolution
-                    return false; //cannot evolve. return false and stop checking.
-                }
-                else
-                {
-                    if (_currentLevel < int.Parse(parameters[i]))
-                    {
-                        //and pokemon's level is not high enough to evolve,
-                        return false; //cannot evolve. return false stop checking.
-                    }
-                }
-            }
-            else if (methods[i] == "Stone")
-            {
-                //if method contains a Stone requirement
-                if (currentMethodSplit[0] != "Stone")
-                {
-                    //and system is not checking for a stone evolution
-                    return false; //cannot evolve. return false and stop checking.
-                }
-                else
-                {
-                    //if it is checking for a stone evolution,
-                    if (currentMethodSplit[1] != parameters[i])
-                    {
-                        //and parameter being checked does not match the required one
-                        return false; //cannot evolve. return false and stop checking.
-                    }
-                }
-            }
-            else if (methods[i] == "Trade")
-            {
-                //if method contains a Trade requirement
-                if (currentMethodSplit[0] != "Trade")
-                {
-                    //and system is not checking for a trade evolution
-                    return false; //cannot evolve. return false and stop checking.
-                }
-            }
-            else if (methods[i] == "Friendship")
-            {
-                //if method contains a Friendship requirement
-                if (friendship < 220)
-                {
-                    //and pokemon's friendship is less than 220
-                    return false; //cannot evolve. return false and stop checking.
-                }
-            }
-            else if (methods[i] == "Item")
-            {
-                //if method contains an Item requirement
-                if (heldItem == parameters[i])
-                {
-                    //and pokemon's Held Item is not the specified Item
-                    return false; //cannot evolve. return false and stop checking.
-                }
-            }
-            else if (methods[i] == "Gender")
-            {
-                //if method contains a Gender requirement
-                if (_gender.ToString() != parameters[i])
-                {
-                    //and pokemon's gender is not the required gender to evolve,
-                    return false; //cannot evolve. return false and stop checking.
-                }
-            }
-            else if (methods[i] == "Move")
-            {
-                //if method contains a Move requirement
-                if (!HasMove(parameters[i]))
-                {
-                    //and pokemon does not have the specified move
-                    return false; //cannot evolve. return false and stop checking.
-                }
-            }
-            else if (methods[i] == "Map")
-            {
-                //if method contains a Map requirement
-                string mapName = PlayerMovement.player.currentMap.name;
-                if (mapName != parameters[i])
-                {
-                    //and current map is not the required map to evolve,
-                    return false; //cannot evolve. return false and stop checking.
-                }
-            }
-            else if (methods[i] == "Time")
-            {
-                //if method contains a Time requirement
-                string dayNight = "Day";
-                if (DateTime.Now.Hour >= 21 || DateTime.Now.Hour < 4)
-                {
-                    //if time is night time
-                    dayNight = "Night"; //set dayNight to be "Night"
-                }
-                if (dayNight != parameters[i])
-                {
-                    //if time is not what the evolution requires (Day/Night)
-                    return false; //cannot evolve. return false and stop checking.
-                }
-            }
-            else
-            {
-                //if methods[i] did not equal to anything above, methods[i] is an invalid method.
-                return false;
-            }
-        }
-        //if the code did not return false once, then the evolution requirements must have been met.
-        return true;
+        // ToDo: Implement evolutions
+        //string[] evolutionSplit = evolutionRequirements.Split(',');
+        //string[] methods = evolutionSplit[0].Split('\\');
+        //string[] currentMethodSplit = currentMethod.Split(',');
+        ////if currentMethod needs a parameter attached, it will be separated by a ' , '
+        //string[] parameters = new string[] { };
+        //if (evolutionSplit.Length > 0)
+        //{
+        //    //if true, there is a parameter attached
+        //    parameters = evolutionSplit[1].Split('\\');
+        //}
+        //for (int i = 0; i < methods.Length; i++)
+        //{
+        //    //for every method for the currently checked evolution
+        //    //Debug.Log(evolutionRequirements +" | "+ currentMethodSplit[0] +" "+ methods[i] +" "+ parameters[i]);
+        //    if (methods[i] == "Level")
+        //    {
+        //        //if method contains a Level requirement
+        //        if (currentMethodSplit[0] != "Level")
+        //        {
+        //            //and system is not checking for a level evolution
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //        else
+        //        {
+        //            if (_currentLevel < int.Parse(parameters[i]))
+        //            {
+        //                //and pokemon's level is not high enough to evolve,
+        //                return false; //cannot evolve. return false stop checking.
+        //            }
+        //        }
+        //    }
+        //    else if (methods[i] == "Stone")
+        //    {
+        //        //if method contains a Stone requirement
+        //        if (currentMethodSplit[0] != "Stone")
+        //        {
+        //            //and system is not checking for a stone evolution
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //        else
+        //        {
+        //            //if it is checking for a stone evolution,
+        //            if (currentMethodSplit[1] != parameters[i])
+        //            {
+        //                //and parameter being checked does not match the required one
+        //                return false; //cannot evolve. return false and stop checking.
+        //            }
+        //        }
+        //    }
+        //    else if (methods[i] == "Trade")
+        //    {
+        //        //if method contains a Trade requirement
+        //        if (currentMethodSplit[0] != "Trade")
+        //        {
+        //            //and system is not checking for a trade evolution
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //    }
+        //    else if (methods[i] == "Friendship")
+        //    {
+        //        //if method contains a Friendship requirement
+        //        if (friendship < 220)
+        //        {
+        //            //and pokemon's friendship is less than 220
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //    }
+        //    else if (methods[i] == "Item")
+        //    {
+        //        //if method contains an Item requirement
+        //        if (heldItem == parameters[i])
+        //        {
+        //            //and pokemon's Held Item is not the specified Item
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //    }
+        //    else if (methods[i] == "Gender")
+        //    {
+        //        //if method contains a Gender requirement
+        //        if (_gender.ToString() != parameters[i])
+        //        {
+        //            //and pokemon's gender is not the required gender to evolve,
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //    }
+        //    else if (methods[i] == "Move")
+        //    {
+        //        //if method contains a Move requirement
+        //        if (!HasMove(parameters[i]))
+        //        {
+        //            //and pokemon does not have the specified move
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //    }
+        //    else if (methods[i] == "Map")
+        //    {
+        //        //if method contains a Map requirement
+        //        string mapName = PlayerMovement.player.currentMap.name;
+        //        if (mapName != parameters[i])
+        //        {
+        //            //and current map is not the required map to evolve,
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //    }
+        //    else if (methods[i] == "Time")
+        //    {
+        //        //if method contains a Time requirement
+        //        string dayNight = "Day";
+        //        if (DateTime.Now.Hour >= 21 || DateTime.Now.Hour < 4)
+        //        {
+        //            //if time is night time
+        //            dayNight = "Night"; //set dayNight to be "Night"
+        //        }
+        //        if (dayNight != parameters[i])
+        //        {
+        //            //if time is not what the evolution requires (Day/Night)
+        //            return false; //cannot evolve. return false and stop checking.
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //if methods[i] did not equal to anything above, methods[i] is an invalid method.
+        //        return false;
+        //    }
+        //}
+        ////if the code did not return false once, then the evolution requirements must have been met.
+        //return true;
+        return false;
     }
 
     public bool evolve(string currentMethod)
     {
-        int[] evolutions = PokemonDatabase.getPokemon(Species.GameId).getEvolutions();
-        string[] evolutionRequirements = PokemonDatabase.getPokemon(Species.GameId).getEvolutionRequirements();
-        for (int i = 0; i < evolutions.Length; i++)
-        {
-            if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
-            {
-                // ToDo: Handle evolution.
-                // We want to keep the same HP rate before and after evolution.
-                int currentHP = GetCurrentStatValue(PokemonStatType.HP);
-                int maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
-                float hpPercent = (float)currentHP / maxHP;
+        // ToDo: Implement evolutions
+        //int[] evolutions = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId).getEvolutions();
+        //string[] evolutionRequirements = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId).getEvolutionRequirements();
+        //for (int i = 0; i < evolutions.Length; i++)
+        //{
+        //    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
+        //    {
+        //        // ToDo: Handle evolution.
+        //        // We want to keep the same HP rate before and after evolution.
+        //        int currentHP = GetCurrentStatValue(PokemonStatType.HP);
+        //        int maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
+        //        float hpPercent = (float)currentHP / maxHP;
 
-                Species.GameId = evolutions[i];
+        //        Species.GameId = evolutions[i];
 
-                maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
-                currentHP = Mathf.RoundToInt(maxHP * hpPercent);
+        //        maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
+        //        currentHP = Mathf.RoundToInt(maxHP * hpPercent);
 
-                return true;
-            }
-        }
+        //        return true;
+        //    }
+        //}
         return false;
     }
 
     //return a string that contains all of this pokemon's data
     public override string ToString()
     {
-        string result = string.Format("{0}: {1}({2}), {3}, Level {4}, EXP: {5}, To next: {6}, Friendship: {7}, RareValue={8}, Pokerus={9}, Shiny={10}, Status: {11}, Ball: {12}, Item: {13}, met at Level {14} on {15} at {16}, OT: {17}, IVs: {18}, {19}, {20}, {21}, {22}, {23}, EVs: {24}, {25}, {26}, {27}, {28}, {29}, Stats: {30}/{31}, {32}, {33}, {34}, {35}, {36}, Nature: {37}, Ability: {38}",
+        string result = string.Format("{0}: {1}({2}), {3}, Level {4}, EXP: {5}, To next: {6}, Friendship: {7}, RareValue={8}, Pokerus={9}, Shiny={10}, Status: {11}, Ball: {12}, Item: {13}, met at Level {14} on {15} at {16}, OT: {17}, IVs: {18}, {19}, {20}, {21}, {22}, {23}, EVs: {24}, {25}, {26}, {27}, {28}, {29}, Stats: {30}/{31}, {32}, {33}, {34}, {35}, {36}, Nature: {37}", //, Ability: {38}
             Species.GameId,
-            getName(),
-            PokemonDatabase.getPokemon(Species.GameId).getName(),
+            GetName(),
+            Species.Name,
             _gender.ToString(),
             _currentLevel,
             exp,
@@ -812,7 +818,7 @@ public class OwnedPokemon
             rareValue,
             pokerus.ToString(),
             isShiny.ToString(),
-            status,
+            _currentStatus,
             caughtBall,
             heldItem,
             metLevel,
@@ -839,8 +845,9 @@ public class OwnedPokemon
             GetCurrentLevelStatValue(PokemonStatType.SpecialAttack),
             GetCurrentLevelStatValue(PokemonStatType.SpecialDefence),
             GetCurrentLevelStatValue(PokemonStatType.Speed),
-            _nature,
-            PokemonDatabase.getPokemon(Species.GameId).getAbility(_currentAbility));
+            _nature
+            //PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId).getAbility(_currentAbility)
+            );
 
         result += ", [";
         for (int i = 0; i < 4; i++)
@@ -867,7 +874,7 @@ public class OwnedPokemon
         PP[1] = maxPP[1];
         PP[2] = maxPP[2];
         PP[3] = maxPP[3];
-        status = PokemonStatus.NONE;
+        _currentStatus = PokemonStatus.NONE;
     }
 
     /// <summary>
@@ -890,7 +897,7 @@ public class OwnedPokemon
                 healedHP = lostHPMod.CurrentValue;
 
             // We don't forget to negate our heal value.
-            Species.Stats[PokemonStatType.HP].SetCurrentHP(-pAmount);
+            Species.Stats[PokemonStatType.HP].LoseHP(-pAmount);
         }
 
         return healedHP;
@@ -911,19 +918,20 @@ public class OwnedPokemon
 
     public void healStatus()
     {
-        status = PokemonStatus.NONE;
+        _currentStatus = PokemonStatus.NONE;
     }
 
-    public void removeHP(float amount)
+    public void removeHP(int pAmount)
     {
-        int intAmount = Mathf.RoundToInt(amount);
-        // ToDo: Update modifers.
-        //currentHP -= intAmount;
-        //if (currentHP <= 0)
-        //{
-        //    currentHP = 0;
-        //    status = PokemonStatus.FAINTED;
-        //}
+        // We use absolute value.
+        pAmount = Mathf.Abs(pAmount);
+
+        Species.Stats[PokemonStatType.HP].LoseHP(pAmount);
+
+        if (GetCurrentStatValue(PokemonStatType.HP) <= 0)
+        {
+            _currentStatus = PokemonStatus.FAINTED;
+        }
     }
 
 
@@ -948,9 +956,9 @@ public class OwnedPokemon
 
     public bool setStatus(PokemonStatus pStatus)
     {
-        if (status == PokemonStatus.NONE)
+        if (_currentStatus == PokemonStatus.NONE)
         {
-            status = pStatus;
+            _currentStatus = pStatus;
             if (pStatus == PokemonStatus.ASLEEP)
             {
                 //if applying sleep, set sleeping 
@@ -962,7 +970,7 @@ public class OwnedPokemon
         {
             if (pStatus == PokemonStatus.NONE || pStatus == PokemonStatus.FAINTED)
             {
-                status = pStatus;
+                _currentStatus = pStatus;
                 sleepTurns = 0;
                 return true;
             }
@@ -973,7 +981,7 @@ public class OwnedPokemon
 
     public void removeSleepTurn()
     {
-        if (status == PokemonStatus.ASLEEP)
+        if (_currentStatus == PokemonStatus.ASLEEP)
         {
             sleepTurns -= 1;
             if (sleepTurns <= 0)
@@ -1001,37 +1009,15 @@ public class OwnedPokemon
         return null;
     }
 
-    public int getID()
-    {
-        return Species.GameId;
-    }
-
-    public string getLongID()
-    {
-        string result = Species.GameId.ToString();
-        while (result.Length < 3)
-        {
-            result = "0" + result;
-        }
-        return result;
-    }
-
-    public static string convertLongID(int ID)
-    {
-        string result = ID.ToString();
-        while (result.Length < 3)
-        {
-            result = "0" + result;
-        }
-        return result;
-    }
-
-    //Get the pokemon's nickname, or regular name if it has none.
-    public string getName()
+    /// <summary>
+    /// Get the pokemon's nickname, or regular name if it has none.
+    /// </summary>
+    /// <returns></returns>
+    public string GetName()
     {
         if (string.IsNullOrEmpty(_nickname))
         {
-            return PokemonDatabase.getPokemon(Species.GameId).getName();
+            return Species.Name;
         }
         else
         {
@@ -1081,7 +1067,7 @@ public class OwnedPokemon
 
     public PokemonStatus getStatus()
     {
-        return status;
+        return _currentStatus;
     }
 
     public string getCaughtBall()
@@ -1355,39 +1341,41 @@ public class OwnedPokemon
 
     public bool CanLearnMove(string move)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
+        // ToDo: Implement moves.
+        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
 
-        string[] moves = thisPokemonData.getMovesetMoves();
-        for (int i = 0; i < moves.Length; i++)
-        {
-            if (moves[i] == move)
-            {
-                return true;
-            }
-        }
-        moves = thisPokemonData.getTmList();
-        for (int i = 0; i < moves.Length; i++)
-        {
-            if (moves[i] == move)
-            {
-                return true;
-            }
-        }
+        //string[] moves = thisPokemonData.getMovesetMoves();
+        //for (int i = 0; i < moves.Length; i++)
+        //{
+        //    if (moves[i] == move)
+        //    {
+        //        return true;
+        //    }
+        //}
+        //moves = thisPokemonData.getTmList();
+        //for (int i = 0; i < moves.Length; i++)
+        //{
+        //    if (moves[i] == move)
+        //    {
+        //        return true;
+        //    }
+        //}
         return false;
     }
 
     public string MoveLearnedAtLevel(int level)
     {
-        PokemonData thisPokemonData = PokemonDatabase.getPokemon(Species.GameId);
+        // ToDo: Implement moves.
+        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
 
-        int[] movesetLevels = thisPokemonData.getMovesetLevels();
-        for (int i = 0; i < movesetLevels.Length; i++)
-        {
-            if (movesetLevels[i] == level)
-            {
-                return thisPokemonData.getMovesetMoves()[i];
-            }
-        }
+        //int[] movesetLevels = thisPokemonData.getMovesetLevels();
+        //for (int i = 0; i < movesetLevels.Length; i++)
+        //{
+        //    if (movesetLevels[i] == level)
+        //    {
+        //        return thisPokemonData.getMovesetMoves()[i];
+        //    }
+        //}
         return null;
     }
 
@@ -1424,43 +1412,44 @@ public class OwnedPokemon
     }
 
 
-    public static Sprite[] GetFrontAnimFromID_(int ID, PokemonGender gender, bool isShiny)
+    public static Sprite[] GetFrontAnimFromID_(string ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID_("PokemonSprites", ID, gender, isShiny);
     }
 
-    public static Sprite[] GetBackAnimFromID_(int ID, PokemonGender gender, bool isShiny)
+    public static Sprite[] GetBackAnimFromID_(string ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID_("PokemonBackSprites", ID, gender, isShiny);
     }
 
-    private static Sprite[] GetAnimFromID_(string folder, int ID, PokemonGender gender, bool isShiny)
+    private static Sprite[] GetAnimFromID_(string folder, string ID, PokemonGender gender, bool isShiny)
     {
-        Sprite[] animation;
-        string shiny = (isShiny) ? "s" : "";
-        if (gender == PokemonGender.FEMALE)
-        {
-            //Attempt to load Female Variant
-            animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + "f" + shiny + "/");
-            if (animation.Length == 0)
-            {
-                Debug.LogWarning("Female Variant NOT Found");
-                //Attempt to load Base Variant (possibly Shiny)
-                animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + shiny + "/");
-            }
-            //	else{ Debug.Log("Female Variant Found"); }
-        }
-        else
-        {
-            //Attempt to load Base Variant (possibly Shiny)
-            animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + shiny + "/");
-        }
-        if (animation.Length == 0 && isShiny)
-        {
-            Debug.LogWarning("Shiny Variant NOT Found");
-            //No Shiny Variant exists, Attempt to load Regular Variant
-            animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + "/");
-        }
+        Sprite[] animation = new Sprite[0];
+        // ToDo: implement anim search pattern (with nomeclature).
+        //string shiny = (isShiny) ? "s" : "";
+        //if (gender == PokemonGender.FEMALE)
+        //{
+        //    //Attempt to load Female Variant
+        //    animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + "f" + shiny + "/");
+        //    if (animation.Length == 0)
+        //    {
+        //        Debug.LogWarning("Female Variant NOT Found");
+        //        //Attempt to load Base Variant (possibly Shiny)
+        //        animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + shiny + "/");
+        //    }
+        //    //	else{ Debug.Log("Female Variant Found"); }
+        //}
+        //else
+        //{
+        //    //Attempt to load Base Variant (possibly Shiny)
+        //    animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + shiny + "/");
+        //}
+        //if (animation.Length == 0 && isShiny)
+        //{
+        //    Debug.LogWarning("Shiny Variant NOT Found");
+        //    //No Shiny Variant exists, Attempt to load Regular Variant
+        //    animation = Resources.LoadAll<Sprite>(folder + "/" + convertLongID(ID) + "/");
+        //}
         return animation;
     }
 
@@ -1470,21 +1459,23 @@ public class OwnedPokemon
         return GetIconsFromID_(Species.GameId, isShiny);
     }
 
-    public static Sprite[] GetIconsFromID_(int ID, bool isShiny)
+    public static Sprite[] GetIconsFromID_(string ID, bool isShiny)
     {
-        string shiny = (isShiny) ? "s" : "";
-        Sprite[] icons = Resources.LoadAll<Sprite>("PokemonIcons/icon" + convertLongID(ID) + shiny);
-        if (icons == null)
-        {
-            Debug.LogWarning("Shiny Variant NOT Found");
-            icons = Resources.LoadAll<Sprite>("PokemonIcons/icon" + convertLongID(ID));
-        }
+        // ToDo: implement icon search pattern (with nomeclature).
+        //string shiny = (isShiny) ? "s" : "";
+        Sprite[] icons = new Sprite[0];
+        //Resources.LoadAll<Sprite>("PokemonIcons/icon" + convertLongID(ID) + shiny);
+        //if (icons == null)
+        //{
+        //    Debug.LogWarning("Shiny Variant NOT Found");
+        //    icons = Resources.LoadAll<Sprite>("PokemonIcons/icon" + convertLongID(ID));
+        //}
         return icons;
     }
 
     public float GetCryPitch()
     {
-        return (status == PokemonStatus.FAINTED) ? 0.9f : 1f - (0.06f * (1 - getPercentHP()));
+        return (_currentStatus == PokemonStatus.FAINTED) ? 0.9f : 1f - (0.06f * (1 - getPercentHP()));
     }
 
     public AudioClip GetCry()
@@ -1492,9 +1483,11 @@ public class OwnedPokemon
         return GetCryFromID(Species.GameId);
     }
 
-    public static AudioClip GetCryFromID(int ID)
+    public static AudioClip GetCryFromID(string ID)
     {
-        return Resources.Load<AudioClip>("Audio/cry/" + convertLongID(ID));
+        // ToDo: implement cry search pattern (with nomeclature).
+        //return Resources.Load<AudioClip>("Audio/cry/" + convertLongID(ID));
+        return null;
     }
 
 
@@ -1519,93 +1512,100 @@ public class OwnedPokemon
     }
 
 
-    public static Texture[] GetFrontAnimFromID(int ID, PokemonGender gender, bool isShiny)
+    public static Texture[] GetFrontAnimFromID(string ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID("PokemonSprites", ID, gender, isShiny);
     }
 
-    public static Texture[] GetBackAnimFromID(int ID, PokemonGender gender, bool isShiny)
+    public static Texture[] GetBackAnimFromID(string ID, PokemonGender gender, bool isShiny)
     {
         return GetAnimFromID("PokemonBackSprites", ID, gender, isShiny);
     }
 
-    private static Texture[] GetAnimFromID(string folder, int ID, PokemonGender gender, bool isShiny)
+    private static Texture[] GetAnimFromID(string folder, string ID, PokemonGender gender, bool isShiny)
     {
-        Texture[] animation;
-        string shiny = (isShiny) ? "s" : "";
-        if (gender == PokemonGender.FEMALE)
-        {
-            //Attempt to load Female Variant
-            animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + "f" + shiny + "/");
-            if (animation.Length == 0)
-            {
-                Debug.LogWarning("Female Variant NOT Found (may not be required)");
-                //Attempt to load Base Variant (possibly Shiny)
-                animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + shiny + "/");
-            }
-            //	else{ Debug.Log("Female Variant Found");}
-        }
-        else
-        {
-            //Attempt to load Base Variant (possibly Shiny)
-            animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + shiny + "/");
-        }
-        if (animation.Length == 0 && isShiny)
-        {
-            Debug.LogWarning("Shiny Variant NOT Found");
-            //No Shiny Variant exists, Attempt to load Regular Variant
-            animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + "/");
-        }
+        Texture[] animation = new Texture[0];
+        // ToDo: implement anim search pattern (with nomeclature).
+        //string shiny = (isShiny) ? "s" : "";
+        //if (gender == PokemonGender.FEMALE)
+        //{
+        //    //Attempt to load Female Variant
+        //    animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + "f" + shiny + "/");
+        //    if (animation.Length == 0)
+        //    {
+        //        Debug.LogWarning("Female Variant NOT Found (may not be required)");
+        //        //Attempt to load Base Variant (possibly Shiny)
+        //        animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + shiny + "/");
+        //    }
+        //    //	else{ Debug.Log("Female Variant Found");}
+        //}
+        //else
+        //{
+        //    //Attempt to load Base Variant (possibly Shiny)
+        //    animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + shiny + "/");
+        //}
+        //if (animation.Length == 0 && isShiny)
+        //{
+        //    Debug.LogWarning("Shiny Variant NOT Found");
+        //    //No Shiny Variant exists, Attempt to load Regular Variant
+        //    animation = Resources.LoadAll<Texture>(folder + "/" + convertLongID(ID) + "/");
+        //}
         return animation;
     }
 
-    public static Texture GetIconsFromID(int ID, bool isShiny)
+    public static Texture GetIconsFromID(string ID, bool isShiny)
     {
-        string shiny = (isShiny) ? "s" : "";
-        Texture icons = Resources.Load<Texture>("PokemonIcons/icon" + convertLongID(ID) + shiny);
-        if (icons == null)
-        {
-            Debug.LogWarning("Shiny Variant NOT Found");
-            icons = Resources.Load<Texture>("PokemonIcons/icon" + convertLongID(ID));
-        }
-        return icons;
+        // ToDo: implement icon search pattern (with nomeclature).
+        //string shiny = (isShiny) ? "s" : "";
+        //Texture icons = Resources.Load<Texture>("PokemonIcons/icon" + convertLongID(ID) + shiny);
+        //if (icons == null)
+        //{
+        //    Debug.LogWarning("Shiny Variant NOT Found");
+        //    icons = Resources.Load<Texture>("PokemonIcons/icon" + convertLongID(ID));
+        //}
+        //return icons;
+
+        return null;
     }
 
 
-    public static Sprite[] GetSpriteFromID(int ID, bool isShiny, bool getLight)
+    public static Sprite[] GetSpriteFromID(string ID, bool isShiny, bool getLight)
     {
-        string shiny = (isShiny) ? "s" : "";
-        string light = (getLight) ? "Lights/" : "";
-        Sprite[] spriteSheet = Resources.LoadAll<Sprite>("OverworldPokemonSprites/" + light + convertLongID(ID) + shiny);
-        if (spriteSheet.Length == 0)
-        {
-            //No Light found AND/OR No Shiny found, load non-shiny
-            if (isShiny)
-            {
-                if (getLight)
-                {
-                    Debug.LogWarning("Shiny Light NOT Found (may not be required)");
-                }
-                else
-                {
-                    Debug.LogWarning("Shiny Variant NOT Found");
-                }
-            }
-            spriteSheet = Resources.LoadAll<Sprite>("OverworldPokemonSprites/" + light + convertLongID(ID));
-        }
-        if (spriteSheet.Length == 0)
-        {
-            //No Light found OR No Sprite found, return 8 blank sprites
-            if (!getLight)
-            {
-                Debug.LogWarning("Sprite NOT Found");
-            }
-            else
-            {
-                Debug.LogWarning("Light NOT Found (may not be required)");
-            }
-            return new Sprite[8];
-        }
-        return spriteSheet;
+        // ToDo: implement sprite search pattern (with nomeclature).
+        //string shiny = (isShiny) ? "s" : "";
+        //string light = (getLight) ? "Lights/" : "";
+        //Sprite[] spriteSheet = Resources.LoadAll<Sprite>("OverworldPokemonSprites/" + light + convertLongID(ID) + shiny);
+        //if (spriteSheet.Length == 0)
+        //{
+        //    //No Light found AND/OR No Shiny found, load non-shiny
+        //    if (isShiny)
+        //    {
+        //        if (getLight)
+        //        {
+        //            Debug.LogWarning("Shiny Light NOT Found (may not be required)");
+        //        }
+        //        else
+        //        {
+        //            Debug.LogWarning("Shiny Variant NOT Found");
+        //        }
+        //    }
+        //    spriteSheet = Resources.LoadAll<Sprite>("OverworldPokemonSprites/" + light + convertLongID(ID));
+        //}
+        //if (spriteSheet.Length == 0)
+        //{
+        //    //No Light found OR No Sprite found, return 8 blank sprites
+        //    if (!getLight)
+        //    {
+        //        Debug.LogWarning("Sprite NOT Found");
+        //    }
+        //    else
+        //    {
+        //        Debug.LogWarning("Light NOT Found (may not be required)");
+        //    }
+        //    return new Sprite[8];
+        //}
+        //return spriteSheet;
+
+        return new Sprite[0];
     }
 }

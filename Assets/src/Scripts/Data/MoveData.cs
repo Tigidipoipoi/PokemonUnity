@@ -78,7 +78,7 @@ public class MoveData
 
     private string name;
 
-    private PokemonData.Type type;
+    private PokemonType type;
     private Category category;
     private int power;
     private float accuracy;
@@ -98,7 +98,7 @@ public class MoveData
     private string fieldEffect;
 
 
-    public MoveData(string name, PokemonData.Type type, Category category, int power, float accuracy,
+    public MoveData(string name, PokemonType type, Category category, int power, float accuracy,
         int PP, Contest contest, int appeal, int jamming, string description)
     {
         this.name = name;
@@ -136,7 +136,7 @@ public class MoveData
         }
     }
 
-    public MoveData(string name, PokemonData.Type type, Category category, int power, float accuracy,
+    public MoveData(string name, PokemonType type, Category category, int power, float accuracy,
         int PP, Contest contest, int appeal, int jamming, string description, string fieldEffect)
     {
         this.name = name;
@@ -176,7 +176,7 @@ public class MoveData
     }
 
 
-    public MoveData(string name, PokemonData.Type type, Category category, int power, float accuracy, int PP,
+    public MoveData(string name, PokemonType type, Category category, int power, float accuracy, int PP,
         Target target,
         int priority, bool contact, bool protectable, bool magicCoatable, bool snatchable,
         Effect[] moveEffects, float[] moveParameters,
@@ -202,7 +202,7 @@ public class MoveData
         this.description = description;
     }
 
-    public MoveData(string name, PokemonData.Type type, Category category, int power, float accuracy, int PP,
+    public MoveData(string name, PokemonType type, Category category, int power, float accuracy, int PP,
         Target target,
         int priority, bool contact, bool protectable, bool magicCoatable, bool snatchable,
         Effect[] moveEffects, float[] moveParameters,
@@ -234,7 +234,7 @@ public class MoveData
         return name;
     }
 
-    public PokemonData.Type getType()
+    public PokemonType getType()
     {
         return type;
     }
