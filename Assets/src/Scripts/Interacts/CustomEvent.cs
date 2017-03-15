@@ -365,7 +365,7 @@ public class CustomEvent : MonoBehaviour
                     //Play Great for Pokemon
                     AudioClip pokeGetMFX = Resources.Load<AudioClip>("Audio/mfx/GetGreat");
 
-                    var pkmn = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(currentEvent.ints[0].ToString());
+                    var pkmn = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(currentEvent.ints[0].ToString());
 
                     string pkName = pkmn.Name;
                     PokemonGender pkGender = PokemonGender.CALCULATE;

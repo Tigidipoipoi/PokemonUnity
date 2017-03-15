@@ -1,5 +1,6 @@
 ﻿using System;
 using SQLite4Unity3d;
+using System.Collections.Generic;
 
 [Serializable]
 [Table("PokemonSpecies")]
@@ -71,10 +72,13 @@ public class PokemonSpecies
 
     #region External tables
     // Types
+    public List<PokemonType> Types { get; set; }
 
     // Abilities
+    public List<PokemonAbility> PossibleAbilities { get; set; }
 
     // MoveSet
+    public List<PokemonMove> LearnableMoves { get; set; }
 
     // Evolutions
     //Level,int level

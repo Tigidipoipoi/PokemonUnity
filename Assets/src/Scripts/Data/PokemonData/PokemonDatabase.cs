@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class PokemonDatabase : Singleton<PokemonDatabase>
+public class PokemonDatabase
 {
     private DatabaseController _databaseController;
 

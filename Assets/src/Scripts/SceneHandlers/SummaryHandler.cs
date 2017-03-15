@@ -280,7 +280,7 @@ public class SummaryHandler : MonoBehaviour
         PlayCry(selectedPokemon);
 
         selectedCaughtBall.sprite = Resources.Load<Sprite>("null");
-        selectedCaughtBall.sprite = Resources.Load<Sprite>("PCSprites/summary" + selectedPokemon.getCaughtBall());
+        selectedCaughtBall.sprite = Resources.Load<Sprite>("PCSprites/summary" + selectedPokemon.CaughtBall);
         selectedName.text = selectedPokemon.GetName();
         selectedNameShadow.text = selectedName.text;
         if (selectedPokemon.Gender == PokemonGender.FEMALE)
@@ -381,11 +381,11 @@ public class SummaryHandler : MonoBehaviour
         natureFormatted = natureFormatted.Substring(0, 1) + natureFormatted.Substring(1).ToLowerInvariant();
         nature.text = "<color=#F22F>" + natureFormatted + "</color> nature.";
         natureShadow.text = natureFormatted + " nature.";
-        metDate.text = "Met on " + selectedPokemon.getMetDate();
+        metDate.text = "Met on " + selectedPokemon.MetData.Date;
         metDateShadow.text = metDate.text;
-        metMap.text = "<color=#F22F>" + selectedPokemon.getMetMap() + "</color>";
-        metMapShadow.text = selectedPokemon.getMetMap();
-        metLevel.text = "Met at Level " + selectedPokemon.getMetLevel() + ".";
+        metMap.text = "<color=#F22F>" + selectedPokemon.MetData.Location + "</color>";
+        metMapShadow.text = selectedPokemon.MetData.Location;
+        metLevel.text = "Met at Level " + selectedPokemon.MetData.Level + ".";
         metLevelShadow.text = metLevel.text;
 
         string[][] characteristics = new string[][]

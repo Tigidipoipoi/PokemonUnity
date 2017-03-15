@@ -235,7 +235,7 @@ public class PlayerMovement : MonoBehaviour
             string namez = "";
             for (int i = 0; i < encounterList.Length; i++)
             {
-                namez += PokemonDatabase.Instance.GetPokemonSpeciesByGameId(encounterList[i].ID.ToString()).Name + ", ";
+                namez += GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(encounterList[i].ID.ToString()).Name + ", ";
             }
             Debug.Log("Wild Pokemon for map \"" + accessedMapSettings.mapName + "\": " + namez);
         }

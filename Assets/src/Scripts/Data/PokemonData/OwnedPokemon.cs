@@ -143,11 +143,12 @@ public class OwnedPokemon
     // ToDo: implement items.
     //private string heldItem;
 
-    private string caughtBall;
+    public string CaughtBall;
 
-    private string metDate;
-    private string metMap;
-    private int metLevel;
+    /// <summary>
+    /// All the data related to the 1st meeting.
+    /// </summary>
+    public MetData MetData;
 
     // ToDo: implement owner.
     ///// <summary>
@@ -156,8 +157,7 @@ public class OwnedPokemon
     //private string OT;
     //private int DONumber;
 
-    private int _currentAbility; //(0/1/2(hiddenability)) if higher than number of abilites, rounds down to nearest ability.
-    // if is 2, but pokemon only has 1 ability and no hidden, will use the one ability it does have.
+    public PokemonAbility CurrentAbility;
 
     private string[] _currentMoveset;
     private string[] _moveHistory;
@@ -172,144 +172,9 @@ public class OwnedPokemon
     public OwnedPokemon(string pGameId)
     {
         // ToDo: Find in Database.
-        Species = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pGameId);
+        Species = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(pGameId);
 
         Stats = Species.BaseStats.GenerateStatList();
-    }
-
-    /// <summary>
-    /// New Pokemon with: every specific detail.
-    /// </summary>
-    /// <param name="pPokemonID"></param>
-    /// <param name="pNickname"></param>
-    /// <param name="pGender"></param>
-    /// <param name="pLevel"></param>
-    /// <param name="pIsShiny"></param>
-    /// <param name="pCaughtBall"></param>
-    /// <param name="pHeldItem"></param>
-    /// <param name="pOT"></param>
-    /// <param name="pIV_HP"></param>
-    /// <param name="pIV_ATK"></param>
-    /// <param name="pIV_DEF"></param>
-    /// <param name="pIV_SPA"></param>
-    /// <param name="pIV_SPD"></param>
-    /// <param name="pIV_SPE"></param>
-    /// <param name="pEV_HP"></param>
-    /// <param name="pEV_ATK"></param>
-    /// <param name="pEV_DEF"></param>
-    /// <param name="pEV_SPA"></param>
-    /// <param name="pEV_SPD"></param>
-    /// <param name="pEV_SPE"></param>
-    /// <param name="pNature"></param>
-    /// <param name="pAbility"></param>
-    /// <param name="pMoveset"></param>
-    /// <param name="pPPups"></param>
-    public OwnedPokemon(string pPokemonID, string pNickname, PokemonGender pGender, int pLevel,
-        bool pIsShiny, string pCaughtBall, string pHeldItem, string pOT,
-        int pIV_HP, int pIV_ATK, int pIV_DEF, int pIV_SPA, int pIV_SPD, int pIV_SPE,
-        int pEV_HP, int pEV_ATK, int pEV_DEF, int pEV_SPA, int pEV_SPD, int pEV_SPE,
-        PokemonNature pNature, int pAbility, string[] pMoveset, int[] pPPups)
-        : this(pPokemonID)
-    {
-        var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pPokemonID);
-
-        Species.GameId = pPokemonID;
-        Nickname = pNickname;
-        //SET UP FORMS LATER #####################################################################################
-        //_formId = 0;
-        Gender = pGender;
-        //if gender is CALCULATE, then calculate gender using maleRatio
-        if (pGender == PokemonGender.CALCULATE)
-        {
-            if (thisPokemonData.MaleRatio < 0)
-            {
-                Gender = PokemonGender.NONE;
-            }
-            else if (Random.Range(0f, 100f) <= thisPokemonData.MaleRatio)
-            {
-                Gender = PokemonGender.MALE;
-            }
-            else
-            {
-                Gender = PokemonGender.FEMALE;
-            }
-        }
-        CurrentLevel = pLevel;
-        //Find exp for current level.
-        CurrentExperience = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(thisPokemonData.LevelingRate, pLevel);
-        CurrentFriendship = thisPokemonData.BaseFriendship;
-
-        generateRareValue(pIsShiny);
-
-        CurrentStatus = PokemonStatus.NONE;
-        caughtBall = pCaughtBall;
-
-        // ToDo: implement owner.
-        //OT = (string.IsNullOrEmpty(pOT)) ? SaveData.currentSave.playerName : pOT;
-        //if (OT != SaveData.currentSave.playerName)
-        //{
-        //    DONumber = Random.Range(0, 65536); //if owned by another trainer, assign a random number. 
-        //} //this way if they trade it to you, it will have a different number to the player's.
-        //else
-        //{
-        //    DONumber = SaveData.currentSave.playerID;
-        //}
-
-        metLevel = pLevel;
-        if (PlayerMovement.player != null)
-        {
-            if (PlayerMovement.player.accessedMapSettings != null)
-            {
-                metMap = PlayerMovement.player.accessedMapSettings.mapName;
-            }
-            else
-            {
-                metMap = "Somewhere";
-            }
-        }
-        else
-        {
-            metMap = "Somewhere";
-        }
-        metDate = DateTime.Today.Day + "/" + DateTime.Today.Month + "/" + DateTime.Today.Year;
-
-        // IVs.
-        Stats[PokemonStatType.HP].IV = pIV_HP;
-        Stats[PokemonStatType.Attack].IV = pIV_ATK;
-        Stats[PokemonStatType.Defence].IV = pIV_DEF;
-        Stats[PokemonStatType.SpecialAttack].IV = pIV_SPA;
-        Stats[PokemonStatType.SpecialDefence].IV = pIV_SPD;
-        Stats[PokemonStatType.Speed].IV = pIV_SPE;
-
-        // EVs.
-        Stats[PokemonStatType.HP].EV = pEV_HP;
-        Stats[PokemonStatType.Attack].EV = pEV_ATK;
-        Stats[PokemonStatType.Defence].EV = pEV_DEF;
-        Stats[PokemonStatType.SpecialAttack].EV = pEV_SPA;
-        Stats[PokemonStatType.SpecialDefence].EV = pEV_SPD;
-        Stats[PokemonStatType.Speed].EV = pEV_SPE;
-
-        //set nature
-        Nature = pNature;
-
-        _currentAbility = pAbility;
-
-        _currentMoveset = pMoveset;
-        _moveHistory = pMoveset;
-
-        PPups = pPPups;
-        //set maxPP and PP to be the regular PP defined by the move in the database.
-        maxPP = new int[4];
-        PP = new int[4];
-        for (int i = 0; i < 4; i++)
-        {
-            if (!string.IsNullOrEmpty(pMoveset[i]))
-            {
-                maxPP[i] = Mathf.FloorToInt(MoveDatabase.getMove(pMoveset[i]).getPP() * ((PPups[i] * 0.2f) + 1));
-                PP[i] = maxPP[i];
-            }
-        }
-        packMoveset();
     }
 
     /// <summary>
@@ -325,87 +190,37 @@ public class OwnedPokemon
     public OwnedPokemon(string pPokemonID, PokemonGender pGender, int pLevel, string pCaughtBall, string pHeldItem, string pOT, int pAbility)
         : this(pPokemonID)
     {
-        var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pPokemonID);
-
-        Species.GameId = pPokemonID;
-
-        //SET UP FORMS LATER #####################################################################################
-        //_formId = 0;
-
-        Gender = pGender;
-        //if gender is CALCULATE, then calculate gender using maleRatio
-        if (pGender == PokemonGender.CALCULATE)
-        {
-            if (thisPokemonData.MaleRatio < 0)
-            {
-                Gender = PokemonGender.NONE;
-            }
-            else if (Random.Range(0f, 100f) <= thisPokemonData.MaleRatio)
-            {
-                Gender = PokemonGender.MALE;
-            }
-            else
-            {
-                Gender = PokemonGender.FEMALE;
-            }
-        }
-
-        CurrentLevel = pLevel;
-        //Find exp for current level, and next level.
-        CurrentExperience = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(thisPokemonData.LevelingRate, pLevel);
-
-        CurrentFriendship = thisPokemonData.BaseFriendship;
-
-        generateRareValue();
-
+        // Set status.
         CurrentStatus = PokemonStatus.NONE;
 
-        caughtBall = pCaughtBall;
+        // Set level and experience.
+        CurrentLevel = pLevel;
+        CurrentExperience = PokemonLevelingRateHelper.GetRequiredExperienceToTargetLevel(Species.LevelingRate, CurrentLevel);
 
-        metLevel = pLevel;
-        if (PlayerMovement.player != null)
-        {
-            if (PlayerMovement.player.accessedMapSettings != null)
-            {
-                metMap = PlayerMovement.player.accessedMapSettings.mapName;
-            }
-            else
-            {
-                metMap = "Somewhere";
-            }
-        }
-        else
-        {
-            metMap = "Somewhere";
-        }
-        metDate = DateTime.Today.Day + "/" + DateTime.Today.Month + "/" + DateTime.Today.Year;
+        // Set friendship.
+        CurrentFriendship = Species.BaseFriendship;
 
-        // ToDo: implement owner.
-        //OT = (string.IsNullOrEmpty(pOT)) ? SaveData.currentSave.playerName : pOT;
-        //if (OT != SaveData.currentSave.playerName)
-        //{
-        //    DONumber = Random.Range(0, 65536); //if owned by another trainer, assign a random number. 
-        //} //this way if they trade it to you, it will have a different number to the player's.
-        //else
-        //{
-        //    DONumber = SaveData.currentSave.playerID;
-        //}
+        // Set gender.
+        generateGender(pGender);
 
-        setNewPokemonIVsAndEVs();
+        // Set rare value.
+        generateRareValue();
 
-        //Randomize nature
+        // Set met data.
+        CaughtBall = pCaughtBall;
+        generateMetData(pLevel);
+
+        // Set DO n°.
+        generateDONumber();
+
+        // Set IVs and EVs.
+        generateIVsAndEVs();
+
+        // Set nature.
         Nature = PokemonNatureHelper.GetRandomNature();
 
-        //set ability 
-        if (pAbility < 0 || pAbility > 2)
-        {
-            //if ability out of range, randomize ability
-            _currentAbility = Random.Range(0, 2);
-        }
-        else
-        {
-            _currentAbility = pAbility;
-        }
+        // Set ability.
+        generateAbility();
 
         //Set moveset based off of the highest level moves possible.
         //_currentMoveset = thisPokemonData.GenerateMoveset(_currentLevel);
@@ -435,62 +250,56 @@ public class OwnedPokemon
     public OwnedPokemon(OwnedPokemon pPokemon, string pNickname, string pCaughtBall)
         : this(pPokemon.Species.GameId)
     {
-        //PokemonData thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(pokemon.Species.Id);
-
-        Species.GameId = pPokemon.Species.GameId;
         Nickname = pNickname;
-        //SET UP FORMS LATER #####################################################################################
-        //_formId = 0;
+
+        // Set status.
+        CurrentStatus = pPokemon.CurrentStatus;
+
+        // Set level and experience.
+        CurrentLevel = pPokemon.CurrentLevel;
+        CurrentExperience = pPokemon.CurrentExperience;
+
+        // Set friendship.
+        CurrentFriendship = pPokemon.Species.BaseFriendship;
+
+        // Set gender.
         Gender = pPokemon.Gender;
 
-        CurrentLevel = pPokemon.CurrentLevel;
-        //Find exp for current level, and next level.
-        CurrentExperience = pPokemon.CurrentExperience;
-        CurrentFriendship = pPokemon.CurrentFriendship;
-
+        // Set rare value.
         RareValue = pPokemon.RareValue;
 
-        CurrentStatus = pPokemon.CurrentStatus;
-        caughtBall = pCaughtBall;
+        // Set met data.
+        CaughtBall = pCaughtBall;
+        MetData = pPokemon.MetData;
 
-        // ToDo: implement owner.
-        //OT = SaveData.currentSave.playerName;
-        //DONumber = SaveData.currentSave.playerID;
+        // Set DO n°.
+        generateDONumber();
 
-        metLevel = CurrentLevel;
-        if (PlayerMovement.player.accessedMapSettings != null)
-        {
-            metMap = PlayerMovement.player.accessedMapSettings.mapName;
-        }
-        else
-        {
-            metMap = "Somewhere";
-        }
-        metDate = DateTime.Today.Day + "/" + DateTime.Today.Month + "/" + DateTime.Today.Year;
 
-        // IVs.
-        Stats[PokemonStatType.HP].IV = pPokemon.GetIV(PokemonStatType.HP);
-        Stats[PokemonStatType.Attack].IV = pPokemon.GetIV(PokemonStatType.Attack);
-        Stats[PokemonStatType.Defence].IV = pPokemon.GetIV(PokemonStatType.Defence);
-        Stats[PokemonStatType.SpecialAttack].IV = pPokemon.GetIV(PokemonStatType.SpecialAttack);
-        Stats[PokemonStatType.SpecialDefence].IV = pPokemon.GetIV(PokemonStatType.SpecialDefence);
-        Stats[PokemonStatType.Speed].IV = pPokemon.GetIV(PokemonStatType.Speed);
-
-        // EVs.
-        Stats[PokemonStatType.HP].EV = pPokemon.GetEV(PokemonStatType.HP);
-        Stats[PokemonStatType.Attack].EV = pPokemon.GetEV(PokemonStatType.Attack);
-        Stats[PokemonStatType.Defence].EV = pPokemon.GetEV(PokemonStatType.Defence);
-        Stats[PokemonStatType.SpecialAttack].EV = pPokemon.GetEV(PokemonStatType.SpecialAttack);
-        Stats[PokemonStatType.SpecialDefence].EV = pPokemon.GetEV(PokemonStatType.SpecialDefence);
-        Stats[PokemonStatType.Speed].EV = pPokemon.GetEV(PokemonStatType.Speed);
-
-        //set nature
+        // Set nature.
         Nature = pPokemon.Nature;
 
+        // Set ability.
+        CurrentAbility = pPokemon.CurrentAbility;
+
         Stats = pPokemon.Stats;
+        //// Copy IVs.
+        //Stats[PokemonStatType.HP].IV = pPokemon.GetIV(PokemonStatType.HP);
+        //Stats[PokemonStatType.Attack].IV = pPokemon.GetIV(PokemonStatType.Attack);
+        //Stats[PokemonStatType.Defence].IV = pPokemon.GetIV(PokemonStatType.Defence);
+        //Stats[PokemonStatType.SpecialAttack].IV = pPokemon.GetIV(PokemonStatType.SpecialAttack);
+        //Stats[PokemonStatType.SpecialDefence].IV = pPokemon.GetIV(PokemonStatType.SpecialDefence);
+        //Stats[PokemonStatType.Speed].IV = pPokemon.GetIV(PokemonStatType.Speed);
 
-        _currentAbility = pPokemon._currentAbility;
+        //// Copy EVs.
+        //Stats[PokemonStatType.HP].EV = pPokemon.GetEV(PokemonStatType.HP);
+        //Stats[PokemonStatType.Attack].EV = pPokemon.GetEV(PokemonStatType.Attack);
+        //Stats[PokemonStatType.Defence].EV = pPokemon.GetEV(PokemonStatType.Defence);
+        //Stats[PokemonStatType.SpecialAttack].EV = pPokemon.GetEV(PokemonStatType.SpecialAttack);
+        //Stats[PokemonStatType.SpecialDefence].EV = pPokemon.GetEV(PokemonStatType.SpecialDefence);
+        //Stats[PokemonStatType.Speed].EV = pPokemon.GetEV(PokemonStatType.Speed);
 
+        // MoveSet.
         _currentMoveset = pPokemon._currentMoveset;
         _moveHistory = pPokemon._moveHistory;
 
@@ -510,6 +319,45 @@ public class OwnedPokemon
     }
     #endregion
 
+    #region Generation methods
+    private void generateAbility()
+    {
+        int randomIndex = Random.Range(0, Species.PossibleAbilities.Count);
+        CurrentAbility = Species.PossibleAbilities[randomIndex];
+    }
+
+    private void generateMetData(int pLevel)
+    {
+        MetData.Level = pLevel;
+
+        if (PlayerMovement.player == null
+            || PlayerMovement.player.accessedMapSettings == null)
+        {
+            MetData.Location = "Somewhere";
+        }
+        else
+        {
+            MetData.Location = PlayerMovement.player.accessedMapSettings.mapName;
+        }
+
+        MetData.Date = DateTime.Now;
+    }
+
+    private void generateGender(PokemonGender pGender)
+    {
+        if (pGender == PokemonGender.CALCULATE)
+        {
+            if (Species.MaleRatio < 0)
+                Gender = PokemonGender.NONE;
+            else if (Random.Range(0f, 100f) <= Species.MaleRatio)
+                Gender = PokemonGender.MALE;
+            else
+                Gender = PokemonGender.FEMALE;
+        }
+        else
+            Gender = pGender;
+    }
+
     private void generateRareValue()
     {
         RareValue = Random.Range(0, 65536);
@@ -527,7 +375,7 @@ public class OwnedPokemon
         }
     }
 
-    private void setNewPokemonIVsAndEVs()
+    private void generateIVsAndEVs()
     {
         // IVs.
         Stats[PokemonStatType.HP].IV = Random.Range(0, 32);
@@ -546,6 +394,26 @@ public class OwnedPokemon
         Stats[PokemonStatType.Speed].EV = 0;
     }
 
+    private void generateDONumber()
+    {
+        // ToDo: implement owner.
+        /*
+          OT = (string.IsNullOrEmpty(pOT)) ? SaveData.currentSave.playerName : pOT;
+          if (OT != SaveData.currentSave.playerName)
+          {
+              // if owned by another trainer, assign a random number. 
+              DONumber = Random.Range(0, 65536); 
+          }
+          // this way if they trade it to you, it will have a different number to the player's.
+          else
+          {
+              DONumber = SaveData.currentSave.playerID;
+          }
+        //*/
+    }
+    #endregion
+
+    #region Stats
     public int GetCurrentLevelStatValue(PokemonStatType pStatType)
     {
         return Stats[pStatType].GetCurrentLevelValue(CurrentLevel, Nature);
@@ -554,541 +422,6 @@ public class OwnedPokemon
     public int GetCurrentStatValue(PokemonStatType pStatType)
     {
         return Stats[pStatType].GetCurrentValue(CurrentLevel, Nature);
-    }
-
-    public string swapHeldItem(string newItem)
-    {
-        // ToDo: Implement items.
-        return "";
-    }
-
-    public void addExp(int expAdded)
-    {
-        if (CurrentLevel < 100)
-        {
-            CurrentExperience += expAdded;
-            while (CurrentExperience >= NextLevelExp)
-            {
-                int currentBaseHP = GetCurrentLevelStatValue(PokemonStatType.HP);
-
-                CurrentLevel += 1;
-
-                // We heal the amount of gained HP by leveling.
-                Stats[PokemonStatType.HP].LoseHP(currentBaseHP - GetCurrentLevelStatValue(PokemonStatType.HP));
-
-                // We remove the death flag if needed.
-                if (CurrentStatus == PokemonStatus.FAINTED
-                    && GetCurrentStatValue(PokemonStatType.HP) > 0)
-                    CurrentStatus = PokemonStatus.NONE;
-            }
-        }
-    }
-
-    public bool TryAddEV(PokemonStatType pStatType, int pAmount)
-    {
-        int hpEV = GetEV(PokemonStatType.HP);
-        int atkEV = GetEV(PokemonStatType.Attack);
-        int defEV = GetEV(PokemonStatType.Defence);
-        int sAtkEV = GetEV(PokemonStatType.SpecialAttack);
-        int sDefEV = GetEV(PokemonStatType.SpecialDefence);
-        int spdEV = GetEV(PokemonStatType.Speed);
-
-        int currentEV = 0;
-        switch (pStatType)
-        {
-            case PokemonStatType.HP:
-                currentEV = hpEV;
-                break;
-            case PokemonStatType.Attack:
-                currentEV = atkEV;
-                break;
-            case PokemonStatType.Defence:
-                currentEV = defEV;
-                break;
-            case PokemonStatType.Speed:
-                currentEV = sAtkEV;
-                break;
-            case PokemonStatType.SpecialAttack:
-                currentEV = sDefEV;
-                break;
-            case PokemonStatType.SpecialDefence:
-                currentEV = spdEV;
-                break;
-
-            default:
-                // Non EV stat.
-                return false;
-        }
-
-        int evTotal = hpEV + atkEV + defEV + sAtkEV + sDefEV + spdEV;
-
-        if (evTotal >= MAX_SUMMED_EV
-            || currentEV >= MAX_EV)
-            // EV cap reached.
-            return false;
-
-        // We check if we will pass the max total amount.
-        if (evTotal + pAmount > MAX_SUMMED_EV)
-            // If we do, we clamp.
-            pAmount = MAX_SUMMED_EV - evTotal;
-
-        // We check if we will pass the max single amount.
-        if (currentEV + pAmount > MAX_EV)
-            // If we do, we clamp.
-            pAmount = MAX_EV - currentEV;
-
-        // We add the EV.
-        Stats[pStatType].EV += pAmount;
-
-        return true;
-    }
-
-    /*/
-        public int getEvolutionID(string currentMethod){
-            PokemonData thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.Id);
-            int[] evolutions = thisPokemonData.getEvolutions();
-            string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
-            string[] evolutionRequirementsSplit = new string[evolutionRequirements.Length];
-    
-            string[] methods = new string[evolutionRequirements.Length];
-            string[] parameters = new string[evolutionRequirements.Length];
-            for(int i = 0; i < evolutionRequirements.Length; i++){
-                evolutionRequirementsSplit = evolutionRequirements[i].Split(',');
-                methods[i] = evolutionRequirementsSplit[0];
-                if(evolutionRequirementsSplit.Length > 1){
-                    parameters[i] = evolutionRequirementsSplit[1];}
-            }
-    
-            string[] currentMethodSplit = currentMethod.Split(','); //if currentMethod needs a parameter attached, it will be separated by a ' , '
-    
-            for(int i = 0; i < methods.Length; i++){ //check every method
-                if(methods[0] == currentMethodSplit[0]){ //if method name equals current method name...
-                    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]) == true){ //if an evolution method was satisfied
-                        return evolutions[i]; //do not check any others. (This prioritises the evolutions in order first to last)
-                    }
-                }
-            }
-            return -1;
-        }
-    //*/
-
-    public int getEvolutionID(string currentMethod)
-    {
-        // ToDo: Implement evolutions
-        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
-        //int[] evolutions = thisPokemonData.getEvolutions();
-        //string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
-
-        //for (int i = 0; i < evolutions.Length; i++)
-        //{
-        //    //if an evolution method was satisfied, return true
-        //    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
-        //    {
-        //        Debug.Log("Relevant ID[" + i + "] = " + evolutions[i]);
-        //        return evolutions[i];
-        //    }
-        //}
-        return -1;
-    }
-
-    //Check PokemonData.cs for list of evolution method names.
-    public bool canEvolve(string currentMethod)
-    {
-        // ToDo: Implement evolutions
-        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
-        //int[] evolutions = thisPokemonData.getEvolutions();
-        //string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
-
-        //for (int i = 0; i < evolutions.Length; i++)
-        //{
-        //    //if an evolution method was satisfied, return true
-        //    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
-        //    {
-        //        //		Debug.Log("All Checks Passed");
-        //        return true;
-        //    }
-        //}
-
-        return false;
-    }
-
-    //check that the evolution can be 
-    public bool checkEvolutionMethods(string currentMethod, string evolutionRequirements)
-    {
-        // ToDo: Implement evolutions
-        //string[] evolutionSplit = evolutionRequirements.Split(',');
-        //string[] methods = evolutionSplit[0].Split('\\');
-        //string[] currentMethodSplit = currentMethod.Split(',');
-        ////if currentMethod needs a parameter attached, it will be separated by a ' , '
-        //string[] parameters = new string[] { };
-        //if (evolutionSplit.Length > 0)
-        //{
-        //    //if true, there is a parameter attached
-        //    parameters = evolutionSplit[1].Split('\\');
-        //}
-        //for (int i = 0; i < methods.Length; i++)
-        //{
-        //    //for every method for the currently checked evolution
-        //    //Debug.Log(evolutionRequirements +" | "+ currentMethodSplit[0] +" "+ methods[i] +" "+ parameters[i]);
-        //    if (methods[i] == "Level")
-        //    {
-        //        //if method contains a Level requirement
-        //        if (currentMethodSplit[0] != "Level")
-        //        {
-        //            //and system is not checking for a level evolution
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //        else
-        //        {
-        //            if (_currentLevel < int.Parse(parameters[i]))
-        //            {
-        //                //and pokemon's level is not high enough to evolve,
-        //                return false; //cannot evolve. return false stop checking.
-        //            }
-        //        }
-        //    }
-        //    else if (methods[i] == "Stone")
-        //    {
-        //        //if method contains a Stone requirement
-        //        if (currentMethodSplit[0] != "Stone")
-        //        {
-        //            //and system is not checking for a stone evolution
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //        else
-        //        {
-        //            //if it is checking for a stone evolution,
-        //            if (currentMethodSplit[1] != parameters[i])
-        //            {
-        //                //and parameter being checked does not match the required one
-        //                return false; //cannot evolve. return false and stop checking.
-        //            }
-        //        }
-        //    }
-        //    else if (methods[i] == "Trade")
-        //    {
-        //        //if method contains a Trade requirement
-        //        if (currentMethodSplit[0] != "Trade")
-        //        {
-        //            //and system is not checking for a trade evolution
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //    }
-        //    else if (methods[i] == "Friendship")
-        //    {
-        //        //if method contains a Friendship requirement
-        //        if (friendship < 220)
-        //        {
-        //            //and pokemon's friendship is less than 220
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //    }
-        //    else if (methods[i] == "Item")
-        //    {
-        //        //if method contains an Item requirement
-        //        if (heldItem == parameters[i])
-        //        {
-        //            //and pokemon's Held Item is not the specified Item
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //    }
-        //    else if (methods[i] == "Gender")
-        //    {
-        //        //if method contains a Gender requirement
-        //        if (_gender.ToString() != parameters[i])
-        //        {
-        //            //and pokemon's gender is not the required gender to evolve,
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //    }
-        //    else if (methods[i] == "Move")
-        //    {
-        //        //if method contains a Move requirement
-        //        if (!HasMove(parameters[i]))
-        //        {
-        //            //and pokemon does not have the specified move
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //    }
-        //    else if (methods[i] == "Map")
-        //    {
-        //        //if method contains a Map requirement
-        //        string mapName = PlayerMovement.player.currentMap.name;
-        //        if (mapName != parameters[i])
-        //        {
-        //            //and current map is not the required map to evolve,
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //    }
-        //    else if (methods[i] == "Time")
-        //    {
-        //        //if method contains a Time requirement
-        //        string dayNight = "Day";
-        //        if (DateTime.Now.Hour >= 21 || DateTime.Now.Hour < 4)
-        //        {
-        //            //if time is night time
-        //            dayNight = "Night"; //set dayNight to be "Night"
-        //        }
-        //        if (dayNight != parameters[i])
-        //        {
-        //            //if time is not what the evolution requires (Day/Night)
-        //            return false; //cannot evolve. return false and stop checking.
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //if methods[i] did not equal to anything above, methods[i] is an invalid method.
-        //        return false;
-        //    }
-        //}
-        ////if the code did not return false once, then the evolution requirements must have been met.
-        //return true;
-        return false;
-    }
-
-    public bool evolve(string currentMethod)
-    {
-        // ToDo: Implement evolutions
-        //int[] evolutions = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId).getEvolutions();
-        //string[] evolutionRequirements = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId).getEvolutionRequirements();
-        //for (int i = 0; i < evolutions.Length; i++)
-        //{
-        //    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
-        //    {
-        //        // ToDo: Handle evolution.
-        //        // We want to keep the same HP rate before and after evolution.
-        //        int currentHP = GetCurrentStatValue(PokemonStatType.HP);
-        //        int maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
-        //        float hpPercent = (float)currentHP / maxHP;
-
-        //        Species.GameId = evolutions[i];
-
-        //        maxHP = GetCurrentLevelStatValue(PokemonStatType.HP);
-        //        currentHP = Mathf.RoundToInt(maxHP * hpPercent);
-
-        //        return true;
-        //    }
-        //}
-        return false;
-    }
-
-    //public override string ToString()
-    //{
-    //    string result = string.Format("{0}: {1}({2}), {3}, Level {4}, EXP: {5}, To next: {6}, Friendship: {7}, RareValue={8}, Pokerus={9}, Shiny={10}, Status: {11}, Ball: {12}, Item: {13}, met at Level {14} on {15} at {16}, OT: {17}, IVs: {18}, {19}, {20}, {21}, {22}, {23}, EVs: {24}, {25}, {26}, {27}, {28}, {29}, Stats: {30}/{31}, {32}, {33}, {34}, {35}, {36}, Nature: {37}", //, Ability: {38}
-    //        Species.GameId,
-    //        GetName(),
-    //        Species.Name,
-    //        Gender.ToString(),
-    //        CurrentLevel,
-    //        CurrentExperience,
-    //        (NextLevelExp - CurrentExperience),
-    //        CurrentFriendship,
-    //        RareValue,
-    //        IsShiny.ToString(),
-    //        _currentStatus,
-    //        caughtBall,
-    //        heldItem,
-    //        metLevel,
-    //        metDate,
-    //        metMap,
-    //        OT,
-    //        IDno,
-    //        Stats[PokemonStatType.HP].IV,
-    //        Stats[PokemonStatType.Attack].IV,
-    //        Stats[PokemonStatType.Defence].IV,
-    //        Stats[PokemonStatType.SpecialAttack].IV,
-    //        Stats[PokemonStatType.SpecialDefence].IV,
-    //        Stats[PokemonStatType.Speed].IV,
-    //        Stats[PokemonStatType.HP].EV,
-    //        Stats[PokemonStatType.Attack].EV,
-    //        Stats[PokemonStatType.Defence].EV,
-    //        Stats[PokemonStatType.SpecialAttack].EV,
-    //        Stats[PokemonStatType.SpecialDefence].EV,
-    //        Stats[PokemonStatType.Speed].EV,
-    //        GetCurrentStatValue(PokemonStatType.HP),
-    //        GetCurrentLevelStatValue(PokemonStatType.HP),
-    //        GetCurrentLevelStatValue(PokemonStatType.Attack),
-    //        GetCurrentLevelStatValue(PokemonStatType.Defence),
-    //        GetCurrentLevelStatValue(PokemonStatType.SpecialAttack),
-    //        GetCurrentLevelStatValue(PokemonStatType.SpecialDefence),
-    //        GetCurrentLevelStatValue(PokemonStatType.Speed),
-    //        _nature
-    //        //PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId).getAbility(_currentAbility)
-    //        );
-
-    //    result += ", [";
-    //    for (int i = 0; i < 4; i++)
-    //    {
-    //        if (!string.IsNullOrEmpty(_currentMoveset[i]))
-    //        {
-    //            result += _currentMoveset[i] + ": " + PP[i] + "/" + maxPP[i] + ", ";
-    //        }
-    //    }
-    //    result = result.Remove(result.Length - 2, 2);
-    //    result += "]";
-
-    //    return result;
-    //}
-
-    public void healFull()
-    {
-        var lostHPMod = Stats[PokemonStatType.HP].Modifiers[PokemonStatModifierType.LostHP];
-        if (lostHPMod != null)
-            healHP(lostHPMod.CurrentValue);
-
-        PP[0] = maxPP[0];
-        PP[1] = maxPP[1];
-        PP[2] = maxPP[2];
-        PP[3] = maxPP[3];
-        CurrentStatus = PokemonStatus.NONE;
-    }
-
-    /// <summary>
-    /// </summary>
-    /// <param name="pAmount"></param>
-    /// <returns>Returns the actually healed HP.</returns>
-    public int healHP(int pAmount)
-    {
-        // We use absolute value first to ease comparisions.
-        pAmount = Mathf.Abs(pAmount);
-
-        int healedHP = 0;
-
-        var lostHPMod = Stats[PokemonStatType.HP].Modifiers[PokemonStatModifierType.LostHP];
-        if (lostHPMod != null)
-        {
-            if (lostHPMod.CurrentValue > pAmount)
-                healedHP = pAmount;
-            else
-                healedHP = lostHPMod.CurrentValue;
-
-            // We don't forget to negate our heal value.
-            Stats[PokemonStatType.HP].LoseHP(-pAmount);
-        }
-
-        return healedHP;
-    }
-
-    public int healPP(int move, float amount)
-    {
-        int excess = 0;
-        int intAmount = Mathf.RoundToInt(amount);
-        PP[move] += intAmount;
-        if (PP[move] > maxPP[move])
-        {
-            excess = PP[move] - maxPP[move];
-            PP[move] = maxPP[move];
-        }
-        return intAmount - excess;
-    }
-
-    public void healStatus()
-    {
-        CurrentStatus = PokemonStatus.NONE;
-    }
-
-    public void removeHP(int pAmount)
-    {
-        // We use absolute value.
-        pAmount = Mathf.Abs(pAmount);
-
-        Stats[PokemonStatType.HP].LoseHP(pAmount);
-
-        if (GetCurrentStatValue(PokemonStatType.HP) <= 0)
-        {
-            CurrentStatus = PokemonStatus.FAINTED;
-        }
-    }
-
-
-    public void removePP(string move, float amount)
-    {
-        removePP(getMoveIndex(move), amount);
-    }
-
-    public void removePP(int move, float amount)
-    {
-        if (move >= 0)
-        {
-            int intAmount = Mathf.RoundToInt(amount);
-            PP[move] -= intAmount;
-            if (PP[move] < 0)
-            {
-                PP[move] = 0;
-            }
-        }
-    }
-
-
-    public bool TrySetStatus(PokemonStatus pNewStatus)
-    {
-        if (pNewStatus == CurrentStatus)
-            return true;
-
-        if (CurrentStatus == PokemonStatus.NONE
-            || pNewStatus == PokemonStatus.NONE
-            || pNewStatus == PokemonStatus.FAINTED)
-        {
-            _currentStatus = pNewStatus;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public string getFirstFEInstance(string moveName)
-    {
-        for (int i = 0; i < _currentMoveset.Length; i++)
-        {
-            if (MoveDatabase.getMove(_currentMoveset[i]).getFieldEffect() == moveName)
-            {
-                return _currentMoveset[i];
-            }
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Get the pokemon's nickname, or regular name if it has none.
-    /// </summary>
-    /// <returns></returns>
-    public string GetName()
-    {
-        if (string.IsNullOrEmpty(Nickname))
-        {
-            return Species.Name;
-        }
-        else
-        {
-            return Nickname;
-        }
-    }
-
-    public string getCaughtBall()
-    {
-        return caughtBall;
-    }
-
-    public string getHeldItem()
-    {
-        // ToDo: implement items.
-        return "";
-    }
-
-    public string getMetDate()
-    {
-        return metDate;
-    }
-
-    public string getMetMap()
-    {
-        return metMap;
-    }
-
-    public int getMetLevel()
-    {
-        return metLevel;
     }
 
     public int GetIV(PokemonStatType pStatType)
@@ -1152,16 +485,279 @@ public class OwnedPokemon
         }
     }
 
+    public bool TryAddEV(PokemonStatType pStatType, int pAmount)
+    {
+        int hpEV = GetEV(PokemonStatType.HP);
+        int atkEV = GetEV(PokemonStatType.Attack);
+        int defEV = GetEV(PokemonStatType.Defence);
+        int sAtkEV = GetEV(PokemonStatType.SpecialAttack);
+        int sDefEV = GetEV(PokemonStatType.SpecialDefence);
+        int spdEV = GetEV(PokemonStatType.Speed);
+
+        int currentEV = 0;
+        switch (pStatType)
+        {
+            case PokemonStatType.HP:
+                currentEV = hpEV;
+                break;
+            case PokemonStatType.Attack:
+                currentEV = atkEV;
+                break;
+            case PokemonStatType.Defence:
+                currentEV = defEV;
+                break;
+            case PokemonStatType.Speed:
+                currentEV = sAtkEV;
+                break;
+            case PokemonStatType.SpecialAttack:
+                currentEV = sDefEV;
+                break;
+            case PokemonStatType.SpecialDefence:
+                currentEV = spdEV;
+                break;
+
+            default:
+                // Non EV stat.
+                return false;
+        }
+
+        int evTotal = hpEV + atkEV + defEV + sAtkEV + sDefEV + spdEV;
+
+        if (evTotal >= MAX_SUMMED_EV
+            || currentEV >= MAX_EV)
+            // EV cap reached.
+            return false;
+
+        // We check if we will pass the max total amount.
+        if (evTotal + pAmount > MAX_SUMMED_EV)
+            // If we do, we clamp.
+            pAmount = MAX_SUMMED_EV - evTotal;
+
+        // We check if we will pass the max single amount.
+        if (currentEV + pAmount > MAX_EV)
+            // If we do, we clamp.
+            pAmount = MAX_EV - currentEV;
+
+        // We add the EV.
+        Stats[pStatType].EV += pAmount;
+
+        return true;
+    }
+    #endregion
+
+    /// <summary>
+    /// Get the pokemon's nickname, or regular name if it has none.
+    /// </summary>
+    /// <returns></returns>
+    public string GetName()
+    {
+        if (string.IsNullOrEmpty(Nickname))
+        {
+            return Species.Name;
+        }
+        else
+        {
+            return Nickname;
+        }
+    }
+
+    public void Tame()
+    {
+        // ToDo: implement pokemon catch.
+    }
+
+    public string swapHeldItem(string newItem)
+    {
+        // ToDo: Implement items.
+        return "";
+    }
+
+    public void addExp(int expAdded)
+    {
+        if (CurrentLevel < 100)
+        {
+            CurrentExperience += expAdded;
+            while (CurrentExperience >= NextLevelExp)
+            {
+                int currentBaseHP = GetCurrentLevelStatValue(PokemonStatType.HP);
+
+                CurrentLevel += 1;
+
+                // We heal the amount of gained HP by leveling.
+                Stats[PokemonStatType.HP].LoseHP(currentBaseHP - GetCurrentLevelStatValue(PokemonStatType.HP));
+
+                // We remove the death flag if needed.
+                if (CurrentStatus == PokemonStatus.FAINTED
+                    && GetCurrentStatValue(PokemonStatType.HP) > 0)
+                    CurrentStatus = PokemonStatus.NONE;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks PokemonData.cs for list of evolution method names.
+    /// </summary>
+    /// <param name="currentMethod"></param>
+    /// <returns></returns>
+    public bool canEvolve(string currentMethod)
+    {
+        // ToDo: Implement evolutions
+        //var thisPokemonData = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(Species.GameId);
+        //int[] evolutions = thisPokemonData.getEvolutions();
+        //string[] evolutionRequirements = thisPokemonData.getEvolutionRequirements();
+
+        //for (int i = 0; i < evolutions.Length; i++)
+        //{
+        //    //if an evolution method was satisfied, return true
+        //    if (checkEvolutionMethods(currentMethod, evolutionRequirements[i]))
+        //    {
+        //        //		Debug.Log("All Checks Passed");
+        //        return true;
+        //    }
+        //}
+
+        return false;
+    }
+
+    #region HP, PP and status battle
+    /// <summary>
+    /// </summary>
+    /// <param name="pAmount"></param>
+    /// <returns>Returns the actually healed HP.</returns>
+    public int healHP(int pAmount)
+    {
+        // We use absolute value first to ease comparisions.
+        pAmount = Mathf.Abs(pAmount);
+
+        int healedHP = 0;
+
+        var lostHPMod = Stats[PokemonStatType.HP].Modifiers[PokemonStatModifierType.LostHP];
+        if (lostHPMod != null)
+        {
+            if (lostHPMod.CurrentValue > pAmount)
+                healedHP = pAmount;
+            else
+                healedHP = lostHPMod.CurrentValue;
+
+            // We don't forget to negate our heal value.
+            Stats[PokemonStatType.HP].LoseHP(-pAmount);
+        }
+
+        return healedHP;
+    }
+
+    public void removeHP(int pAmount)
+    {
+        // We use absolute value.
+        pAmount = Mathf.Abs(pAmount);
+
+        Stats[PokemonStatType.HP].LoseHP(pAmount);
+
+        if (GetCurrentStatValue(PokemonStatType.HP) <= 0)
+        {
+            CurrentStatus = PokemonStatus.FAINTED;
+        }
+    }
+
+    public int healPP(int move, float amount)
+    {
+        // ToDo: implement moves and PP.
+        //int excess = 0;
+        //int intAmount = Mathf.RoundToInt(amount);
+        //PP[move] += intAmount;
+        //if (PP[move] > maxPP[move])
+        //{
+        //    excess = PP[move] - maxPP[move];
+        //    PP[move] = maxPP[move];
+        //}
+
+        //return intAmount - excess;
+
+        return 0;
+    }
+
+    public void removePP(string move, float amount)
+    {
+        // ToDo: implement moves and PP.
+        //removePP(getMoveIndex(move), amount);
+    }
+
+    public void removePP(int move, float amount)
+    {
+        // ToDo: implement moves and PP.
+        //if (move >= 0)
+        //{
+        //    int intAmount = Mathf.RoundToInt(amount);
+        //    PP[move] -= intAmount;
+        //    if (PP[move] < 0)
+        //    {
+        //        PP[move] = 0;
+        //    }
+        //}
+    }
+
+    public void healStatus()
+    {
+        CurrentStatus = PokemonStatus.NONE;
+    }
+
+    public bool TrySetStatus(PokemonStatus pNewStatus)
+    {
+        if (pNewStatus == CurrentStatus)
+            return true;
+
+        if (CurrentStatus == PokemonStatus.NONE
+            || pNewStatus == PokemonStatus.NONE
+            || pNewStatus == PokemonStatus.FAINTED)
+        {
+            _currentStatus = pNewStatus;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void healFull()
+    {
+        var lostHPMod = Stats[PokemonStatType.HP].Modifiers[PokemonStatModifierType.LostHP];
+        if (lostHPMod != null)
+            healHP(lostHPMod.CurrentValue);
+
+        for (int i = 0; i != 4; ++i)
+        {
+            healPP(i, maxPP[i]);
+        }
+
+        healStatus();
+    }
+    #endregion
+
+
+    public string getFirstFEInstance(string moveName)
+    {
+        for (int i = 0; i < _currentMoveset.Length; i++)
+        {
+            if (MoveDatabase.getMove(_currentMoveset[i]).getFieldEffect() == moveName)
+            {
+                return _currentMoveset[i];
+            }
+        }
+        return null;
+    }
+
+    public string getHeldItem()
+    {
+        // ToDo: implement items.
+        return "";
+    }
+
     public float getPercentHP()
     {
         return (float)GetCurrentStatValue(PokemonStatType.HP) / GetCurrentLevelStatValue(PokemonStatType.HP);
     }
 
-    public int getAbility()
-    {
-        return _currentAbility;
-    }
-
+    #region Moves
     public int getMoveIndex(string move)
     {
         for (int i = 0; i < _currentMoveset.Length; i++)
@@ -1193,15 +789,6 @@ public class OwnedPokemon
         _currentMoveset[target1] = _currentMoveset[target2];
         _currentMoveset[target2] = temp;
     }
-
-
-    private void ResetPP(int index)
-    {
-        PPups[index] = 0;
-        maxPP[index] = Mathf.FloorToInt(MoveDatabase.getMove(_currentMoveset[index]).getPP() * ((PPups[index] * 0.2f) + 1));
-        PP[index] = maxPP[index];
-    }
-
 
     /// Returns false if no room to add the new move OR move already is learned.
     public bool addMove(string newMove)
@@ -1322,7 +909,7 @@ public class OwnedPokemon
     public bool CanLearnMove(string move)
     {
         // ToDo: Implement moves.
-        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
+        //var thisPokemonData = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(Species.GameId);
 
         //string[] moves = thisPokemonData.getMovesetMoves();
         //for (int i = 0; i < moves.Length; i++)
@@ -1346,7 +933,7 @@ public class OwnedPokemon
     public string MoveLearnedAtLevel(int level)
     {
         // ToDo: Implement moves.
-        //var thisPokemonData = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(Species.GameId);
+        //var thisPokemonData = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(Species.GameId);
 
         //int[] movesetLevels = thisPokemonData.getMovesetLevels();
         //for (int i = 0; i < movesetLevels.Length; i++)
@@ -1358,11 +945,13 @@ public class OwnedPokemon
         //}
         return null;
     }
-
-
-    public int[] getPPups()
+    #endregion
+    #region PP
+    private void ResetPP(int index)
     {
-        return PPups;
+        PPups[index] = 0;
+        maxPP[index] = Mathf.FloorToInt(MoveDatabase.getMove(_currentMoveset[index]).getPP() * ((PPups[index] * 0.2f) + 1));
+        PP[index] = maxPP[index];
     }
 
     public int[] getMaxPP()
@@ -1379,8 +968,28 @@ public class OwnedPokemon
     {
         return PP[index];
     }
+    #endregion
 
+    #region Sound
+    public float GetCryPitch()
+    {
+        return (CurrentStatus == PokemonStatus.FAINTED) ? 0.9f : 1f - (0.06f * (1 - getPercentHP()));
+    }
 
+    public AudioClip GetCry()
+    {
+        return GetCryFromID(Species.GameId);
+    }
+
+    public static AudioClip GetCryFromID(string ID)
+    {
+        // ToDo: implement cry search pattern (with nomeclature).
+        //return Resources.Load<AudioClip>("Audio/cry/" + convertLongID(ID));
+        return null;
+    }
+    #endregion
+
+    #region View
     public Sprite[] GetFrontAnim_()
     {
         return GetAnimFromID_("PokemonSprites", Species.GameId, Gender, IsShiny);
@@ -1390,7 +999,6 @@ public class OwnedPokemon
     {
         return GetAnimFromID_("PokemonBackSprites", Species.GameId, Gender, IsShiny);
     }
-
 
     public static Sprite[] GetFrontAnimFromID_(string ID, PokemonGender gender, bool isShiny)
     {
@@ -1433,7 +1041,6 @@ public class OwnedPokemon
         return animation;
     }
 
-
     public Sprite[] GetIcons_()
     {
         return GetIconsFromID_(Species.GameId, IsShiny);
@@ -1452,24 +1059,6 @@ public class OwnedPokemon
         //}
         return icons;
     }
-
-    public float GetCryPitch()
-    {
-        return (CurrentStatus == PokemonStatus.FAINTED) ? 0.9f : 1f - (0.06f * (1 - getPercentHP()));
-    }
-
-    public AudioClip GetCry()
-    {
-        return GetCryFromID(Species.GameId);
-    }
-
-    public static AudioClip GetCryFromID(string ID)
-    {
-        // ToDo: implement cry search pattern (with nomeclature).
-        //return Resources.Load<AudioClip>("Audio/cry/" + convertLongID(ID));
-        return null;
-    }
-
 
     public Texture[] GetFrontAnim()
     {
@@ -1490,7 +1079,6 @@ public class OwnedPokemon
     {
         return GetSpriteFromID(Species.GameId, IsShiny, getLight);
     }
-
 
     public static Texture[] GetFrontAnimFromID(string ID, PokemonGender gender, bool isShiny)
     {
@@ -1548,7 +1136,6 @@ public class OwnedPokemon
         return null;
     }
 
-
     public static Sprite[] GetSpriteFromID(string ID, bool isShiny, bool getLight)
     {
         // ToDo: implement sprite search pattern (with nomeclature).
@@ -1588,4 +1175,5 @@ public class OwnedPokemon
 
         return new Sprite[0];
     }
+    #endregion
 }
