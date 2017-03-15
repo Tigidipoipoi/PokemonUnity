@@ -387,7 +387,7 @@ public class CustomEventEditor : Editor
             case CustomEventDetails.CustomEventType.ReceivePokemon:
                 eventDescription = "Receive a Lv. " + ints_Prop.GetArrayElementAtIndex(1).intValue + " \"";
                 // ToDo: change this ints_Prop for string_Prop ?
-                PokemonSpecies pkmn = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(ints_Prop.GetArrayElementAtIndex(0).intValue.ToString());
+                PokemonSpecies pkmn = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(ints_Prop.GetArrayElementAtIndex(0).intValue.ToString());
                 eventDescription += (pkmn != null) ? pkmn.Name : "null";
                 eventDescription += "\" or Jump to " + int0_Prop.intValue + ".";
                 break;
@@ -588,7 +588,7 @@ public class CustomEventEditor : Editor
                     ints_Prop.GetArrayElementAtIndex(0).intValue);
 
                 // ToDO: change ints_Prop.
-                var pkmn = PokemonDatabase.Instance.GetPokemonSpeciesByGameId(ints_Prop.GetArrayElementAtIndex(0).intValue.ToString());
+                var pkmn = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(ints_Prop.GetArrayElementAtIndex(0).intValue.ToString());
                 string pokemonName = (pkmn != null) ? pkmn.Name : "null";
                 EditorGUILayout.LabelField(new GUIContent(" "), new GUIContent(pokemonName));
                 EditorGUILayout.Space();
