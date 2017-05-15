@@ -153,18 +153,19 @@ public class PC
         return result;
     }
 
-    public OwnedPokemon getFirstFEUserInParty(string moveName)
+    public OwnedPokemon getFirstFieldEffectUserInParty(string moveName)
     {
         for (int i = 0; i < 6; i++)
         {
             if (boxes[0][i] != null)
             {
-                string[] moveset = boxes[0][i].getMoveset();
-                for (int i2 = 0; i2 < moveset.Length; i2++)
+                var moveset = boxes[0][i].GetMoveset();
+                for (int ii = 0; ii < moveset.Length; ++ii)
                 {
-                    if (moveset[i2] != null)
+                    if (moveset[ii] != null)
                     {
-                        if (MoveDatabase.getMove(moveset[i2]).getFieldEffect() == moveName)
+                        if (moveset[ii].Effects.Find(effect => effect.Type == PokemonMoveEffectType.Field) != null
+                            && moveset[ii].Name == moveName)
                         {
                             return boxes[0][i];
                         }

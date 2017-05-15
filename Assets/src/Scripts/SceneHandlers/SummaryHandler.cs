@@ -14,6 +14,7 @@ public class SummaryHandler : MonoBehaviour
         selectedStatus,
         selectedShiny;
 
+    // ToDo: Replace all shadows by components !!!
     private Text
         selectedName,
         selectedNameShadow,
@@ -80,37 +81,17 @@ public class SummaryHandler : MonoBehaviour
     private Image
         moveSelector,
         selectedMove,
-        selectedCategory,
-        move1Type,
-        move2Type,
-        move3Type,
-        move4Type;
+        selectedCategory;
+
+    private Text[] moveNames;
+    private Text[] moveNameShadows;
+    private Image[] moveTypes;
+    private Text[] movePPTexts;
+    private Text[] movePPTextShadows;
+    private Text[] movePPs;
+    private Text[] movePPShadows;
 
     private Text
-        move1Name,
-        move1NameShadow,
-        move1PPText,
-        move1PPTextShadow,
-        move1PP,
-        move1PPShadow,
-        move2Name,
-        move2NameShadow,
-        move2PPText,
-        move2PPTextShadow,
-        move2PP,
-        move2PPShadow,
-        move3Name,
-        move3NameShadow,
-        move3PPText,
-        move3PPTextShadow,
-        move3PP,
-        move3PPShadow,
-        move4Name,
-        move4NameShadow,
-        move4PPText,
-        move4PPTextShadow,
-        move4PP,
-        move4PPShadow,
         selectedPower,
         selectedPowerShadow,
         selectedAccuracy,
@@ -212,34 +193,25 @@ public class SummaryHandler : MonoBehaviour
         moveSelector = pages[4].transform.FindChild("MoveSelector").GetComponent<Image>();
         selectedMove = pages[4].transform.FindChild("SelectedMove").GetComponent<Image>();
 
-        move1NameShadow = moves.FindChild("Move1").GetComponent<Text>();
-        move1Name = move1NameShadow.transform.FindChild("Text").GetComponent<Text>();
-        move1Type = moves.FindChild("Move1Type").GetComponent<Image>();
-        move1PPTextShadow = moves.FindChild("Move1PPText").GetComponent<Text>();
-        move1PPText = move1PPTextShadow.transform.FindChild("Text").GetComponent<Text>();
-        move1PPShadow = moves.FindChild("Move1PP").GetComponent<Text>();
-        move1PP = move1PPShadow.transform.FindChild("Text").GetComponent<Text>();
-        move2NameShadow = moves.FindChild("Move2").GetComponent<Text>();
-        move2Name = move2NameShadow.transform.FindChild("Text").GetComponent<Text>();
-        move2Type = moves.FindChild("Move2Type").GetComponent<Image>();
-        move2PPTextShadow = moves.FindChild("Move2PPText").GetComponent<Text>();
-        move2PPText = move2PPTextShadow.transform.FindChild("Text").GetComponent<Text>();
-        move2PPShadow = moves.FindChild("Move2PP").GetComponent<Text>();
-        move2PP = move2PPShadow.transform.FindChild("Text").GetComponent<Text>();
-        move3NameShadow = moves.FindChild("Move3").GetComponent<Text>();
-        move3Name = move3NameShadow.transform.FindChild("Text").GetComponent<Text>();
-        move3Type = moves.FindChild("Move3Type").GetComponent<Image>();
-        move3PPTextShadow = moves.FindChild("Move3PPText").GetComponent<Text>();
-        move3PPText = move3PPTextShadow.transform.FindChild("Text").GetComponent<Text>();
-        move3PPShadow = moves.FindChild("Move3PP").GetComponent<Text>();
-        move3PP = move3PPShadow.transform.FindChild("Text").GetComponent<Text>();
-        move4NameShadow = moves.FindChild("Move4").GetComponent<Text>();
-        move4Name = move4NameShadow.transform.FindChild("Text").GetComponent<Text>();
-        move4Type = moves.FindChild("Move4Type").GetComponent<Image>();
-        move4PPTextShadow = moves.FindChild("Move4PPText").GetComponent<Text>();
-        move4PPText = move4PPTextShadow.transform.FindChild("Text").GetComponent<Text>();
-        move4PPShadow = moves.FindChild("Move4PP").GetComponent<Text>();
-        move4PP = move4PPShadow.transform.FindChild("Text").GetComponent<Text>();
+        Text[] moveNames = new Text[OwnedPokemon.MOVESET_SIZE];
+        Text[] moveNameShadows = new Text[OwnedPokemon.MOVESET_SIZE];
+        Image[] moveTypes = new Image[OwnedPokemon.MOVESET_SIZE];
+        Text[] movePPTexts = new Text[OwnedPokemon.MOVESET_SIZE];
+        Text[] movePPTextShadows = new Text[OwnedPokemon.MOVESET_SIZE];
+        Text[] movePPs = new Text[OwnedPokemon.MOVESET_SIZE];
+        Text[] movePPShadows = new Text[OwnedPokemon.MOVESET_SIZE];
+
+        for (int i = 1; i <= OwnedPokemon.MOVESET_SIZE; ++i)
+        {
+            moveNameShadows[i] = moves.FindChild(string.Format("Move{0}", i.ToString())).GetComponent<Text>();
+            moveNames[i] = moveNameShadows[i].transform.FindChild("Text").GetComponent<Text>();
+            moveTypes[i] = moves.FindChild(string.Format("Move{0}Type", i.ToString())).GetComponent<Image>();
+            movePPTextShadows[i] = moves.FindChild(string.Format("Move{0}PPText", i.ToString())).GetComponent<Text>();
+            movePPTexts[i] = movePPTextShadows[i].transform.FindChild("Text").GetComponent<Text>();
+            movePPShadows[i] = moves.FindChild(string.Format("Move{0}PP", i.ToString())).GetComponent<Text>();
+            movePPs[i] = movePPShadows[i].transform.FindChild("Text").GetComponent<Text>();
+        }
+
         selectedCategory = pages[4].transform.FindChild("SelectedCategory").GetComponent<Image>();
         selectedPowerShadow = pages[4].transform.FindChild("SelectedPower").GetComponent<Text>();
         selectedPower = selectedPowerShadow.transform.FindChild("Text").GetComponent<Text>();
@@ -280,7 +252,7 @@ public class SummaryHandler : MonoBehaviour
         PlayCry(selectedPokemon);
 
         selectedCaughtBall.sprite = Resources.Load<Sprite>("null");
-        selectedCaughtBall.sprite = Resources.Load<Sprite>("PCSprites/summary" + selectedPokemon.CaughtBall);
+        selectedCaughtBall.sprite = Resources.Load<Sprite>("PCSprites/summary" + selectedPokemon.MetData.CaughtBall);
         selectedName.text = selectedPokemon.GetName();
         selectedNameShadow.text = selectedName.text;
         if (selectedPokemon.Gender == PokemonGender.FEMALE)
@@ -487,92 +459,35 @@ public class SummaryHandler : MonoBehaviour
 
     private void updateSelectionMoveset(OwnedPokemon selectedPokemon)
     {
-        string[] moveset = selectedPokemon.getMoveset();
-        int[] maxPP = selectedPokemon.getMaxPP();
-        int[] PP = selectedPokemon.getPP();
-        if (!string.IsNullOrEmpty(moveset[0]))
+        var moveset = selectedPokemon.CurrentMoveset;
+
+        for (int i = 0; i != OwnedPokemon.MOVESET_SIZE; ++i)
         {
-            move1Name.text = moveset[0];
-            move1NameShadow.text = move1Name.text;
-            move1Type.sprite =
-                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[0]).getType().ToString());
-            move1PPText.text = "PP";
-            move1PPTextShadow.text = move1PPText.text;
-            move1PP.text = PP[0] + "/" + maxPP[0];
-            move1PPShadow.text = move1PP.text;
-        }
-        else
-        {
-            move1Name.text = null;
-            move1NameShadow.text = move1Name.text;
-            move1Type.sprite = Resources.Load<Sprite>("null");
-            move1PPText.text = null;
-            move1PPTextShadow.text = move1PPText.text;
-            move1PP.text = null;
-            move1PPShadow.text = move1PP.text;
-        }
-        if (!string.IsNullOrEmpty(moveset[1]))
-        {
-            move2Name.text = moveset[1];
-            move2NameShadow.text = move2Name.text;
-            move2Type.sprite =
-                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[1]).getType().ToString());
-            move2PPText.text = "PP";
-            move2PPTextShadow.text = move2PPText.text;
-            move2PP.text = PP[1] + "/" + maxPP[1];
-            move2PPShadow.text = move2PP.text;
-        }
-        else
-        {
-            move2Name.text = null;
-            move2NameShadow.text = move2Name.text;
-            move2Type.sprite = Resources.Load<Sprite>("null");
-            move2PPText.text = null;
-            move2PPTextShadow.text = move2PPText.text;
-            move2PP.text = null;
-            move2PPShadow.text = move2PP.text;
-        }
-        if (!string.IsNullOrEmpty(moveset[2]))
-        {
-            move3Name.text = moveset[2];
-            move3NameShadow.text = move3Name.text;
-            move3Type.sprite =
-                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[2]).getType().ToString());
-            move3PPText.text = "PP";
-            move3PPTextShadow.text = move3PPText.text;
-            move3PP.text = PP[2] + "/" + maxPP[2];
-            move3PPShadow.text = move3PP.text;
-        }
-        else
-        {
-            move3Name.text = null;
-            move3NameShadow.text = move3Name.text;
-            move3Type.sprite = Resources.Load<Sprite>("null");
-            move3PPText.text = null;
-            move3PPTextShadow.text = move3PPText.text;
-            move3PP.text = null;
-            move3PPShadow.text = move3PP.text;
-        }
-        if (!string.IsNullOrEmpty(moveset[3]))
-        {
-            move4Name.text = moveset[3];
-            move4NameShadow.text = move4Name.text;
-            move4Type.sprite =
-                Resources.Load<Sprite>("PCSprites/type" + MoveDatabase.getMove(moveset[3]).getType().ToString());
-            move4PPText.text = "PP";
-            move4PPTextShadow.text = move4PPText.text;
-            move4PP.text = PP[3] + "/" + maxPP[3];
-            move4PPShadow.text = move4PP.text;
-        }
-        else
-        {
-            move4Name.text = null;
-            move4NameShadow.text = move4Name.text;
-            move4Type.sprite = Resources.Load<Sprite>("null");
-            move4PPText.text = null;
-            move4PPTextShadow.text = move4PPText.text;
-            move4PP.text = null;
-            move4PPShadow.text = move4PP.text;
+            var ownedPokemonMove = moveset[i];
+            if (ownedPokemonMove != null)
+            {
+                moveNames[i].text = ownedPokemonMove.Move.Name;
+
+                moveTypes[i].sprite = Resources.Load<Sprite>("PCSprites/type" + PokemonTypeHelper.GetName(ownedPokemonMove.Move.CurrentType));
+
+                movePPTexts[i].text = "PP";
+
+                movePPs[i].text = ownedPokemonMove.CurrentPP + "/" + ownedPokemonMove.CurrentMaxPP;
+            }
+            else
+            {
+                moveNames[i].text = null;
+
+                moveTypes[i].sprite = Resources.Load<Sprite>("null");
+
+                movePPTexts[i].text = null;
+
+                movePPs[i].text = null;
+            }
+
+            moveNameShadows[i].text = moveNames[i].text;
+            movePPTextShadows[i].text = movePPTexts[i].text;
+            movePPShadows[i].text = movePPs[i].text;
         }
 
         updateSelectedMove(null);
@@ -782,7 +697,7 @@ public class SummaryHandler : MonoBehaviour
                 {
                     if (currentPage == 4)
                     {
-                        if (pokemonList[currentPosition].getMoveset()[0] != null)
+                        if (pokemonList[currentPosition].GetMoveset()[0] != null)
                         {
                             //if there are moves to rearrange
                             SfxHandler.Play(selectClip);
@@ -809,309 +724,311 @@ public class SummaryHandler : MonoBehaviour
 
     private IEnumerator NavigateMoves(OwnedPokemon pokemon, bool learning, string newMoveString)
     {
-        learnScreen.SetActive(learning);
-        newMove.gameObject.SetActive(learning);
-        Vector3 positionMod = (learning) ? new Vector3(0, 32) : new Vector3(0, 0);
-        moves.localPosition = positionMod;
-        if (learning)
-        {
-            updateMoveToLearn(newMoveString);
-        }
+        yield break;
+        // ToDO: Redo this.
+        //learnScreen.SetActive(learning);
+        //newMove.gameObject.SetActive(learning);
+        //Vector3 positionMod = (learning) ? new Vector3(0, 32) : new Vector3(0, 0);
+        //moves.localPosition = positionMod;
+        //if (learning)
+        //{
+        //    updateMoveToLearn(newMoveString);
+        //}
 
-        string[] pokeMoveset = pokemon.getMoveset();
-        string[] moveset = new string[]
-        {
-            pokeMoveset[0], pokeMoveset[1],
-            pokeMoveset[2], pokeMoveset[3],
-            newMoveString, newMoveString
-        };
-        Vector3[] positions = new Vector3[]
-        {
-            new Vector3(21, 32), new Vector3(108, 32),
-            new Vector3(21, 0), new Vector3(108, 0),
-            new Vector3(64, -32), new Vector3(64, -32)
-        };
+        //string[] pokeMoveset = pokemon.GetMoveset();
+        //string[] moveset = new string[]
+        //{
+        //    pokeMoveset[0], pokeMoveset[1],
+        //    pokeMoveset[2], pokeMoveset[3],
+        //    newMoveString, newMoveString
+        //};
+        //Vector3[] positions = new Vector3[]
+        //{
+        //    new Vector3(21, 32), new Vector3(108, 32),
+        //    new Vector3(21, 0), new Vector3(108, 0),
+        //    new Vector3(64, -32), new Vector3(64, -32)
+        //};
 
-        moveSelector.enabled = true;
-        selectedMove.enabled = false;
+        //moveSelector.enabled = true;
+        //selectedMove.enabled = false;
 
-        bool navigatingMoves = true;
-        bool selectingMove = false;
-        int currentMoveNumber = 0;
-        int selectedMoveNumber = -1;
+        //bool navigatingMoves = true;
+        //bool selectingMove = false;
+        //int currentMoveNumber = 0;
+        //int selectedMoveNumber = -1;
 
-        moveSelector.rectTransform.localPosition = positions[0] + positionMod;
-        updateSelectedMove(moveset[currentMoveNumber]);
-        yield return null;
-        while (navigatingMoves)
-        {
-            if (Input.GetAxisRaw("Horizontal") < 0)
-            {
-                if (currentMoveNumber == 1)
-                {
-                    currentMoveNumber = 0;
-                    updateSelectedMove(moveset[currentMoveNumber]);
-                    SfxHandler.Play(scrollClip);
-                    yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                }
-                else if (currentMoveNumber == 3)
-                {
-                    if (!string.IsNullOrEmpty(moveset[2]))
-                    {
-                        currentMoveNumber = 2;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-                else if (learning)
-                {
-                    if (currentMoveNumber == 5)
-                    {
-                        currentMoveNumber = 4;
-                    }
-                }
-            }
-            else if (Input.GetAxisRaw("Horizontal") > 0)
-            {
-                if (currentMoveNumber == 0)
-                {
-                    if (!string.IsNullOrEmpty(moveset[1]))
-                    {
-                        currentMoveNumber = 1;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-                else if (currentMoveNumber == 2)
-                {
-                    if (!string.IsNullOrEmpty(moveset[3]))
-                    {
-                        currentMoveNumber = 3;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-                else if (learning)
-                {
-                    if (currentMoveNumber == 4)
-                    {
-                        currentMoveNumber = 5;
-                    }
-                }
-            }
-            else if (Input.GetAxisRaw("Vertical") > 0)
-            {
-                if (currentMoveNumber == 2)
-                {
-                    currentMoveNumber = 0;
-                    updateSelectedMove(moveset[currentMoveNumber]);
-                    SfxHandler.Play(scrollClip);
-                    yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                }
-                else if (currentMoveNumber == 3)
-                {
-                    if (!string.IsNullOrEmpty(moveset[1]))
-                    {
-                        currentMoveNumber = 1;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-                else if (learning)
-                {
-                    if (currentMoveNumber == 4)
-                    {
-                        if (!string.IsNullOrEmpty(moveset[2]))
-                        {
-                            currentMoveNumber = 2;
-                        }
-                        else
-                        {
-                            currentMoveNumber = 0;
-                        }
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                    else if (currentMoveNumber == 5)
-                    {
-                        if (!string.IsNullOrEmpty(moveset[3]))
-                        {
-                            currentMoveNumber = 3;
-                        }
-                        else if (!string.IsNullOrEmpty(moveset[1]))
-                        {
-                            currentMoveNumber = 1;
-                        }
-                        else
-                        {
-                            currentMoveNumber = 0;
-                        }
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-            }
-            else if (Input.GetAxisRaw("Vertical") < 0)
-            {
-                if (currentMoveNumber == 0)
-                {
-                    if (!string.IsNullOrEmpty(moveset[2]))
-                    {
-                        currentMoveNumber = 2;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                    else if (learning)
-                    {
-                        currentMoveNumber = 4;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-                else if (currentMoveNumber == 1)
-                {
-                    if (!string.IsNullOrEmpty(moveset[3]))
-                    {
-                        currentMoveNumber = 3;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                    else if (learning)
-                    {
-                        currentMoveNumber = 5;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-                else if (learning)
-                {
-                    if (currentMoveNumber == 2)
-                    {
-                        currentMoveNumber = 4;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                    else if (currentMoveNumber == 3)
-                    {
-                        currentMoveNumber = 5;
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(scrollClip);
-                        yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
-                    }
-                }
-            }
-            else if (Input.GetButtonDown("Back"))
-            {
-                if (!learning)
-                {
-                    if (selectingMove)
-                    {
-                        selectingMove = false;
-                        selectedMove.enabled = false;
-                        yield return new WaitForSeconds(0.2f);
-                    }
-                    else
-                    {
-                        navigatingMoves = false;
-                        moveSelector.enabled = false;
-                        updateSelectedMove(null);
-                        SfxHandler.Play(returnClip);
-                        yield return new WaitForSeconds(0.2f);
-                    }
-                }
-                else
-                {
-                    //Cancel learning move
-                    navigatingMoves = false;
-                    SfxHandler.Play(returnClip);
-                    yield return new WaitForSeconds(0.2f);
-                }
-            }
-            else if (Input.GetButtonDown("Select"))
-            {
-                if (!learning)
-                {
-                    if (selectingMove)
-                    {
-                        pokemon.swapMoves(selectedMoveNumber, currentMoveNumber);
-                        selectingMove = false;
-                        selectedMove.enabled = false;
-                        moveset = pokemon.getMoveset();
-                        updateSelectionMoveset(pokemon);
-                        updateSelectedMove(moveset[currentMoveNumber]);
-                        SfxHandler.Play(selectClip);
-                        yield return new WaitForSeconds(0.2f);
-                    }
-                    else
-                    {
-                        selectedMoveNumber = currentMoveNumber;
-                        selectingMove = true;
-                        selectedMove.rectTransform.localPosition = positions[currentMoveNumber] + positionMod;
-                        selectedMove.enabled = true;
-                        SfxHandler.Play(selectClip);
-                        yield return new WaitForSeconds(0.2f);
-                    }
-                }
-                else
-                {
-                    if (currentMoveNumber < 4)
-                    {
-                        //Forget learned move
-                        forget.SetActive(true);
-                        selectedMove.enabled = true;
-                        selectedMove.rectTransform.localPosition = positions[currentMoveNumber] + positionMod;
-                        moveSelector.rectTransform.localPosition = positions[4] + positionMod;
-                        SfxHandler.Play(selectClip);
-                        yield return new WaitForSeconds(0.2f);
+        //moveSelector.rectTransform.localPosition = positions[0] + positionMod;
+        //updateSelectedMove(moveset[currentMoveNumber]);
+        //yield return null;
+        //while (navigatingMoves)
+        //{
+        //    if (Input.GetAxisRaw("Horizontal") < 0)
+        //    {
+        //        if (currentMoveNumber == 1)
+        //        {
+        //            currentMoveNumber = 0;
+        //            updateSelectedMove(moveset[currentMoveNumber]);
+        //            SfxHandler.Play(scrollClip);
+        //            yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //        }
+        //        else if (currentMoveNumber == 3)
+        //        {
+        //            if (!string.IsNullOrEmpty(moveset[2]))
+        //            {
+        //                currentMoveNumber = 2;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //        else if (learning)
+        //        {
+        //            if (currentMoveNumber == 5)
+        //            {
+        //                currentMoveNumber = 4;
+        //            }
+        //        }
+        //    }
+        //    else if (Input.GetAxisRaw("Horizontal") > 0)
+        //    {
+        //        if (currentMoveNumber == 0)
+        //        {
+        //            if (!string.IsNullOrEmpty(moveset[1]))
+        //            {
+        //                currentMoveNumber = 1;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //        else if (currentMoveNumber == 2)
+        //        {
+        //            if (!string.IsNullOrEmpty(moveset[3]))
+        //            {
+        //                currentMoveNumber = 3;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //        else if (learning)
+        //        {
+        //            if (currentMoveNumber == 4)
+        //            {
+        //                currentMoveNumber = 5;
+        //            }
+        //        }
+        //    }
+        //    else if (Input.GetAxisRaw("Vertical") > 0)
+        //    {
+        //        if (currentMoveNumber == 2)
+        //        {
+        //            currentMoveNumber = 0;
+        //            updateSelectedMove(moveset[currentMoveNumber]);
+        //            SfxHandler.Play(scrollClip);
+        //            yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //        }
+        //        else if (currentMoveNumber == 3)
+        //        {
+        //            if (!string.IsNullOrEmpty(moveset[1]))
+        //            {
+        //                currentMoveNumber = 1;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //        else if (learning)
+        //        {
+        //            if (currentMoveNumber == 4)
+        //            {
+        //                if (!string.IsNullOrEmpty(moveset[2]))
+        //                {
+        //                    currentMoveNumber = 2;
+        //                }
+        //                else
+        //                {
+        //                    currentMoveNumber = 0;
+        //                }
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //            else if (currentMoveNumber == 5)
+        //            {
+        //                if (!string.IsNullOrEmpty(moveset[3]))
+        //                {
+        //                    currentMoveNumber = 3;
+        //                }
+        //                else if (!string.IsNullOrEmpty(moveset[1]))
+        //                {
+        //                    currentMoveNumber = 1;
+        //                }
+        //                else
+        //                {
+        //                    currentMoveNumber = 0;
+        //                }
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //    }
+        //    else if (Input.GetAxisRaw("Vertical") < 0)
+        //    {
+        //        if (currentMoveNumber == 0)
+        //        {
+        //            if (!string.IsNullOrEmpty(moveset[2]))
+        //            {
+        //                currentMoveNumber = 2;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //            else if (learning)
+        //            {
+        //                currentMoveNumber = 4;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //        else if (currentMoveNumber == 1)
+        //        {
+        //            if (!string.IsNullOrEmpty(moveset[3]))
+        //            {
+        //                currentMoveNumber = 3;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //            else if (learning)
+        //            {
+        //                currentMoveNumber = 5;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //        else if (learning)
+        //        {
+        //            if (currentMoveNumber == 2)
+        //            {
+        //                currentMoveNumber = 4;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //            else if (currentMoveNumber == 3)
+        //            {
+        //                currentMoveNumber = 5;
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(scrollClip);
+        //                yield return StartCoroutine(moveMoveSelector(positions[currentMoveNumber] + positionMod));
+        //            }
+        //        }
+        //    }
+        //    else if (Input.GetButtonDown("Back"))
+        //    {
+        //        if (!learning)
+        //        {
+        //            if (selectingMove)
+        //            {
+        //                selectingMove = false;
+        //                selectedMove.enabled = false;
+        //                yield return new WaitForSeconds(0.2f);
+        //            }
+        //            else
+        //            {
+        //                navigatingMoves = false;
+        //                moveSelector.enabled = false;
+        //                updateSelectedMove(null);
+        //                SfxHandler.Play(returnClip);
+        //                yield return new WaitForSeconds(0.2f);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //Cancel learning move
+        //            navigatingMoves = false;
+        //            SfxHandler.Play(returnClip);
+        //            yield return new WaitForSeconds(0.2f);
+        //        }
+        //    }
+        //    else if (Input.GetButtonDown("Select"))
+        //    {
+        //        if (!learning)
+        //        {
+        //            if (selectingMove)
+        //            {
+        //                pokemon.SwapMoves(selectedMoveNumber, currentMoveNumber);
+        //                selectingMove = false;
+        //                selectedMove.enabled = false;
+        //                moveset = pokemon.GetMoveset();
+        //                updateSelectionMoveset(pokemon);
+        //                updateSelectedMove(moveset[currentMoveNumber]);
+        //                SfxHandler.Play(selectClip);
+        //                yield return new WaitForSeconds(0.2f);
+        //            }
+        //            else
+        //            {
+        //                selectedMoveNumber = currentMoveNumber;
+        //                selectingMove = true;
+        //                selectedMove.rectTransform.localPosition = positions[currentMoveNumber] + positionMod;
+        //                selectedMove.enabled = true;
+        //                SfxHandler.Play(selectClip);
+        //                yield return new WaitForSeconds(0.2f);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (currentMoveNumber < 4)
+        //            {
+        //                //Forget learned move
+        //                forget.SetActive(true);
+        //                selectedMove.enabled = true;
+        //                selectedMove.rectTransform.localPosition = positions[currentMoveNumber] + positionMod;
+        //                moveSelector.rectTransform.localPosition = positions[4] + positionMod;
+        //                SfxHandler.Play(selectClip);
+        //                yield return new WaitForSeconds(0.2f);
 
-                        bool forgetPrompt = true;
-                        while (forgetPrompt)
-                        {
-                            if (Input.GetButtonDown("Select"))
-                            {
-                                replacedMove = moveset[currentMoveNumber];
-                                pokemon.replaceMove(currentMoveNumber, newMoveString);
+        //                bool forgetPrompt = true;
+        //                while (forgetPrompt)
+        //                {
+        //                    if (Input.GetButtonDown("Select"))
+        //                    {
+        //                        replacedMove = moveset[currentMoveNumber];
+        //                        pokemon.ReplaceMove(currentMoveNumber, newMoveString);
 
-                                forgetPrompt = false;
-                                navigatingMoves = false;
-                                SfxHandler.Play(selectClip);
-                                yield return new WaitForSeconds(0.2f);
-                            }
-                            else if (Input.GetButtonDown("Back"))
-                            {
-                                forget.SetActive(false);
-                                selectedMove.enabled = false;
-                                moveSelector.rectTransform.localPosition = positions[currentMoveNumber] + positionMod;
+        //                        forgetPrompt = false;
+        //                        navigatingMoves = false;
+        //                        SfxHandler.Play(selectClip);
+        //                        yield return new WaitForSeconds(0.2f);
+        //                    }
+        //                    else if (Input.GetButtonDown("Back"))
+        //                    {
+        //                        forget.SetActive(false);
+        //                        selectedMove.enabled = false;
+        //                        moveSelector.rectTransform.localPosition = positions[currentMoveNumber] + positionMod;
 
-                                forgetPrompt = false;
-                                SfxHandler.Play(returnClip);
-                                yield return new WaitForSeconds(0.2f);
-                            }
-                            yield return null;
-                        }
-                    }
-                    else
-                    {
-                        //Cancel learning move
-                        navigatingMoves = false;
-                        SfxHandler.Play(selectClip);
-                        yield return new WaitForSeconds(0.2f);
-                    }
-                }
-            }
+        //                        forgetPrompt = false;
+        //                        SfxHandler.Play(returnClip);
+        //                        yield return new WaitForSeconds(0.2f);
+        //                    }
+        //                    yield return null;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //Cancel learning move
+        //                navigatingMoves = false;
+        //                SfxHandler.Play(selectClip);
+        //                yield return new WaitForSeconds(0.2f);
+        //            }
+        //        }
+        //    }
 
-            yield return null;
-        }
+        //    yield return null;
+        //}
     }
 }

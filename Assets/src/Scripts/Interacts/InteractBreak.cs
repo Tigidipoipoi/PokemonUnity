@@ -53,7 +53,7 @@ public class InteractBreak : MonoBehaviour
 
     public IEnumerator interact()
     {
-        OwnedPokemon targetPokemon = SaveData.currentSave.PC.getFirstFEUserInParty(fieldEffect);
+        OwnedPokemon targetPokemon = SaveData.currentSave.PC.getFirstFieldEffectUserInParty(fieldEffect);
         if (targetPokemon != null)
         {
             if (PlayerMovement.player.setCheckBusyWith(this.gameObject))

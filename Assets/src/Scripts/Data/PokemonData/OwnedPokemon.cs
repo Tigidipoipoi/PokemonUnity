@@ -1,6 +1,7 @@
 ﻿//Original Scripts by IIColour (IIColour_Spectrum)
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -57,6 +58,7 @@ public class OwnedPokemon
     /// Current level.
     /// </summary>
     /// <remarks>
+    /// May be a simple getter.
     /// Ranges from 1 to 100.
     /// </remarks>
     public int CurrentLevel
@@ -143,8 +145,6 @@ public class OwnedPokemon
     // ToDo: implement items.
     //private string heldItem;
 
-    public string CaughtBall;
-
     /// <summary>
     /// All the data related to the 1st meeting.
     /// </summary>
@@ -159,11 +159,21 @@ public class OwnedPokemon
 
     public PokemonAbility CurrentAbility;
 
+    #region ToDo: finish this implementation.
+    public const int MOVESET_SIZE = 4;
+    /// <summary>
+    /// </summary>
+    /// <remarks>Always size of 4 !</remarks>
+    public OwnedPokemonMove[] CurrentMoveset;
+    public List<PokemonMove> MoveHistory;
+
+    // OLD
     private string[] _currentMoveset;
     private string[] _moveHistory;
     private int[] PPups;
     private int[] maxPP;
     private int[] PP;
+    #endregion
     #endregion
 
     #region Constructors
@@ -207,8 +217,7 @@ public class OwnedPokemon
         generateRareValue();
 
         // Set met data.
-        CaughtBall = pCaughtBall;
-        generateMetData(pLevel);
+        generateMetData(pLevel, pCaughtBall);
 
         // Set DO n°.
         generateDONumber();
@@ -222,6 +231,7 @@ public class OwnedPokemon
         // Set ability.
         generateAbility();
 
+        // ToDo: Set default move set as 4 highest level learnable moves
         //Set moveset based off of the highest level moves possible.
         //_currentMoveset = thisPokemonData.GenerateMoveset(_currentLevel);
         _moveHistory = _currentMoveset;
@@ -269,7 +279,6 @@ public class OwnedPokemon
         RareValue = pPokemon.RareValue;
 
         // Set met data.
-        CaughtBall = pCaughtBall;
         MetData = pPokemon.MetData;
 
         // Set DO n°.
@@ -326,7 +335,7 @@ public class OwnedPokemon
         CurrentAbility = Species.PossibleAbilities[randomIndex];
     }
 
-    private void generateMetData(int pLevel)
+    private void generateMetData(int pLevel, string pCaughtBall)
     {
         MetData.Level = pLevel;
 
@@ -341,6 +350,8 @@ public class OwnedPokemon
         }
 
         MetData.Date = DateTime.Now;
+
+        MetData.CaughtBall = pCaughtBall;
     }
 
     private void generateGender(PokemonGender pGender)
@@ -758,151 +769,156 @@ public class OwnedPokemon
     }
 
     #region Moves
-    public int getMoveIndex(string move)
+    public int GetMoveIndex(PokemonMove pMove)
     {
-        for (int i = 0; i < _currentMoveset.Length; i++)
+        for (int i = 0; i != MOVESET_SIZE; ++i)
         {
-            if (!string.IsNullOrEmpty(_currentMoveset[i]))
-            {
-                if (_currentMoveset[i] == move)
-                {
-                    return i;
-                }
-            }
+            if (CurrentMoveset[i].Move == pMove)
+                return i;
         }
+
         return -1;
     }
 
-    public string[] getMoveset()
+    /// <summary>
+    /// Keep ?
+    /// </summary>
+    /// <returns></returns>
+    public PokemonMove[] GetMoveset()
     {
-        string[] result = new string[4];
-        for (int i = 0; i < 4; i++)
+        PokemonMove[] moveset = new PokemonMove[MOVESET_SIZE];
+        for (int i = 0; i != MOVESET_SIZE; ++i)
         {
-            result[i] = _currentMoveset[i];
+            moveset[i] = CurrentMoveset[i].Move;
         }
-        return result;
+
+        return moveset;
     }
 
-    public void swapMoves(int target1, int target2)
+    public void SwapMoves(int pFirstIndex, int pSecondIndex)
     {
-        string temp = _currentMoveset[target1];
-        _currentMoveset[target1] = _currentMoveset[target2];
-        _currentMoveset[target2] = temp;
+        var temp = CurrentMoveset[pFirstIndex];
+        CurrentMoveset[pFirstIndex] = CurrentMoveset[pSecondIndex];
+        CurrentMoveset[pSecondIndex] = temp;
     }
 
-    /// Returns false if no room to add the new move OR move already is learned.
-    public bool addMove(string newMove)
+    /// <summary>
+    /// Tries to add a new move.
+    /// </summary>
+    /// <param name="pNewMove">The move to add.</param>
+    /// <returns>Returns false if there is no room to add the new move OR move is already learned.</returns>
+    public bool TryAddMove(PokemonMove pNewMove)
     {
-        if (!HasMove(newMove) && string.IsNullOrEmpty(_currentMoveset[3]))
-        {
-            _currentMoveset[3] = newMove;
-            ResetPP(3);
-            packMoveset();
-            return true;
-        }
-        return false;
-    }
-
-    public void replaceMove(int index, string newMove)
-    {
-        if (index >= 0 && index < 4)
-        {
-            _currentMoveset[index] = newMove;
-            addMoveToHistory(newMove);
-            ResetPP(index);
-        }
-    }
-
-    /// Returns false if only one move is left in the moveset.
-    public bool forgetMove(int index)
-    {
-        if (getMoveCount() > 1)
-        {
-            _currentMoveset[index] = null;
-            packMoveset();
-            return true;
-        }
-        return false;
-    }
-
-    public int getMoveCount()
-    {
-        int count = 0;
-        for (int i = 0; i < 4; i++)
-        {
-            if (!string.IsNullOrEmpty(_currentMoveset[i]))
-            {
-                count += 1;
-            }
-        }
-        return count;
-    }
-
-    private void packMoveset()
-    {
-        string[] packedMoveset = new string[4];
-        int[] packedPP = new int[4];
-        int[] packedMaxPP = new int[4];
-        int[] packedPPups = new int[4];
-
-        int i2 = 0; //counter for packed array
-        for (int i = 0; i < 4; i++)
-        {
-            if (!string.IsNullOrEmpty(_currentMoveset[i]))
-            {
-                //if next move in moveset is not null
-                packedMoveset[i2] = _currentMoveset[i]; //add to packed moveset
-                packedPP[i2] = PP[i];
-                packedMaxPP[i2] = maxPP[i];
-                packedPPups[i2] = PPups[i];
-                i2 += 1;
-            } //ready packed moveset's next position
-        }
-        _currentMoveset = packedMoveset;
-        PP = packedPP;
-        maxPP = packedMaxPP;
-        PPups = packedPPups;
-    }
-
-    private void addMoveToHistory(string move)
-    {
-        if (!HasMoveInHistory(move))
-        {
-            string[] newHistory = new string[_moveHistory.Length + 1];
-            for (int i = 0; i < _moveHistory.Length; i++)
-            {
-                newHistory[i] = _moveHistory[i];
-            }
-            newHistory[_moveHistory.Length] = move;
-            _moveHistory = newHistory;
-        }
-    }
-
-    public bool HasMove(string move)
-    {
-        if (string.IsNullOrEmpty(move))
+        if (HasMove(pNewMove))
         {
             return false;
         }
-        for (int i = 0; i < _currentMoveset.Length; i++)
+
+        for (int i = 0; i != MOVESET_SIZE; ++i)
         {
-            if (_currentMoveset[i] == move)
+            if (CurrentMoveset[i] == null)
             {
+                CurrentMoveset[i] = new OwnedPokemonMove(pNewMove);
                 return true;
             }
         }
+
+        // All 4 slots are used.
         return false;
     }
 
-    public bool HasMoveInHistory(string move)
+    public void ReplaceMove(int pIndex, PokemonMove pNewMove)
     {
-        for (int i = 0; i < _currentMoveset.Length; i++)
+        if (pIndex < 0
+            || pIndex >= 4)
+            return;
+
+        CurrentMoveset[pIndex] = new OwnedPokemonMove(pNewMove);
+        addMoveToHistory(pNewMove);
+    }
+
+    /// <summary>
+    /// Tries to forget the move at the specified index.
+    /// </summary>
+    /// <param name="pIndex"></param>
+    /// <returns>Returns false if index is wrong or only one move is left in the moveset.</returns>
+    public bool TryForgetMoveAt(int pIndex)
+    {
+        if (pIndex < 0
+            || pIndex >= MOVESET_SIZE
+            || GetMoveCount() <= 1)
+            return false;
+
+        CurrentMoveset[pIndex] = null;
+        packMoveset();
+
+        return true;
+    }
+
+    /// <summary>
+    /// Gets the moves count.
+    /// </summary>
+    public int GetMoveCount()
+    {
+        int count = 0;
+        for (int i = 0; i != MOVESET_SIZE; ++i)
         {
-            if (_currentMoveset[i] == move)
+            if (CurrentMoveset[i] != null)
+                ++count;
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    /// Reorders <see cref="CurrentMoveset"/> so every null entries are at the end of the array.
+    /// </summary>
+    private void packMoveset()
+    {
+        for (int i = 0, lastNullIndex = MOVESET_SIZE; i != MOVESET_SIZE; ++i)
+        {
+            // This entry is null.
+            if (CurrentMoveset[i] == null)
             {
-                return true;
+                // We store this index if it is the smallest index with a null entry.
+                if (lastNullIndex >= i)
+                    lastNullIndex = i;
+            }
+            // This entry is set.
+            else
+            {
+                // Is there a null entry before ?
+                if (lastNullIndex < i)
+                {
+                    // We swap the moves.
+                    SwapMoves(lastNullIndex, i);
+
+                    // We go back to the just set index.
+                    i = lastNullIndex;
+
+                    // We reset our lastNullIndex.
+                    lastNullIndex = MOVESET_SIZE;
+                }
             }
         }
+    }
+
+    private void addMoveToHistory(PokemonMove pMove)
+    {
+        if (MoveHistory.Contains(pMove))
+            return;
+
+        MoveHistory.Add(pMove);
+    }
+
+    public bool HasMove(PokemonMove pMove)
+    {
+        for (int i = 0; i != MOVESET_SIZE; ++i)
+        {
+            if (CurrentMoveset[i].Move == pMove)
+                return true;
+        }
+
         return false;
     }
 
@@ -944,29 +960,6 @@ public class OwnedPokemon
         //    }
         //}
         return null;
-    }
-    #endregion
-    #region PP
-    private void ResetPP(int index)
-    {
-        PPups[index] = 0;
-        maxPP[index] = Mathf.FloorToInt(MoveDatabase.getMove(_currentMoveset[index]).getPP() * ((PPups[index] * 0.2f) + 1));
-        PP[index] = maxPP[index];
-    }
-
-    public int[] getMaxPP()
-    {
-        return maxPP;
-    }
-
-    public int[] getPP()
-    {
-        return PP;
-    }
-
-    public int getPP(int index)
-    {
-        return PP[index];
     }
     #endregion
 

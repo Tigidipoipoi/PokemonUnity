@@ -757,33 +757,34 @@ public class BagHandler : MonoBehaviour
                     }
                 }
             }
-            else if (selectedItem.getItemEffect() == ItemData.ItemEffect.TM)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    partyStandardDisplay[i].SetActive(false);
-                    partyTextDisplay[i].gameObject.SetActive(true);
-                    if (SaveData.currentSave.PC.boxes[0][i] != null)
-                    {
-                        if (SaveData.currentSave.PC.boxes[0][i].HasMove(selectedItem.getName()))
-                        {
-                            partyTextDisplay[i].text = "LEARNED!";
-                            partyTextDisplay[i].color = new Color(1, 1, 1, 1);
-                        }
-                        else if (SaveData.currentSave.PC.boxes[0][i].CanLearnMove(selectedItem.getName()))
-                        {
-                            partyTextDisplay[i].text = "ABLE!";
-                            partyTextDisplay[i].color = new Color(0, 0.5f, 1, 1);
-                        }
-                        else
-                        {
-                            partyTextDisplay[i].text = "UNABLE!";
-                            partyTextDisplay[i].color = new Color(1, 0.25f, 0, 1);
-                        }
-                        partyTextDisplayShadow[i].text = partyTextDisplay[i].text;
-                    }
-                }
-            }
+            // ToDo: Implement TM
+            //else if (selectedItem.getItemEffect() == ItemData.ItemEffect.TM)
+            //{
+            //    for (int i = 0; i < 6; i++)
+            //    {
+            //        partyStandardDisplay[i].SetActive(false);
+            //        partyTextDisplay[i].gameObject.SetActive(true);
+            //        if (SaveData.currentSave.PC.boxes[0][i] != null)
+            //        {
+            //            if (SaveData.currentSave.PC.boxes[0][i].HasMove(selectedItem.getName()))
+            //            {
+            //                partyTextDisplay[i].text = "LEARNED!";
+            //                partyTextDisplay[i].color = new Color(1, 1, 1, 1);
+            //            }
+            //            else if (SaveData.currentSave.PC.boxes[0][i].CanLearnMove(selectedItem.getName()))
+            //            {
+            //                partyTextDisplay[i].text = "ABLE!";
+            //                partyTextDisplay[i].color = new Color(0, 0.5f, 1, 1);
+            //            }
+            //            else
+            //            {
+            //                partyTextDisplay[i].text = "UNABLE!";
+            //                partyTextDisplay[i].color = new Color(1, 0.25f, 0, 1);
+            //            }
+            //            partyTextDisplayShadow[i].text = partyTextDisplay[i].text;
+            //        }
+            //    }
+            //}
             else
             {
                 for (int i = 0; i < 6; i++)
@@ -2135,140 +2136,141 @@ public class BagHandler : MonoBehaviour
                 updateSelectedItem();
             }
         }
-        else if (selectedItem.getItemEffect() == ItemData.ItemEffect.PP)
-        {
-            //PP
-            string[] currentPokemonMoveset = currentPokemon.getMoveset();
-            int[] currentPokemonPP = currentPokemon.getPP();
-            int[] currentPokemonMaxPP = currentPokemon.getMaxPP();
-            bool loweredPP = false;
-            for (int i = 0; i < 4; i++)
-            {
-                if (currentPokemonMoveset[i] != null)
-                {
-                    if (currentPokemonPP[i] < currentPokemonMaxPP[i])
-                    {
-                        loweredPP = true;
-                    }
-                    else
-                    {
-                        //remove any move from the array that has full PP.
-                        currentPokemonMoveset[i] = null;
-                    }
-                }
-            }
-            if (loweredPP)
-            {
-                //check that the item is not healing all PP
-                if (selectedItem.getStringParameter() == "All")
-                {
-                    //heal PP for each move.
-                    float amount = selectedItem.getFloatParameter();
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (currentPokemonMoveset[i] != null)
-                        {
-                            if (amount <= 1)
-                            {
-                                amount = currentPokemon.healPP(i,
-                                    Mathf.RoundToInt(currentPokemon.getMaxPP()[i] * amount));
-                            }
-                            else
-                            {
-                                amount = currentPokemon.healPP(i, amount);
-                            }
-                        }
-                    }
+        // ToDo: implement PP items
+        //else if (selectedItem.getItemEffect() == ItemData.ItemEffect.PP)
+        //{
+        //    //PP
+        //    string[] currentPokemonMoveset = currentPokemon.GetMoveset();
+        //    int[] currentPokemonPP = currentPokemon.getPP();
+        //    int[] currentPokemonMaxPP = currentPokemon.getMaxPP();
+        //    bool loweredPP = false;
+        //    for (int i = 0; i < 4; i++)
+        //    {
+        //        if (currentPokemonMoveset[i] != null)
+        //        {
+        //            if (currentPokemonPP[i] < currentPokemonMaxPP[i])
+        //            {
+        //                loweredPP = true;
+        //            }
+        //            else
+        //            {
+        //                //remove any move from the array that has full PP.
+        //                currentPokemonMoveset[i] = null;
+        //            }
+        //        }
+        //    }
+        //    if (loweredPP)
+        //    {
+        //        //check that the item is not healing all PP
+        //        if (selectedItem.getStringParameter() == "All")
+        //        {
+        //            //heal PP for each move.
+        //            float amount = selectedItem.getFloatParameter();
+        //            for (int i = 0; i < 4; i++)
+        //            {
+        //                if (currentPokemonMoveset[i] != null)
+        //                {
+        //                    if (amount <= 1)
+        //                    {
+        //                        amount = currentPokemon.healPP(i,
+        //                            Mathf.RoundToInt(currentPokemon.getMaxPP()[i] * amount));
+        //                    }
+        //                    else
+        //                    {
+        //                        amount = currentPokemon.healPP(i, amount);
+        //                    }
+        //                }
+        //            }
 
-                    SfxHandler.Play(healClip);
-                    removeItem(selectedItem.getName(), 1);
+        //            SfxHandler.Play(healClip);
+        //            removeItem(selectedItem.getName(), 1);
 
-                    Dialog.drawDialogBox();
-                    yield return Dialog.StartCoroutine("drawTextSilent", "Restored all moves.");
-                    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                    {
-                        yield return null;
-                    }
-                }
-                else
-                {
-                    //Set up the choices string to only contain moves with lowered PP.
-                    string[] choices = new string[]
-                    {
-                        currentPokemonMoveset[0], currentPokemonMoveset[1],
-                        currentPokemonMoveset[2], currentPokemonMoveset[3], "Cancel"
-                    };
-                    string[] packedChoices = new string[5];
-                    int packedIndex = 0;
-                    for (int i = 0; i < 5; i++)
-                    {
-                        if (choices[i] != null)
-                        {
-                            packedChoices[packedIndex] = choices[i];
-                            packedIndex += 1;
-                        }
-                    }
-                    choices = new string[packedIndex];
-                    for (int i = 0; i < packedIndex; i++)
-                    {
-                        choices[i] = packedChoices[i];
-                    }
+        //            Dialog.drawDialogBox();
+        //            yield return Dialog.StartCoroutine("drawTextSilent", "Restored all moves.");
+        //            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+        //            {
+        //                yield return null;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //Set up the choices string to only contain moves with lowered PP.
+        //            string[] choices = new string[]
+        //            {
+        //                currentPokemonMoveset[0], currentPokemonMoveset[1],
+        //                currentPokemonMoveset[2], currentPokemonMoveset[3], "Cancel"
+        //            };
+        //            string[] packedChoices = new string[5];
+        //            int packedIndex = 0;
+        //            for (int i = 0; i < 5; i++)
+        //            {
+        //                if (choices[i] != null)
+        //                {
+        //                    packedChoices[packedIndex] = choices[i];
+        //                    packedIndex += 1;
+        //                }
+        //            }
+        //            choices = new string[packedIndex];
+        //            for (int i = 0; i < packedIndex; i++)
+        //            {
+        //                choices[i] = packedChoices[i];
+        //            }
 
-                    //Start the dialog, now that the choices have been set up.
-                    Dialog.drawDialogBox();
-                    yield return Dialog.StartCoroutine("drawText", "Restore which move's PP?");
-                    Dialog.drawChoiceBoxWidth(choices, 110);
-                    yield return StartCoroutine(Dialog.choiceNavigate(choices));
-                    int chosenIndex = Dialog.chosenIndex;
-                    if (chosenIndex != 0)
-                    {
-                        //resolve move number
-                        int moveNumber = 0;
-                        for (int i = 0; i < 4; i++)
-                        {
-                            if (currentPokemonMoveset[i] == choices[choices.Length - chosenIndex - 1])
-                            {
-                                moveNumber = i;
-                            }
-                        }
+        //            //Start the dialog, now that the choices have been set up.
+        //            Dialog.drawDialogBox();
+        //            yield return Dialog.StartCoroutine("drawText", "Restore which move's PP?");
+        //            Dialog.drawChoiceBoxWidth(choices, 110);
+        //            yield return StartCoroutine(Dialog.choiceNavigate(choices));
+        //            int chosenIndex = Dialog.chosenIndex;
+        //            if (chosenIndex != 0)
+        //            {
+        //                //resolve move number
+        //                int moveNumber = 0;
+        //                for (int i = 0; i < 4; i++)
+        //                {
+        //                    if (currentPokemonMoveset[i] == choices[choices.Length - chosenIndex - 1])
+        //                    {
+        //                        moveNumber = i;
+        //                    }
+        //                }
 
-                        //heal PP for selected move.
-                        float amount = selectedItem.getFloatParameter();
-                        if (amount <= 1)
-                        {
-                            amount = currentPokemon.healPP(moveNumber,
-                                Mathf.RoundToInt(currentPokemon.getMaxPP()[moveNumber] * amount));
-                        }
-                        else
-                        {
-                            amount = currentPokemon.healPP(moveNumber, amount);
-                        }
+        //                //heal PP for selected move.
+        //                float amount = selectedItem.getFloatParameter();
+        //                if (amount <= 1)
+        //                {
+        //                    amount = currentPokemon.healPP(moveNumber,
+        //                        Mathf.RoundToInt(currentPokemon.getMaxPP()[moveNumber] * amount));
+        //                }
+        //                else
+        //                {
+        //                    amount = currentPokemon.healPP(moveNumber, amount);
+        //                }
 
-                        SfxHandler.Play(healClip);
-                        removeItem(selectedItem.getName(), 1);
+        //                SfxHandler.Play(healClip);
+        //                removeItem(selectedItem.getName(), 1);
 
-                        Dialog.drawDialogBox();
-                        yield return Dialog.StartCoroutine("drawTextSilent", "It restored " + amount + " points.");
-                        while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                        {
-                            yield return null;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Dialog.drawDialogBox();
-                yield return Dialog.StartCoroutine("drawText", "It wouldn't have any effect.");
-                while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                {
-                    yield return null;
-                }
-                switching = false;
-                selected = -1;
-                updateSelectedItem();
-            }
-        }
+        //                Dialog.drawDialogBox();
+        //                yield return Dialog.StartCoroutine("drawTextSilent", "It restored " + amount + " points.");
+        //                while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+        //                {
+        //                    yield return null;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Dialog.drawDialogBox();
+        //        yield return Dialog.StartCoroutine("drawText", "It wouldn't have any effect.");
+        //        while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+        //        {
+        //            yield return null;
+        //        }
+        //        switching = false;
+        //        selected = -1;
+        //        updateSelectedItem();
+        //    }
+        //}
         else if (selectedItem.getItemEffect() == ItemData.ItemEffect.STATUS)
         {
             // ToDo: Handle STATUS items.
@@ -2493,70 +2495,71 @@ public class BagHandler : MonoBehaviour
             //    updateSelectedItem();
             //}
         }
-        else if (selectedItem.getItemEffect() == ItemData.ItemEffect.TM)
-        {
-            //TM
-            if (currentPokemon.HasMove(selectedItem.getName()))
-            {
-                Dialog.drawDialogBox(2);
-                yield return
-                    Dialog.StartCoroutine("drawText",
-                        currentPokemon.GetName() + " already knows \n" + selectedItem.getName() + ".");
-                while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                {
-                    yield return null;
-                }
-            }
-            else if (currentPokemon.CanLearnMove(selectedItem.getName()))
-            {
-                //check if can learn move
-                if (!booted)
-                {
-                    Dialog.drawDialogBox(2);
-                    SfxHandler.Play(tmBootupClip);
-                    yield return StartCoroutine(Dialog.drawTextSilent("Booted up a TM."));
-                    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                    {
-                        yield return null;
-                    }
-                    Dialog.drawDialogBox(2);
-                    yield return Dialog.StartCoroutine("drawText", "It contained " + selectedItem.getName() + ".");
-                    while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                    {
-                        yield return null;
-                    }
-                    Dialog.drawDialogBox(2);
-                    yield return
-                        Dialog.StartCoroutine("drawText",
-                            "Teach " + selectedItem.getName() + "\nto " + currentPokemon.GetName() + "?");
-                    Dialog.drawChoiceBox(14);
-                    yield return StartCoroutine(Dialog.choiceNavigate());
-                    Dialog.undrawChoiceBox();
+        // ToDo: implement TM
+        //else if (selectedItem.getItemEffect() == ItemData.ItemEffect.TM)
+        //{
+        //    //TM
+        //    if (currentPokemon.HasMove(selectedItem.getName()))
+        //    {
+        //        Dialog.drawDialogBox(2);
+        //        yield return
+        //            Dialog.StartCoroutine("drawText",
+        //                currentPokemon.GetName() + " already knows \n" + selectedItem.getName() + ".");
+        //        while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+        //        {
+        //            yield return null;
+        //        }
+        //    }
+        //    else if (currentPokemon.CanLearnMove(selectedItem.getName()))
+        //    {
+        //        //check if can learn move
+        //        if (!booted)
+        //        {
+        //            Dialog.drawDialogBox(2);
+        //            SfxHandler.Play(tmBootupClip);
+        //            yield return StartCoroutine(Dialog.drawTextSilent("Booted up a TM."));
+        //            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+        //            {
+        //                yield return null;
+        //            }
+        //            Dialog.drawDialogBox(2);
+        //            yield return Dialog.StartCoroutine("drawText", "It contained " + selectedItem.getName() + ".");
+        //            while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+        //            {
+        //                yield return null;
+        //            }
+        //            Dialog.drawDialogBox(2);
+        //            yield return
+        //                Dialog.StartCoroutine("drawText",
+        //                    "Teach " + selectedItem.getName() + "\nto " + currentPokemon.GetName() + "?");
+        //            Dialog.drawChoiceBox(14);
+        //            yield return StartCoroutine(Dialog.choiceNavigate());
+        //            Dialog.undrawChoiceBox();
 
-                    if (Dialog.chosenIndex == 1)
-                    {
-                        yield return StartCoroutine(LearnMove(currentPokemon, selectedItem.getName()));
-                    }
-                }
-                else
-                {
-                    yield return StartCoroutine(LearnMove(currentPokemon, selectedItem.getName()));
-                }
-            }
-            else
-            {
-                Dialog.drawDialogBox();
-                yield return Dialog.StartCoroutine("drawText", currentPokemon.GetName() + " can't learn that move.");
-                while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
-                {
-                    yield return null;
-                }
-            }
-            Dialog.undrawDialogBox();
-            switching = false;
-            selected = -1;
-            updateSelectedItem();
-        }
+        //            if (Dialog.chosenIndex == 1)
+        //            {
+        //                yield return StartCoroutine(LearnMove(currentPokemon, selectedItem.getName()));
+        //            }
+        //        }
+        //        else
+        //        {
+        //            yield return StartCoroutine(LearnMove(currentPokemon, selectedItem.getName()));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Dialog.drawDialogBox();
+        //        yield return Dialog.StartCoroutine("drawText", currentPokemon.GetName() + " can't learn that move.");
+        //        while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+        //        {
+        //            yield return null;
+        //        }
+        //    }
+        //    Dialog.undrawDialogBox();
+        //    switching = false;
+        //    selected = -1;
+        //    updateSelectedItem();
+        //}
         else if (selectedItem.getItemEffect() == ItemData.ItemEffect.UNIQUE)
         {
             //UNIQUE
@@ -2633,7 +2636,7 @@ public class BagHandler : MonoBehaviour
         }
     }
 
-    private IEnumerator LearnMove(OwnedPokemon selectedPokemon, string move)
+    private IEnumerator LearnMove(OwnedPokemon selectedPokemon, PokemonMove pMove)
     {
         int chosenIndex = 1;
         if (chosenIndex == 1)
@@ -2642,12 +2645,12 @@ public class BagHandler : MonoBehaviour
             while (learning)
             {
                 //Moveset is full
-                if (selectedPokemon.getMoveCount() == 4)
+                if (selectedPokemon.GetMoveCount() == 4)
                 {
                     Dialog.drawDialogBox(2);
                     yield return
                         Dialog.StartCoroutine("drawText",
-                            selectedPokemon.GetName() + " wants to learn the \nmove " + move + ".");
+                            selectedPokemon.GetName() + " wants to learn the \nmove " + pMove.Name + ".");
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                     {
                         yield return null;
@@ -2662,7 +2665,7 @@ public class BagHandler : MonoBehaviour
                     }
                     Dialog.drawDialogBox(2);
                     yield return
-                        Dialog.StartCoroutine("drawText", "Should a move be deleted and \nreplaced with " + move + "?");
+                        Dialog.StartCoroutine("drawText", "Should a move be deleted and \nreplaced with " + pMove.Name + "?");
 
                     Dialog.drawChoiceBox(14);
                     yield return StartCoroutine(Dialog.choiceNavigate());
@@ -2681,7 +2684,7 @@ public class BagHandler : MonoBehaviour
 
                         //Set SceneSummary to be active so that it appears
                         PKUScene.main.Summary.gameObject.SetActive(true);
-                        StartCoroutine(PKUScene.main.Summary.control(selectedPokemon, move));
+                        StartCoroutine(PKUScene.main.Summary.control(selectedPokemon, pMove.Name));
                         //Start an empty loop that will only stop when SceneSummary is no longer active (is closed)
                         while (PKUScene.main.Summary.gameObject.activeSelf)
                         {
@@ -2729,7 +2732,7 @@ public class BagHandler : MonoBehaviour
                             Dialog.drawDialogBox(2);
                             AudioClip mfx = Resources.Load<AudioClip>("Audio/mfx/GetAverage");
                             BgmHandler.main.PlayMFX(mfx);
-                            StartCoroutine(Dialog.drawTextSilent(selectedPokemon.GetName() + " learned \n" + move + "!"));
+                            StartCoroutine(Dialog.drawTextSilent(selectedPokemon.GetName() + " learned \n" + pMove + "!"));
                             yield return new WaitForSeconds(mfx.length);
                             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                             {
@@ -2748,7 +2751,7 @@ public class BagHandler : MonoBehaviour
                     {
                         //NOT ELSE because this may need to run after (chosenIndex == 1) runs
                         Dialog.drawDialogBox(2);
-                        yield return Dialog.StartCoroutine("drawText", "Give up on learning the move \n" + move + "?");
+                        yield return Dialog.StartCoroutine("drawText", "Give up on learning the move \n" + pMove + "?");
                         Dialog.drawChoiceBox(14);
                         yield return StartCoroutine(Dialog.choiceNavigate());
                         chosenIndex = Dialog.chosenIndex;
@@ -2763,12 +2766,12 @@ public class BagHandler : MonoBehaviour
                 //Moveset is not full, can fit the new move easily
                 else
                 {
-                    selectedPokemon.addMove(move);
+                    selectedPokemon.TryAddMove(pMove);
 
                     Dialog.drawDialogBox(2);
                     AudioClip mfx = Resources.Load<AudioClip>("Audio/mfx/GetAverage");
                     BgmHandler.main.PlayMFX(mfx);
-                    StartCoroutine(Dialog.drawTextSilent(selectedPokemon.GetName() + " learned \n" + move + "!"));
+                    StartCoroutine(Dialog.drawTextSilent(selectedPokemon.GetName() + " learned \n" + pMove + "!"));
                     yield return new WaitForSeconds(mfx.length);
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                     {
@@ -2784,7 +2787,7 @@ public class BagHandler : MonoBehaviour
             //NOT ELSE because this may need to run after (chosenIndex == 1) runs
             //cancel learning loop
             Dialog.drawDialogBox(2);
-            yield return Dialog.StartCoroutine("drawText", selectedPokemon.GetName() + " did not learn \n" + move + ".")
+            yield return Dialog.StartCoroutine("drawText", selectedPokemon.GetName() + " did not learn \n" + pMove + ".")
                 ;
             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
             {

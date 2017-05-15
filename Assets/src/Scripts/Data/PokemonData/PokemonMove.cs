@@ -67,11 +67,16 @@ public class PokemonMove
 
     public PokemonMoveCategory BattleCategory { get; set; }
 
+    /// <summary>
+    /// -1 is used for unmissable moves.
+    /// </summary>
+    public int Accuracy { get; set; }
+
     public List<PokemonMoveEffect> Effects { get; set; }
 
     public int BasePP { get; set; }
 
-    public int MaxPP { get { return Mathf.FloorToInt(BasePP * 0.6f); } }
+    public int MaxPP { get { return Mathf.FloorToInt(BasePP * 1.6f); } }
 }
 
 public class OwnedPokemonMove
@@ -86,10 +91,23 @@ public class OwnedPokemonMove
     {
         get
         {
-            float maxPP = Mathf.Clamp(Move.BasePP * CurrentPPUps * 0.2f, Move.BasePP, Move.MaxPP);
+            float maxPP = Mathf.Clamp(Move.BasePP * (1 + CurrentPPUps * 0.2f), Move.BasePP, Move.MaxPP);
 
             return Mathf.FloorToInt(maxPP);
         }
+    }
+
+    public OwnedPokemonMove() { }
+
+    public OwnedPokemonMove(PokemonMove pMove)
+    {
+        Move = pMove;
+        CurrentPP = Move.BasePP;
+    }
+
+    public void ResetPP()
+    {
+        CurrentPP = CurrentMaxPP;
     }
 }
 

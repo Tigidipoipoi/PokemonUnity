@@ -610,7 +610,7 @@ public class EvolutionHandler : MonoBehaviour
     }
 
 
-    private IEnumerator LearnMove(OwnedPokemon selectedPokemon, string move)
+    private IEnumerator LearnMove(OwnedPokemon selectedPokemon, PokemonMove pMoveToLearn)
     {
         int chosenIndex = 1;
         if (chosenIndex == 1)
@@ -619,12 +619,12 @@ public class EvolutionHandler : MonoBehaviour
             while (learning)
             {
                 //Moveset is full
-                if (selectedPokemon.getMoveCount() == 4)
+                if (selectedPokemon.GetMoveCount() == 4)
                 {
                     dialog.DrawDialogBox();
                     yield return
                         StartCoroutine(
-                            dialog.DrawText(selectedPokemon.GetName() + " wants to learn the \nmove " + move + "."));
+                            dialog.DrawText(selectedPokemon.GetName() + " wants to learn the \nmove " + pMoveToLearn.Name + "."));
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                     {
                         yield return null;
@@ -639,7 +639,7 @@ public class EvolutionHandler : MonoBehaviour
                     }
                     dialog.DrawDialogBox();
                     yield return
-                        StartCoroutine(dialog.DrawText("Should a move be deleted and \nreplaced with " + move + "?"));
+                        StartCoroutine(dialog.DrawText("Should a move be deleted and \nreplaced with " + pMoveToLearn.Name + "?"));
 
                     yield return StartCoroutine(dialog.DrawChoiceBox());
                     chosenIndex = dialog.chosenIndex;
@@ -657,7 +657,7 @@ public class EvolutionHandler : MonoBehaviour
 
                         //Set SceneSummary to be active so that it appears
                         PKUScene.main.Summary.gameObject.SetActive(true);
-                        StartCoroutine(PKUScene.main.Summary.control(selectedPokemon, move));
+                        StartCoroutine(PKUScene.main.Summary.control(selectedPokemon, pMoveToLearn.Name));
                         //Start an empty loop that will only stop when SceneSummary is no longer active (is closed)
                         while (PKUScene.main.Summary.gameObject.activeSelf)
                         {
@@ -706,7 +706,7 @@ public class EvolutionHandler : MonoBehaviour
                             dialog.DrawDialogBox();
                             AudioClip mfx = Resources.Load<AudioClip>("Audio/mfx/GetAverage");
                             BgmHandler.main.PlayMFX(mfx);
-                            StartCoroutine(dialog.DrawTextSilent(selectedPokemon.GetName() + " learned \n" + move + "!"));
+                            StartCoroutine(dialog.DrawTextSilent(selectedPokemon.GetName() + " learned \n" + pMoveToLearn.Name + "!"));
                             yield return new WaitForSeconds(mfx.length);
                             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                             {
@@ -725,7 +725,7 @@ public class EvolutionHandler : MonoBehaviour
                     {
                         //NOT ELSE because this may need to run after (chosenIndex == 1) runs
                         dialog.DrawDialogBox();
-                        yield return StartCoroutine(dialog.DrawText("Give up on learning the move \n" + move + "?"));
+                        yield return StartCoroutine(dialog.DrawText("Give up on learning the move \n" + pMoveToLearn.Name + "?"));
 
                         yield return StartCoroutine(dialog.DrawChoiceBox());
                         chosenIndex = dialog.chosenIndex;
@@ -740,12 +740,12 @@ public class EvolutionHandler : MonoBehaviour
                 //Moveset is not full, can fit the new move easily
                 else
                 {
-                    selectedPokemon.addMove(move);
+                    selectedPokemon.TryAddMove(pMoveToLearn);
 
                     dialog.DrawDialogBox();
                     AudioClip mfx = Resources.Load<AudioClip>("Audio/mfx/GetAverage");
                     BgmHandler.main.PlayMFX(mfx);
-                    StartCoroutine(dialog.DrawTextSilent(selectedPokemon.GetName() + " learned \n" + move + "!"));
+                    StartCoroutine(dialog.DrawTextSilent(selectedPokemon.GetName() + " learned \n" + pMoveToLearn + "!"));
                     yield return new WaitForSeconds(mfx.length);
                     while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                     {
@@ -761,7 +761,7 @@ public class EvolutionHandler : MonoBehaviour
             //NOT ELSE because this may need to run after (chosenIndex == 1) runs
             //cancel learning loop
             dialog.DrawDialogBox();
-            yield return StartCoroutine(dialog.DrawText(selectedPokemon.GetName() + " did not learn \n" + move + "."));
+            yield return StartCoroutine(dialog.DrawText(selectedPokemon.GetName() + " did not learn \n" + pMoveToLearn + "."));
             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
             {
                 yield return null;
