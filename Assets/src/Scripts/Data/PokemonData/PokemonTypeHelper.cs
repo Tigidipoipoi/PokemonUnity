@@ -1,25 +1,31 @@
-﻿public enum PokemonType
+﻿using System;
+
+/// <summary>
+/// Pokemon's types work as flags.
+/// </summary>
+[Flags]
+public enum PokemonType
 {
     // Used for struggle
-    None,
-    Normal,
-    Fighting,
-    Flying,
-    Poison,
-    Ground,
-    Rock,
-    Bug,
-    Ghost,
-    Steel,
-    Fire,
-    Water,
-    Grass,
-    Electric,
-    Psychic,
-    Ice,
-    Dragon,
-    Dark,
-    Fairy,
+    None        = 0,
+    Normal      = 1,
+    Fighting    = 2,
+    Flying      = 4,
+    Poison      = 8,
+    Ground      = 16,
+    Rock        = 32,
+    Bug         = 64,
+    Ghost       = 128,
+    Steel       = 256,
+    Fire        = 512,
+    Water       = 1024,
+    Grass       = 2048,
+    Electric    = 4096,
+    Psychic     = 8192,
+    Ice         = 16384,
+    Dragon      = 32768,
+    Dark        = 65536,
+    Fairy       = 131072,
 };
 
 public static class PokemonTypeHelper

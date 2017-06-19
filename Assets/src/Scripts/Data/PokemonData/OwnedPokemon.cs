@@ -41,6 +41,11 @@ public class OwnedPokemon
     /// </summary>
     public PokemonStatList Stats { get; set; }
 
+    /// <summary>
+    /// Since a pokemon's type can change in battle, we need to store its current types separated from its specie's base types.
+    /// </summary>
+    public PokemonType CurrentTypes { get; set; }
+
     public PokemonNature Nature;
 
     /// <summary>
@@ -184,7 +189,8 @@ public class OwnedPokemon
         // ToDo: Find in Database.
         Species = GameController.Instance.PokemonDb.GetPokemonSpeciesByGameId(pGameId);
 
-        Stats = Species.BaseStats.GenerateStatList();
+        if (Species != null)
+            Stats = Species.BaseStats.GenerateStatList();
     }
 
     /// <summary>

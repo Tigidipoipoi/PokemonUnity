@@ -13,11 +13,16 @@ public class GameController : Singleton<GameController>
         InitCulture();
 
         string path = string.Format("lang/{0}/Localisation.txt", LocalizationManager.Language);
-        var localizationFile = Resources.Load<TextAsset>(path);
-        if (localizationFile != null)
+
+        // Avoid to load outside the game.
+        if (Application.isPlaying)
         {
-            var allText = localizationFile.text.Split('\n');
-            LocalizationManager.InitLocalization(allText, false);
+            var localizationFile = Resources.Load<TextAsset>(path);
+            if (localizationFile != null)
+            {
+                var allText = localizationFile.text.Split('\n');
+                LocalizationManager.InitLocalization(allText, false);
+            }
         }
     }
 

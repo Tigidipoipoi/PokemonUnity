@@ -10,6 +10,12 @@ public class DatabaseController : IDisposable
 
     public DatabaseController()
     {
+        // ToDo: handle DB in editor.
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
         // Path to database.
         string dbPath = Application.dataPath + "/Resources/Data/PKU-Database.db";
         DBConnection = new SQLiteConnection(dbPath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);

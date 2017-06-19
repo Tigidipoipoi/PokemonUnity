@@ -52,6 +52,9 @@ public class PokemonSpecies
     [Column("BaseFriendship")]
     public int BaseFriendship { get; set; }
 
+    [Column("BaseTypes")]
+    public PokemonType BaseTypes { get; set; }
+
     #region Foreign Keys
     [Column("LevelingRate")]
     public PokemonLevelingRateType LevelingRate { get; set; }
@@ -71,8 +74,6 @@ public class PokemonSpecies
     #endregion
 
     #region External tables
-    // Types
-    public List<PokemonType> Types { get; set; }
 
     // Abilities
     public List<PokemonAbility> PossibleAbilities { get; set; }
